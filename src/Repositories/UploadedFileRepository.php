@@ -74,5 +74,23 @@ class UploadedFileRepository
     public function calculateSha256(string $file): string
     {
         return hash_file('sha256', $file);
+    }  
+    
+    public function initializeExecutionHistory(): void
+    {
+        $this->db->exec("
+            CREATE TABLE IF NOT EXISTS execution_history
+            (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                executed_at TEXT NOT NULL,
+                client TEXT NOT NULL,
+                files_found INTEGER NOT NULL,
+                files_uploaded INTEGER NOT NULL,
+                files_skipped INTEGER NOT NULL,
+                errors INTEGER NOT NULL,
+                duration REAL NOT NULL,
+                status TEXT NOT NULL
+            );
+        ");
     }    
 }

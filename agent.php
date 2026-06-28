@@ -9,13 +9,14 @@ use BackupCenter\Core\FileValidator;
 use BackupCenter\Core\Logger;
 use BackupCenter\Core\WinScpProvider;
 use BackupCenter\Services\UploadManager;
+use BackupCenter\Core\Paths;
 
 $config = new ConfigurationManager(
-    __DIR__ . '/resources/config/config.json'
+    Paths::config() . '/config.json'
 );
 
 $logger = new Logger(
-    __DIR__ . '/storage/logs'
+    Paths::logs()
 );
 
 $scanner = new FileScanner();
