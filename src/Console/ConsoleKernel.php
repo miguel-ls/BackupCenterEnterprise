@@ -11,6 +11,7 @@ use BackupCenter\Core\Application;
 use BackupCenter\Console\Commands\StatsCommand;
 use BackupCenter\Console\Commands\LogsCommand;
 use BackupCenter\Console\Commands\ConfigCommand;
+use BackupCenter\Console\Commands\VerifyCommand;
 
 class ConsoleKernel
 {
@@ -42,6 +43,10 @@ class ConsoleKernel
                 new Application()
             ),            
 
+            'verify' => (new VerifyCommand())->execute(
+                new Application()
+            ),
+
             'help' => $this->help(),
 
             default => $this->unknown($command),
@@ -60,6 +65,7 @@ class ConsoleKernel
         echo "stats" . PHP_EOL;
         echo "logs" . PHP_EOL;
         echo "config" . PHP_EOL;
+        echo "verify" . PHP_EOL;
 
         return 0;
     }
