@@ -3,9 +3,9 @@
 namespace BackupCenter\Core;
 
 use BackupCenter\Services\UploadManager;
-use BackupCenter\Core\Database;
 use BackupCenter\Repositories\UploadedFileRepository;
 use BackupCenter\Models\ExecutionSummary;
+use BackupCenter\Repositories\ExecutionHistoryRepository;
 
 class BackupCenterAgent
 {
@@ -16,29 +16,27 @@ class BackupCenterAgent
     private Logger $logger;
     private FileScanner $scanner;
     private FileValidator $validator;
-    private WinScpProvider $provider;
+    private ExecutionHistoryRepository $executionHistoryRepository;
+
 
     public function __construct(
         ConfigurationManager $config,
         Logger $logger,
         FileScanner $scanner,
         FileValidator $validator,
-        WinScpProvider $provider,
-        UploadManager $uploadManager
+        UploadManager $uploadManager,
+        UploadedFileRepository $repository,
+        ExecutionHistoryRepository $executionHistoryRepository
+        
     ) {
         $this->config = $config;
         $this->logger = $logger;
         $this->scanner = $scanner;
         $this->validator = $validator;
-        $this->provider = $provider;
         $this->uploadManager = $uploadManager;
         $this->lockValidator = new FileLockValidator();
-
-        $database = new Database(__DIR__ . '/../../storage/database/backupcenter.db');
-
-        $this->repository = new UploadedFileRepository($database);
-
-        $this->repository->initialize();        
+        $this->executionHistoryRepository = $executionHistoryRepository;
+        $this->repository = $repository;    
     }
 
     public function run(): void
@@ -91,19 +89,41 @@ class BackupCenterAgent
 
             echo "Subiendo: " . $file->getName() . PHP_EOL;
 
-            $result = $this->uploadManager->upload($file);
+            try {
 
-            echo $result . PHP_EOL;
+                $result = $this->uploadManager->upload($file);
 
-            $this->repository->save(
-                $file->getName(),
-                $file->getSize(),
-                $sha256
-            );            
+                echo $result . PHP_EOL;
 
-            $summary->uploaded++;
+                $this->repository->save(
+                    $file->getName(),
+                    $file->getSize(),
+                    $sha256
+                );
+
+                $summary->uploaded++;
+
+            } catch (\Throwable $e) {
+
+                $summary->errors++;
+
+                echo "ERROR: " . $e->getMessage() . PHP_EOL;
+
+                $this->logger->error(
+                    "Error subiendo {$file->getName()}: {$e->getMessage()}"
+                );
+
+                continue;
+            }
 
             }
+
+        $summary->finish();
+
+        $this->executionHistoryRepository->save(
+            $summary,
+            $this->config->get('client.name')
+        );            
 
         $this->logger->success('Proceso finalizado.');
 

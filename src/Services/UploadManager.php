@@ -6,32 +6,69 @@ use BackupCenter\Core\ConfigurationManager;
 use BackupCenter\Builders\ScriptBuilder;
 use BackupCenter\Core\WinScpProvider;
 use BackupCenter\Models\BackupFile;
+use BackupCenter\Core\RetryPolicy;
 
 class UploadManager
 {
     private ConfigurationManager $config;
     private WinScpProvider $provider;
+    private RetryPolicy $retryPolicy;
+    private ScriptBuilder $builder;
 
     public function __construct(
         ConfigurationManager $config,
-        WinScpProvider $provider
+        WinScpProvider $provider,
+        ScriptBuilder $builder,
+        RetryPolicy $retryPolicy
     ) {
         $this->config = $config;
         $this->provider = $provider;
+        $this->builder = $builder;
+        $this->retryPolicy = $retryPolicy;
     }
-
     public function upload(BackupFile $file): string
     {
         $connection = $this->config->getConnectionConfig();
 
-        $script = (new ScriptBuilder())
-            ->batchAbort()
-            ->confirmOff()
-            ->open($connection)
-            ->put($file->getPath())
-            ->exit()
-            ->build();
+        $lastException = null;
 
-        return $this->provider->execute($script);
+        for (
+            $attempt = 1;
+            $attempt <= $this->retryPolicy->getAttempts();
+            $attempt++
+        ) {
+
+            try {
+
+                $script = $this->builder
+                    ->batchAbort()
+                    ->confirmOff()
+                    ->open($connection)
+                    ->put($file->getPath())
+                    ->exit()
+                    ->build();
+
+                return $this->provider->execute($script);
+
+            } catch (\Throwable $e) {
+
+                $lastException = $e;
+
+                echo "Intento {$attempt} falló: {$e->getMessage()}" . PHP_EOL;
+
+                if (!$this->retryPolicy->shouldRetry($attempt)) {
+                    break;
+                }
+
+                echo "Reintentando en "
+                    . $this->retryPolicy->getDelay()
+                    . " segundos..."
+                    . PHP_EOL;
+
+                sleep($this->retryPolicy->getDelay());
+            }
+        }
+
+        throw $lastException;
     }
 }

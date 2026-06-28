@@ -6,6 +6,10 @@ use BackupCenter\Console\Commands\DoctorCommand;
 use BackupCenter\Console\Commands\InfoCommand;
 use BackupCenter\Console\Commands\StatusCommand;
 use BackupCenter\Console\Commands\VersionCommand;
+use BackupCenter\Console\Commands\HistoryCommand;
+use BackupCenter\Core\Application;
+use BackupCenter\Console\Commands\StatsCommand;
+use BackupCenter\Console\Commands\LogsCommand;
 
 class ConsoleKernel
 {
@@ -23,6 +27,16 @@ class ConsoleKernel
 
             'doctor' => (new DoctorCommand())->execute(),
 
+            'history' => (new HistoryCommand())->execute(
+                new Application()
+            ),            
+
+            'stats' => (new StatsCommand())->execute(
+                new Application()
+            ),            
+
+            'logs' => (new LogsCommand())->execute(),
+
             'help' => $this->help(),
 
             default => $this->unknown($command),
@@ -37,6 +51,9 @@ class ConsoleKernel
         echo "info" . PHP_EOL;
         echo "status" . PHP_EOL;
         echo "doctor" . PHP_EOL;
+        echo "history" . PHP_EOL;
+        echo "stats" . PHP_EOL;
+        echo "logs" . PHP_EOL;
 
         return 0;
     }

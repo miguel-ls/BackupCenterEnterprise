@@ -21,7 +21,10 @@
         "port": 30126,
         "username": "unimarket",
         "password": "1q2w3e4r5t.",
-        "hostkey": "ssh-ed25519 255 RmInX2qqfJRntFznrgKm8LZtcQOiZUNqZ+amaNCObww"
+        "hostkey": "ssh-ed25519 255 RmInX2qqfJRntFznrgKm8LZtcQOiZUNqZ+amaNCObww",
+
+        "retry_attempts": 3,
+        "retry_delay": 5
     },
 
     "logs": {
