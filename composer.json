@@ -1,0 +1,18 @@
+{
+    "name": "codesicorp/backup-center-enterprise",
+    "description": "Backup Center Enterprise",
+    "type": "project",
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "BackupCenter\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Miguel Lopez",
+            "email": "mlopez@mgsa.com.pe"
+        }
+    ],
+    "require": {}
+}

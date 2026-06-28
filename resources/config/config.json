@@ -1,0 +1,21 @@
+{
+    "application": {
+        "name": "Backup Center Enterprise",
+        "version": "1.0.0",
+        "environment": "development"
+    },
+
+    "client": {
+        "code": "UNIMARKET",
+        "name": "Unimarket"
+    },
+
+    "backup": {
+        "local_path": "B:\\Backup ERP",
+        "remote_path": "/backups/unimarket"
+    },
+
+    "winscp": {
+        "session": "CODESICORP"
+    }
+}
