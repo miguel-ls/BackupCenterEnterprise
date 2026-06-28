@@ -3,7 +3,7 @@
 namespace BackupCenter\Services;
 
 use BackupCenter\Core\ConfigurationManager;
-use BackupCenter\Core\ScriptBuilder;
+use BackupCenter\Builders\ScriptBuilder;
 use BackupCenter\Core\WinScpProvider;
 use BackupCenter\Models\BackupFile;
 

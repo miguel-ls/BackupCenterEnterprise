@@ -1,6 +1,6 @@
 <?php
 
-namespace BackupCenter\Core;
+namespace BackupCenter\Builders;
 
 use BackupCenter\Models\ConnectionConfig;
 
