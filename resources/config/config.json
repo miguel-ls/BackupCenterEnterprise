@@ -1,21 +1,30 @@
 {
-    "application": {
-        "name": "Backup Center Enterprise",
-        "version": "1.0.0",
-        "environment": "development"
-    },
-
     "client": {
-        "code": "UNIMARKET",
-        "name": "Unimarket"
+        "name": "Unimarket",
+        "code": "UNIMARKET"
     },
 
     "backup": {
         "local_path": "B:\\Backup ERP",
-        "remote_path": "/backups/unimarket"
+        "extensions": [
+            "zip",
+            "bak"
+        ]
     },
 
     "winscp": {
-        "session": "CODESICORP"
+        "executable": "C:\\Program Files (x86)\\WinSCP\\WinSCP.com"
+    },
+
+    "sftp": {
+        "host": "38.253.171.145",
+        "port": 30126,
+        "username": "unimarket",
+        "password": "1q2w3e4r5t.",
+        "hostkey": "ssh-ed25519 255 RmInX2qqfJRntFznrgKm8LZtcQOiZUNqZ+amaNCObww"
+    },
+
+    "logs": {
+        "path": "resources/logs"
     }
 }

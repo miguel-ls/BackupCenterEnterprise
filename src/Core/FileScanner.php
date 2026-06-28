@@ -2,6 +2,8 @@
 
 namespace BackupCenter\Core;
 
+use BackupCenter\Models\BackupFile;
+
 class FileScanner
 {
     public function scan(string $path): array
@@ -24,17 +26,17 @@ class FileScanner
                 continue;
             }
 
-            $files[] = [
-                'name' => $file,
-                'path' => $fullPath,
-                'size' => filesize($fullPath),
-                'modified' => filemtime($fullPath),
-                'extension' => strtolower(pathinfo($file, PATHINFO_EXTENSION))
-            ];
+            $files[] = new BackupFile(
+                $file,
+                $fullPath,
+                filesize($fullPath),
+                filemtime($fullPath),
+                strtolower(pathinfo($file, PATHINFO_EXTENSION))
+            );
         }
 
-        usort($files, function ($a, $b) {
-            return $a['modified'] <=> $b['modified'];
+        usort($files, function (BackupFile $a, BackupFile $b) {
+            return $a->getModified() <=> $b->getModified();
         });
 
         return $files;

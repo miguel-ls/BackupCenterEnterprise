@@ -2,6 +2,8 @@
 
 namespace BackupCenter\Core;
 
+use BackupCenter\Models\ConnectionConfig;
+
 class ConfigurationManager
 {
     private array $config = [];
@@ -37,6 +39,17 @@ class ConfigurationManager
         }
 
         return $value;
+    }
+
+    public function getConnectionConfig(): ConnectionConfig
+    {
+        return new ConnectionConfig(
+            $this->get('sftp.host'),
+            (int) $this->get('sftp.port'),
+            $this->get('sftp.username'),
+            $this->get('sftp.password'),
+            $this->get('sftp.hostkey')
+        );
     }
 
     public function all(): array

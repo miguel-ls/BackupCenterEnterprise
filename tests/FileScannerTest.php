@@ -14,10 +14,11 @@ try {
 
     foreach ($files as $file) {
 
-        echo "Nombre     : {$file['name']}" . PHP_EOL;
-        echo "Extensión  : {$file['extension']}" . PHP_EOL;
-        echo "Tamaño     : {$file['size']} bytes" . PHP_EOL;
+        echo "Nombre     : " . $file->getName() . PHP_EOL;
+        echo "Extensión  : " . $file->getExtension() . PHP_EOL;
+        echo "Tamaño     : " . $file->getSize() . " bytes" . PHP_EOL;
         echo "-----------------------------------" . PHP_EOL;
+
     }
 
 } catch (Exception $e) {
