@@ -6,7 +6,7 @@ use BackupCenter\Models\BackupFile;
 
 class FileScanner
 {
-    public function scan(string $path): array
+    public function scan(string $path, array $extensions = []): array
     {
         if (!is_dir($path)) {
             throw new \Exception("Directory not found: {$path}");
@@ -22,6 +22,12 @@ class FileScanner
 
             $fullPath = $path . DIRECTORY_SEPARATOR . $file;
 
+            $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+
+            if (!empty($extensions) && !in_array($extension, $extensions, true)) {
+                continue;
+            }            
+
             if (!is_file($fullPath)) {
                 continue;
             }
@@ -31,7 +37,7 @@ class FileScanner
                 $fullPath,
                 filesize($fullPath),
                 filemtime($fullPath),
-                strtolower(pathinfo($file, PATHINFO_EXTENSION))
+                $extension
             );
         }
 

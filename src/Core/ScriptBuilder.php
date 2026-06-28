@@ -36,13 +36,20 @@ class ScriptBuilder
         return $this;
     }
 
-    public function put(string $localFile, string $remotePath): self
+    public function put(string $localFile, ?string $remotePath = null): self
     {
-        $this->lines[] = sprintf(
-            'put "%s" "%s"',
-            $localFile,
-            $remotePath
-        );
+        if ($remotePath === null) {
+            $this->lines[] = sprintf(
+                'put "%s"',
+                $localFile
+            );
+        } else {
+            $this->lines[] = sprintf(
+                'put "%s" "%s"',
+                $localFile,
+                $remotePath
+            );
+        }
 
         return $this;
     }

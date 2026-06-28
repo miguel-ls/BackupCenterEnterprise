@@ -5,7 +5,7 @@
     },
 
     "backup": {
-        "local_path": "B:\\Backup ERP",
+        "local_path": "D:\\Backup ERP",
         "extensions": [
             "zip",
             "bak"

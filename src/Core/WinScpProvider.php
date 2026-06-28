@@ -14,7 +14,7 @@ class WinScpProvider
 
     public function execute(string $script): string
     {
-        $tempFile = tempnam(sys_get_temp_dir(), 'winscp_');
+        $tempFile = __DIR__ . '/../../storage/temp/winscp_' . uniqid() . '.txt';
 
         file_put_contents($tempFile, $script);
 
