@@ -17,7 +17,47 @@ switch ($command) {
         echo "Version: 0.3.0-dev" . PHP_EOL;
         break;
 
+    case 'info':
+
+        $config = new BackupCenter\Core\ConfigurationManager(
+            BackupCenter\Core\Paths::config() . '/config.json'
+        );
+
+        echo "Información del proyecto" . PHP_EOL;
+        echo "------------------------------" . PHP_EOL;
+
+        echo "Versión        : " .
+            trim(file_get_contents(__DIR__ . '/VERSION'))
+            . PHP_EOL;
+
+        echo "Cliente        : " .
+            $config->get('client.name')
+            . PHP_EOL;
+
+        echo "PHP            : " .
+            PHP_VERSION
+            . PHP_EOL;
+
+        echo "Ruta backups   : " .
+            $config->get('backup.local_path')
+            . PHP_EOL;
+
+        echo "Extensiones    : " .
+            implode(', ', $config->get('backup.extensions', []))
+            . PHP_EOL;
+
+        echo "Logs           : " .
+            BackupCenter\Core\Paths::logs()
+            . PHP_EOL;
+
+        echo "Base de datos  : " .
+            BackupCenter\Core\Paths::database() . '/backupcenter.db'
+            . PHP_EOL;
+
+        break;        
     case 'help':
+        echo "  php console.php info" . PHP_EOL;
+        
     case 'doctor':
 
         echo "Diagnóstico del sistema" . PHP_EOL;
