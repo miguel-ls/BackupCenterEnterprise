@@ -10,6 +10,7 @@ use BackupCenter\Console\Commands\HistoryCommand;
 use BackupCenter\Core\Application;
 use BackupCenter\Console\Commands\StatsCommand;
 use BackupCenter\Console\Commands\LogsCommand;
+use BackupCenter\Console\Commands\ConfigCommand;
 
 class ConsoleKernel
 {
@@ -37,6 +38,10 @@ class ConsoleKernel
 
             'logs' => (new LogsCommand())->execute(),
 
+            'config' => (new ConfigCommand())->execute(
+                new Application()
+            ),            
+
             'help' => $this->help(),
 
             default => $this->unknown($command),
@@ -54,6 +59,7 @@ class ConsoleKernel
         echo "history" . PHP_EOL;
         echo "stats" . PHP_EOL;
         echo "logs" . PHP_EOL;
+        echo "config" . PHP_EOL;
 
         return 0;
     }
