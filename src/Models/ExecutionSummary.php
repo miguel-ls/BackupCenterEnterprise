@@ -4,6 +4,10 @@ namespace BackupCenter\Models;
 
 class ExecutionSummary
 {
+    public bool $success = true;
+
+    public string $message = '';
+        
     public int $found = 0;
     public int $uploaded = 0;
     public int $skipped = 0;
@@ -14,6 +18,7 @@ class ExecutionSummary
 
     private float $startTime;
 
+    
     public function __construct()
     {
         $this->startedAt = date('Y-m-d H:i:s');

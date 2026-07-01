@@ -121,4 +121,4 @@ echo "============================================" . PHP_EOL;
 echo PHP_EOL;
 echo "Ahora puedes ejecutar:" . PHP_EOL;
 echo PHP_EOL;
-echo "php agent.php" . PHP_EOL;
+echo "El motor fue instalado correctamente." . PHP_EOL;

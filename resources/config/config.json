@@ -29,5 +29,9 @@
 
     "logs": {
         "path": "resources/logs"
+    },
+
+    "scheduler": {
+    "interval_seconds": 300
     }
 }

@@ -6,4 +6,18 @@ use BackupCenter\Core\Application;
 
 $app = new Application();
 
-$app->agent()->run();
+$summary = $app->agent()->run();
+
+if (
+    in_array('--json', $argv)
+) {
+
+    header('Content-Type: application/json');
+
+    echo json_encode(
+        $summary,
+        JSON_PRETTY_PRINT
+    );
+
+    exit(0);
+}

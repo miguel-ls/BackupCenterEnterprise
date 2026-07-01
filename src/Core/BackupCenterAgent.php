@@ -39,7 +39,7 @@ class BackupCenterAgent
         $this->repository = $repository;    
     }
 
-    public function run(): void
+    public function run(): ExecutionSummary
     {
         $this->logger->info('=== Backup Center iniciado ===');
         $summary = new ExecutionSummary();
@@ -137,5 +137,7 @@ class BackupCenterAgent
         echo "Errores              : {$summary->errors}" . PHP_EOL;
         echo "Tiempo total         : {$summary->getDuration()} s" . PHP_EOL;
         echo "==========================================" . PHP_EOL;
+
+        return $summary;
     }
 }
