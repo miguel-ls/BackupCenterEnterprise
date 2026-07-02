@@ -24,7 +24,10 @@
 
 </div>
 
-<JobDialog v-model="showDialog"/>
+<JobDialog
+    v-model="showDialog"
+    @saved="jobSaved"
+/>
 
     <div class="bg-white rounded-xl border border-neutral-200 shadow-sm">
 
@@ -46,7 +49,11 @@
 
                     <th class="text-left p-4">Estado</th>
 
-                    <th class="text-left p-4">Hora</th>
+<th class="text-left p-4">Hora</th>
+
+<th class="text-center p-4">
+    Acciones
+</th>
 
                 </tr>
 
@@ -73,9 +80,36 @@
                         {{ job.status }}
                     </td>
 
-                    <td class="p-4">
-                        {{ job.time }}
-                    </td>
+<td class="p-4">
+    {{ job.time }}
+</td>
+
+<td class="p-4">
+
+<div class="flex justify-center gap-2">
+
+    <button
+        class="p-2 rounded bg-green-600 text-white hover:bg-green-700"
+    >
+        <Play :size="18"/>
+    </button>
+
+    <button
+        class="p-2 rounded bg-amber-500 text-white hover:bg-amber-600"
+    >
+        <Pencil :size="18"/>
+    </button>
+
+    <button
+        @click="removeJob(job.id)"
+        class="p-2 rounded bg-red-600 text-white hover:bg-red-700"
+    >
+        <Trash2 :size="18"/>
+    </button>
+
+</div>
+
+</td>
 
                 </tr>
 
@@ -91,26 +125,49 @@
 
 <script setup>
 
-
-import { ref,onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 
 import MainLayout from '../components/layout/MainLayout.vue'
+import JobDialog from '../components/dialogs/JobDialog.vue'
 
-import JobForm from '../components/jobs/JobForm.vue'
+import { getJobs, deleteJob } from '../api/client'
 
-import { getJobs } from '../api/client'
+import {
+    Play,
+    Pencil,
+    Trash2
+} from 'lucide-vue-next'
 
 const jobs = ref([])
 
-onMounted(async()=>{
+const showDialog = ref(false)
+
+async function loadJobs(){
 
     jobs.value = await getJobs()
 
-})
+}
 
+function jobSaved(){
 
-import JobDialog from '../components/dialogs/JobDialog.vue'
+    showDialog.value = false
 
-const showDialog = ref(false)
+    loadJobs()
+
+}
+
+async function removeJob(id){
+
+    if(!confirm('¿Eliminar este trabajo?')){
+        return
+    }
+
+    await deleteJob(id)
+
+    loadJobs()
+
+}
+
+onMounted(loadJobs)
 
 </script>

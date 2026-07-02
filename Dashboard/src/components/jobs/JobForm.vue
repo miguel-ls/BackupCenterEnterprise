@@ -1,10 +1,6 @@
 <template>
 
-<div class="bg-white rounded-xl border border-neutral-200 shadow-sm p-6">
-
-    <h2 class="text-xl font-bold mb-6">
-        Nuevo Trabajo
-    </h2>
+<div class="bg-white rounded-xl">
 
     <div class="space-y-4">
 
@@ -32,11 +28,16 @@
             class="w-full border rounded-lg p-3"
         >
 
-        <button
-            class="bg-blue-600 text-white px-5 py-3 rounded-lg hover:bg-blue-700"
-        >
-            Guardar
-        </button>
+        <div class="flex justify-end">
+
+            <button
+                @click="save"
+                class="bg-blue-600 text-white px-5 py-3 rounded-lg hover:bg-blue-700"
+            >
+                Guardar
+            </button>
+
+        </div>
 
     </div>
 
@@ -47,6 +48,9 @@
 <script setup>
 
 import { reactive } from 'vue'
+import { createJob } from '../../api/client'
+
+const emit = defineEmits(['saved'])
 
 const job = reactive({
 
@@ -56,5 +60,13 @@ const job = reactive({
     schedule:''
 
 })
+
+async function save(){
+
+    await createJob(job)
+
+    emit('saved')
+
+}
 
 </script>

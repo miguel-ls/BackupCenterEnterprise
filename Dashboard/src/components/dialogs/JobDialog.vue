@@ -10,13 +10,11 @@
         <div class="flex justify-between items-center mb-6">
 
             <h2 class="text-2xl font-bold">
-
                 Nuevo trabajo
-
             </h2>
 
             <button
-                @click="$emit('update:modelValue', false)"
+                @click="close"
                 class="text-2xl"
             >
                 ×
@@ -24,7 +22,7 @@
 
         </div>
 
-        <JobForm />
+        <JobForm @saved="saved"/>
 
     </div>
 
@@ -36,16 +34,27 @@
 
 import JobForm from '../jobs/JobForm.vue'
 
+const emit = defineEmits([
+    'update:modelValue',
+    'saved'
+])
+
 defineProps({
-
     modelValue:Boolean
-
 })
 
-defineEmits([
+function close(){
 
-    'update:modelValue'
+    emit('update:modelValue',false)
 
-])
+}
+
+function saved(){
+
+    emit('saved')
+
+    emit('update:modelValue',false)
+
+}
 
 </script>
