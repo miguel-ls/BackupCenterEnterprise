@@ -11,3 +11,11 @@ export async function getStatus() {
     return await response.json()
 
 }
+
+export async function getJobs(){
+
+    const response = await fetch(`${API_URL}/jobs.php`)
+
+    return await response.json()
+
+}

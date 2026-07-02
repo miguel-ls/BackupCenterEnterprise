@@ -1,39 +1,51 @@
 <template>
-  <aside class="w-64 bg-neutral-900 text-white flex flex-col">
+
+<aside class="w-56 bg-neutral-900 text-white flex flex-col">
 
     <div class="h-16 flex items-center px-6 border-b border-neutral-800">
-      <h1 class="text-xl font-bold">
-        Backup Center
-      </h1>
+
+        <h1 class="text-2xl font-bold">
+
+            Backup Center
+
+        </h1>
+
     </div>
 
-    <nav class="flex-1 p-3 space-y-1">
+    <nav class="flex-1 p-4 space-y-2">
 
-      <a class="flex items-center rounded-lg px-4 py-3 hover:bg-neutral-800 transition">
-        Dashboard
-      </a>
+        <RouterLink to="/" class="block px-4 py-3 rounded-lg hover:bg-neutral-800">
+            Dashboard
+        </RouterLink>
 
-      <a class="flex items-center rounded-lg px-4 py-3 hover:bg-neutral-800 transition">
-        Trabajos
-      </a>
+        <RouterLink to="/jobs" class="block px-4 py-3 rounded-lg hover:bg-neutral-800">
+            Trabajos
+        </RouterLink>
 
-      <a class="flex items-center rounded-lg px-4 py-3 hover:bg-neutral-800 transition">
-        Historial
-      </a>
+        <RouterLink to="/history" class="block px-4 py-3 rounded-lg hover:bg-neutral-800">
+            Historial
+        </RouterLink>
 
-      <a class="flex items-center rounded-lg px-4 py-3 hover:bg-neutral-800 transition">
-        Logs
-      </a>
+        <RouterLink to="/logs" class="block px-4 py-3 rounded-lg hover:bg-neutral-800">
+            Logs
+        </RouterLink>
 
-      <a class="flex items-center rounded-lg px-4 py-3 hover:bg-neutral-800 transition">
-        Configuración
-      </a>
+        <RouterLink to="/settings" class="block px-4 py-3 rounded-lg hover:bg-neutral-800">
+            Configuración
+        </RouterLink>
 
-      <a class="flex items-center rounded-lg px-4 py-3 hover:bg-neutral-800 transition">
-        Acerca de
-      </a>
+        <RouterLink to="/about" class="block px-4 py-3 rounded-lg hover:bg-neutral-800">
+            Acerca de
+        </RouterLink>
 
     </nav>
 
-  </aside>
+</aside>
+
 </template>
+
+<script setup>
+
+import { RouterLink } from 'vue-router'
+
+</script>
