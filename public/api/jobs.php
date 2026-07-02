@@ -7,23 +7,14 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 use BackupCenter\Core\Database;
 use BackupCenter\Core\Paths;
+use BackupCenter\Repositories\JobRepository;
 
 $db = new Database(
     Paths::database() . '/backupcenter.db'
 );
 
-$pdo = $db->getConnection();
-
-$stmt = $pdo->query("
-    SELECT
-        id,
-        name,
-        last_status AS status,
-        COALESCE(last_run, '-') AS time
-    FROM jobs
-    ORDER BY id
-");
+$repository = new JobRepository($db);
 
 echo json_encode(
-    $stmt->fetchAll(PDO::FETCH_ASSOC)
+    $repository->getJobs()
 );

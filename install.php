@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 use BackupCenter\Core\Paths;
+use BackupCenter\Repositories\JobRepository;
 
 echo PHP_EOL;
 echo "============================================" . PHP_EOL;
@@ -104,13 +105,17 @@ $database = new Database(
     Paths::database() . '/backupcenter.db'
 );
 
-$repository = new UploadedFileRepository($database);
+$uploadedRepository = new UploadedFileRepository($database);
 
-$repository->initialize();
+$uploadedRepository->initialize();
 
-$repository->initializeExecutionHistory();
+$uploadedRepository->initializeExecutionHistory();
 
-$repository->initializeJobs();
+$jobRepository = new JobRepository($database);
+
+$jobRepository->initialize();
+
+
 
 echo "  [OK] Base de datos inicializada." . PHP_EOL;
 

@@ -2,13 +2,37 @@
 
 <MainLayout>
 
-    <h1 class="text-3xl font-bold mb-8">
+<div class="flex justify-between items-center mb-8">
+
+    <h1 class="text-3xl font-bold">
 
         Trabajos
 
     </h1>
 
+    <button
+
+        @click="showDialog=true"
+
+        class="bg-blue-600 text-white px-5 py-3 rounded-lg"
+
+    >
+
+        + Nuevo trabajo
+
+    </button>
+
+</div>
+
+<JobDialog v-model="showDialog"/>
+
     <div class="bg-white rounded-xl border border-neutral-200 shadow-sm">
+
+<!--
+<JobForm />
+
+<div class="h-6"></div>
+-->
 
         <table class="w-full">
 
@@ -67,9 +91,12 @@
 
 <script setup>
 
+
 import { ref,onMounted } from 'vue'
 
 import MainLayout from '../components/layout/MainLayout.vue'
+
+import JobForm from '../components/jobs/JobForm.vue'
 
 import { getJobs } from '../api/client'
 
@@ -80,5 +107,10 @@ onMounted(async()=>{
     jobs.value = await getJobs()
 
 })
+
+
+import JobDialog from '../components/dialogs/JobDialog.vue'
+
+const showDialog = ref(false)
 
 </script>

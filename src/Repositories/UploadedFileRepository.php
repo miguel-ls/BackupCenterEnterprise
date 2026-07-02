@@ -132,5 +132,24 @@ public function initializeJobs(): void
         );
     ");
 }
-    
+
+public function getJobs(): array
+{
+    $stmt = $this->db->query("
+        SELECT
+            id,
+            name,
+            source,
+            destination,
+            schedule,
+            enabled,
+            last_run,
+            last_status
+        FROM jobs
+        ORDER BY id
+    ");
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
 }
