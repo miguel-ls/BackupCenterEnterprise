@@ -93,4 +93,44 @@ class UploadedFileRepository
             );
         ");
     }    
+
+public function initializeJobs(): void
+{
+    $this->db->exec("
+        CREATE TABLE IF NOT EXISTS jobs
+        (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            source TEXT,
+            destination TEXT,
+            schedule TEXT,
+            enabled INTEGER DEFAULT 1,
+            last_run TEXT,
+            last_status TEXT,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        );
+    ");
+
+    $this->db->exec("
+        INSERT INTO jobs
+        (
+            name,
+            source,
+            destination,
+            schedule,
+            last_status
+        )
+        SELECT
+            'ERP SQL',
+            'B:\\Backup ERP',
+            '/backups/unimarket',
+            '0 */6 * * *',
+            'Correcto'
+        WHERE NOT EXISTS
+        (
+            SELECT 1 FROM jobs
+        );
+    ");
+}
+    
 }

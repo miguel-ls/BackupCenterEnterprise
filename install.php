@@ -110,6 +110,8 @@ $repository->initialize();
 
 $repository->initializeExecutionHistory();
 
+$repository->initializeJobs();
+
 echo "  [OK] Base de datos inicializada." . PHP_EOL;
 
 echo PHP_EOL;
