@@ -5,25 +5,25 @@
     <div class="space-y-4">
 
         <input
-            v-model="job.name"
+            v-model="props.job.name"
             placeholder="Nombre del trabajo"
             class="w-full border rounded-lg p-3"
         >
 
         <input
-            v-model="job.source"
+            v-model="props.job.source"
             placeholder="Origen"
             class="w-full border rounded-lg p-3"
         >
 
         <input
-            v-model="job.destination"
+            v-model="props.job.destination"
             placeholder="Destino"
             class="w-full border rounded-lg p-3"
         >
 
         <input
-            v-model="job.schedule"
+            v-model="props.job.schedule"
             placeholder="Cron (0 */6 * * *)"
             class="w-full border rounded-lg p-3"
         >
@@ -47,23 +47,36 @@
 
 <script setup>
 
-import { reactive } from 'vue'
-import { createJob } from '../../api/client'
+
+import { createJob, updateJob } from '../../api/client'
 
 const emit = defineEmits(['saved'])
 
-const job = reactive({
+const props = defineProps({
 
-    name:'',
-    source:'',
-    destination:'',
-    schedule:''
+    job: Object
 
 })
 
 async function save(){
 
-    await createJob(job)
+    console.log(props.job)
+
+    console.log("ID:", props.job.id)
+
+    if(props.job.id){
+
+        console.log("EDITAR")
+
+        await updateJob(props.job)
+
+    }else{
+
+        console.log("CREAR")
+
+        await createJob(props.job)
+
+    }
 
     emit('saved')
 

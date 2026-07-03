@@ -35,17 +35,17 @@ class JobRepository
     public function getJobs(): array
     {
         $stmt = $this->db->query("
-            SELECT
-                id,
-                name,
-                source,
-                destination,
-                schedule,
-                enabled,
-                last_run,
-                last_status
-            FROM jobs
-            ORDER BY id
+SELECT
+    id,
+    name,
+    source,
+    destination,
+    schedule,
+    enabled,
+    COALESCE(last_run, '-') AS time,
+    COALESCE(last_status, 'Pendiente') AS status
+FROM jobs
+ORDER BY id
         ");
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -87,5 +87,59 @@ public function createJob(
     ]);
 
     return (int)$this->db->lastInsertId();
-}    
+}
+
+public function deleteJob(int $id): bool
+{
+    $stmt = $this->db->prepare("
+        DELETE FROM jobs
+        WHERE id = ?
+    ");
+
+    return $stmt->execute([$id]);
+}
+
+public function getJob(int $id): ?array
+{
+    $stmt = $this->db->prepare("
+        SELECT
+            *
+        FROM jobs
+        WHERE id = ?
+    ");
+
+    $stmt->execute([$id]);
+
+    $job = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    return $job ?: null;
+}
+
+public function updateJob(
+    int $id,
+    string $name,
+    string $source,
+    string $destination,
+    string $schedule
+): bool
+{
+    $stmt = $this->db->prepare("
+        UPDATE jobs
+        SET
+            name = ?,
+            source = ?,
+            destination = ?,
+            schedule = ?
+        WHERE id = ?
+    ");
+
+    return $stmt->execute([
+        $name,
+        $source,
+        $destination,
+        $schedule,
+        $id
+    ]);
+}
+
 }

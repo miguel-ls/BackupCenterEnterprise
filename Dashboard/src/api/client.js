@@ -57,3 +57,21 @@ export async function deleteJob(id){
     return await response.json()
 
 }
+
+export async function updateJob(job){
+
+    const response = await fetch(`${API_URL}/jobs.php`,{
+
+        method:'PUT',
+
+        headers:{
+            'Content-Type':'application/json'
+        },
+
+        body:JSON.stringify(job)
+
+    })
+
+    return await response.json()
+
+}

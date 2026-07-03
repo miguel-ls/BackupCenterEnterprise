@@ -22,8 +22,11 @@
 
         </div>
 
-        <JobForm @saved="saved"/>
-
+        <JobForm
+            :job="props.job"
+            @saved="saved"
+        />
+        
     </div>
 
 </div>
@@ -39,8 +42,12 @@ const emit = defineEmits([
     'saved'
 ])
 
-defineProps({
-    modelValue:Boolean
+const props = defineProps({
+
+    modelValue: Boolean,
+
+    job: Object
+
 })
 
 function close(){

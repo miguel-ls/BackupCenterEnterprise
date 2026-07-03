@@ -12,7 +12,7 @@
 
     <button
 
-        @click="showDialog=true"
+        @click="newJob"
 
         class="bg-blue-600 text-white px-5 py-3 rounded-lg"
 
@@ -26,6 +26,7 @@
 
 <JobDialog
     v-model="showDialog"
+    :job="selectedJob"
     @saved="jobSaved"
 />
 
@@ -94,11 +95,12 @@
         <Play :size="18"/>
     </button>
 
-    <button
-        class="p-2 rounded bg-amber-500 text-white hover:bg-amber-600"
-    >
-        <Pencil :size="18"/>
-    </button>
+<button
+    @click="editJob(job)"
+    class="p-2 rounded bg-amber-500 text-white hover:bg-amber-600"
+>
+    <Pencil :size="18"/>
+</button>
 
     <button
         @click="removeJob(job.id)"
@@ -139,8 +141,16 @@ import {
 } from 'lucide-vue-next'
 
 const jobs = ref([])
-
 const showDialog = ref(false)
+
+const selectedJob = ref({
+    id: null,
+    name: '',
+    source: '',
+    destination: '',
+    schedule: ''
+})
+
 
 async function loadJobs(){
 
@@ -153,6 +163,34 @@ function jobSaved(){
     showDialog.value = false
 
     loadJobs()
+
+}
+
+function newJob(){
+
+    selectedJob.value = {
+        id: null,
+        name: '',
+        source: '',
+        destination: '',
+        schedule: ''
+    }
+
+    showDialog.value = true
+
+}
+
+function editJob(job){
+
+    console.log("JOB:", job)
+
+    selectedJob.value = {
+        ...job
+    }
+
+    console.log("SELECTED:", selectedJob.value)
+
+    showDialog.value = true
 
 }
 
