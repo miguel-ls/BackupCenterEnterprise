@@ -14,6 +14,7 @@ use BackupCenter\Repositories\ExecutionHistoryRepository;
 use BackupCenter\Repositories\JobRepository;
 use BackupCenter\Repositories\ConnectionRepository;
 use BackupCenter\Services\BackupService;
+use BackupCenter\Services\SchedulerService;
 
 class Application
 {
@@ -100,6 +101,12 @@ $this->backupService = new BackupService(
     $this->connectionRepository
 );
 
+$this->schedulerService = new SchedulerService(
+    $this->jobRepository,
+    $this->backupService
+);
+
+
         $this->agent = new BackupCenterAgent(
             $this->config,
             $this->logger,
@@ -145,4 +152,10 @@ public function backupService(): BackupService
 {
     return $this->backupService;
 }    
+
+public function schedulerService(): SchedulerService
+{
+    return $this->schedulerService;
+}
+
 }

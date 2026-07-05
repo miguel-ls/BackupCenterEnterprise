@@ -169,4 +169,17 @@ public function updateJob(
             $id
         ]);
     }
+
+public function getEnabledJobs(): array
+{
+    $stmt = $this->db->query("
+        SELECT *
+        FROM jobs
+        WHERE enabled = 1
+        ORDER BY id
+    ");
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+    
 }
