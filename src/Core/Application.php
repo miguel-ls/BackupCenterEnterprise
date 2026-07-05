@@ -16,6 +16,11 @@ use BackupCenter\Repositories\ConnectionRepository;
 use BackupCenter\Services\BackupService;
 use BackupCenter\Services\SchedulerService;
 
+use BackupCenter\Scheduler\CronEvaluator;
+use BackupCenter\Scheduler\JobRunner;
+use BackupCenter\Scheduler\SchedulerEngine;
+use BackupCenter\Scheduler\SchedulerLoop;
+
 class Application
 {
     private ConfigurationManager $config;
@@ -34,6 +39,9 @@ class Application
 private JobRepository $jobRepository;
 private ConnectionRepository $connectionRepository;
 private BackupService $backupService;    
+
+private SchedulerLoop $schedulerLoop;
+private SchedulerEngine $schedulerEngine;
 
     public function __construct()
     {
@@ -101,6 +109,22 @@ $this->backupService = new BackupService(
     $this->connectionRepository
 );
 
+$cron = new CronEvaluator();
+
+$runner = new JobRunner(
+    $this->backupService
+);
+
+$this->schedulerEngine = new SchedulerEngine(
+    $this->jobRepository,
+    $cron,
+    $runner
+);
+
+$this->schedulerLoop = new SchedulerLoop(
+    $this->schedulerEngine
+);
+
 $this->schedulerService = new SchedulerService(
     $this->jobRepository,
     $this->backupService
@@ -156,6 +180,16 @@ public function backupService(): BackupService
 public function schedulerService(): SchedulerService
 {
     return $this->schedulerService;
+}
+
+public function schedulerEngine(): SchedulerEngine
+{
+    return $this->schedulerEngine;
+}
+
+public function schedulerLoop(): SchedulerLoop
+{
+    return $this->schedulerLoop;
 }
 
 }

@@ -14,8 +14,8 @@ $app = new Application();
 $force = in_array('--force', $argv);
 
 $app
-    ->schedulerService()
-    ->run($force);
+    ->schedulerEngine()
+    ->execute($force);
 
 echo PHP_EOL;
 echo "Scheduler finalizado." . PHP_EOL;

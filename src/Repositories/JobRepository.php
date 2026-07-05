@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS jobs
     enabled INTEGER DEFAULT 1,
     last_run TEXT,
     last_status TEXT,
+    running INTEGER DEFAULT 0,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
         ");
@@ -181,5 +182,46 @@ public function getEnabledJobs(): array
 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-    
+
+public function isRunning(int $id): bool
+{
+    $stmt = $this->db->prepare("
+        SELECT running
+        FROM jobs
+        WHERE id = ?
+    ");
+
+    $stmt->execute([$id]);
+
+    return (int)$stmt->fetchColumn() === 1;
+}
+
+public function setRunning(
+    int $id,
+    bool $running
+): void
+{
+    $stmt = $this->db->prepare("
+        UPDATE jobs
+        SET running = ?
+        WHERE id = ?
+    ");
+
+    $stmt->execute([
+        $running ? 1 : 0,
+        $id
+    ]);
+}
+
+public function getRunningJobs(): array
+{
+    $stmt = $this->db->query("
+        SELECT *
+        FROM jobs
+        WHERE running = 1
+    ");
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
 }
