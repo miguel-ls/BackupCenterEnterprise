@@ -3,13 +3,15 @@
 namespace BackupCenter\Scheduler;
 
 use BackupCenter\Repositories\JobRepository;
+use BackupCenter\Queue\JobQueue;
 
 class SchedulerEngine
 {
     public function __construct(
         private JobRepository $repository,
         private CronEvaluator $cron,
-        private JobRunner $runner
+        private JobRunner $runner,
+        private JobQueue $queue
     ) {
     }
 
@@ -33,24 +35,11 @@ class SchedulerEngine
                 continue;
             }
 
-            $this->repository->setRunning(
-                (int)$job['id'],
-                true
+            echo "Encolando Job {$job['id']}" . PHP_EOL;
+
+            $this->queue->enqueue(
+                (int)$job['id']
             );
-
-            try {
-
-                $this->runner->run(
-                    (int)$job['id']
-                );
-
-            } finally {
-
-                $this->repository->setRunning(
-                    (int)$job['id'],
-                    false
-                );
-            }
         }
     }
 }
