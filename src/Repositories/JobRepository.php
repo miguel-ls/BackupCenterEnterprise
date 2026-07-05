@@ -17,41 +17,65 @@ class JobRepository
     public function initialize(): void
     {
         $this->db->exec("
-            CREATE TABLE IF NOT EXISTS jobs
-            (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                source TEXT,
-                destination TEXT,
-                schedule TEXT,
-                enabled INTEGER DEFAULT 1,
-                last_run TEXT,
-                last_status TEXT,
-                created_at TEXT DEFAULT CURRENT_TIMESTAMP
-            );
+CREATE TABLE IF NOT EXISTS jobs
+(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    connection_id INTEGER,
+    name TEXT NOT NULL,
+    source TEXT,
+    destination TEXT,
+    remote_path TEXT,
+    schedule TEXT,
+    enabled INTEGER DEFAULT 1,
+    last_run TEXT,
+    last_status TEXT,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
         ");
     }
 
     public function getJobs(): array
     {
         $stmt = $this->db->query("
-SELECT
-    id,
-    name,
-    source,
-    destination,
-    schedule,
-    enabled,
-    COALESCE(last_run, '-') AS time,
-    COALESCE(last_status, 'Pendiente') AS status
-FROM jobs
-ORDER BY id
+            SELECT
+                j.id,
+                j.connection_id,
+                j.name,
+                j.source,
+                j.destination,
+                j.schedule,
+                j.enabled,
+                COALESCE(j.last_run,'-') AS time,
+                COALESCE(j.last_status,'Pendiente') AS status,
+                COALESCE(c.name,'Sin conexión') AS connection
+            FROM jobs j
+
+            LEFT JOIN connections c
+                ON c.id=j.connection_id
+
+            ORDER BY j.id
         ");
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getJob(int $id): ?array
+    {
+        $stmt = $this->db->prepare("
+            SELECT *
+            FROM jobs
+            WHERE id=?
+        ");
+
+        $stmt->execute([$id]);
+
+        $job = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $job ?: null;
+    }
+
 public function createJob(
+    ?int $connectionId,
     string $name,
     string $source,
     string $destination,
@@ -61,6 +85,7 @@ public function createJob(
     $stmt = $this->db->prepare("
         INSERT INTO jobs
         (
+            connection_id,
             name,
             source,
             destination,
@@ -70,16 +95,12 @@ public function createJob(
         )
         VALUES
         (
-            ?,
-            ?,
-            ?,
-            ?,
-            1,
-            'Pendiente'
+            ?,?,?,?,?,1,'Pendiente'
         )
     ");
 
     $stmt->execute([
+        $connectionId,
         $name,
         $source,
         $destination,
@@ -89,34 +110,9 @@ public function createJob(
     return (int)$this->db->lastInsertId();
 }
 
-public function deleteJob(int $id): bool
-{
-    $stmt = $this->db->prepare("
-        DELETE FROM jobs
-        WHERE id = ?
-    ");
-
-    return $stmt->execute([$id]);
-}
-
-public function getJob(int $id): ?array
-{
-    $stmt = $this->db->prepare("
-        SELECT
-            *
-        FROM jobs
-        WHERE id = ?
-    ");
-
-    $stmt->execute([$id]);
-
-    $job = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    return $job ?: null;
-}
-
 public function updateJob(
     int $id,
+    ?int $connectionId,
     string $name,
     string $source,
     string $destination,
@@ -126,14 +122,16 @@ public function updateJob(
     $stmt = $this->db->prepare("
         UPDATE jobs
         SET
-            name = ?,
-            source = ?,
-            destination = ?,
-            schedule = ?
-        WHERE id = ?
+            connection_id=?,
+            name=?,
+            source=?,
+            destination=?,
+            schedule=?
+        WHERE id=?
     ");
 
     return $stmt->execute([
+        $connectionId,
         $name,
         $source,
         $destination,
@@ -142,4 +140,33 @@ public function updateJob(
     ]);
 }
 
+    public function deleteJob(int $id): bool
+    {
+        $stmt = $this->db->prepare("
+            DELETE
+            FROM jobs
+            WHERE id=?
+        ");
+
+        return $stmt->execute([$id]);
+    }
+
+    public function updateExecution(
+        int $id,
+        string $status
+    ): void
+    {
+        $stmt = $this->db->prepare("
+            UPDATE jobs
+            SET
+                last_run=datetime('now'),
+                last_status=?
+            WHERE id=?
+        ");
+
+        $stmt->execute([
+            $status,
+            $id
+        ]);
+    }
 }

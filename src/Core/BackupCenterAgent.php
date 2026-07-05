@@ -6,13 +6,16 @@ use BackupCenter\Services\UploadManager;
 use BackupCenter\Repositories\UploadedFileRepository;
 use BackupCenter\Models\ExecutionSummary;
 use BackupCenter\Repositories\ExecutionHistoryRepository;
+use BackupCenter\Contracts\IConfiguration;
 
 class BackupCenterAgent
 {
     private FileLockValidator $lockValidator;
     private UploadedFileRepository $repository;
     private UploadManager $uploadManager;
-    private ConfigurationManager $config;
+
+
+private IConfiguration $config;
     private Logger $logger;
     private FileScanner $scanner;
     private FileValidator $validator;
@@ -20,7 +23,7 @@ class BackupCenterAgent
 
 
     public function __construct(
-        ConfigurationManager $config,
+        IConfiguration $config,
         Logger $logger,
         FileScanner $scanner,
         FileValidator $validator,
@@ -39,20 +42,28 @@ class BackupCenterAgent
         $this->repository = $repository;    
     }
 
-    public function run(): ExecutionSummary
+    public function run(
+    IConfiguration $configuration
+): ExecutionSummary
     {
         $this->logger->info('=== Backup Center iniciado ===');
         $summary = new ExecutionSummary();
 
-        $files = $this->scanner->scan(
-            $this->config->get('backup.local_path'),
-            $this->config->get('backup.extensions', [])
-        );
+$path = $configuration->get('backup.local_path')
+    ?? $configuration->get('source');
+
+$extensions = $configuration->get('backup.extensions')
+    ?? ['zip', 'bak', '7z'];
+
+$files = $this->scanner->scan(
+    $path,
+    $extensions
+);
 
         $summary->found = count($files);
 
 
-        echo "Ruta: " . $this->config->get('backup.local_path') . PHP_EOL;
+        echo "Ruta: " . $configuration->get('backup.local_path') . PHP_EOL;
         echo "Archivos encontrados: " . count($files) . PHP_EOL;
 
         foreach ($files as $file) {
@@ -76,9 +87,15 @@ class BackupCenterAgent
                 'Subiendo: ' . $file->getName()
             );
 
-            $sha256 = $this->repository->calculateSha256($file->getPath());
+            echo "JOB ID = " . $configuration->get('id') . PHP_EOL;
 
-            if ($this->repository->exists($sha256)) {
+            if (
+                $this->repository->exists(
+                    (int)$configuration->get('id'),
+                    $file->getName(),
+                    $file->getSize()
+                )
+            ) {
 
                 $summary->skipped++;
 
@@ -93,9 +110,10 @@ class BackupCenterAgent
 
                 $result = $this->uploadManager->upload($file);
 
-                echo $result . PHP_EOL;
+                $sha256 = $this->repository->calculateSha256($file->getPath());
 
                 $this->repository->save(
+                    (int)$configuration->get('id'),
                     $file->getName(),
                     $file->getSize(),
                     $sha256
@@ -122,7 +140,8 @@ class BackupCenterAgent
 
         $this->executionHistoryRepository->save(
             $summary,
-            $this->config->get('client.name')
+$configuration->get('client.name')
+    ?? $configuration->get('name')
         );            
 
         $this->logger->success('Proceso finalizado.');

@@ -9,8 +9,11 @@ use BackupCenter\Services\UploadManager;
 use BackupCenter\Core\FileScanner;
 use BackupCenter\Core\FileValidator;
 use BackupCenter\Repositories\UploadedFileRepository;
-use BackupCenter\Core\Database;
 use BackupCenter\Repositories\ExecutionHistoryRepository;
+
+use BackupCenter\Repositories\JobRepository;
+use BackupCenter\Repositories\ConnectionRepository;
+use BackupCenter\Services\BackupService;
 
 class Application
 {
@@ -23,8 +26,13 @@ class Application
     private FileScanner $scanner;
     private FileValidator $validator;
     private UploadedFileRepository $repository;
+    private ExecutionHistoryRepository $executionHistoryRepository;
     private BackupCenterAgent $agent;
     private Database $database;
+
+private JobRepository $jobRepository;
+private ConnectionRepository $connectionRepository;
+private BackupService $backupService;    
 
     public function __construct()
     {
@@ -38,7 +46,7 @@ class Application
 
         $this->logger = new Logger(
             Paths::logs()
-        );         
+        );
 
         $this->scriptBuilder = new ScriptBuilder();
 
@@ -71,6 +79,27 @@ class Application
             $this->database
         );
 
+$this->jobRepository = new JobRepository(
+    $this->database
+);
+
+$this->connectionRepository = new ConnectionRepository(
+    $this->database
+);
+
+$this->connectionRepository->initialize();
+
+$hostedAgent = new HostedAgent(
+    $this,
+    new Scheduler()
+);
+
+$this->backupService = new BackupService(
+    $hostedAgent,
+    $this->jobRepository,
+    $this->connectionRepository
+);
+
         $this->agent = new BackupCenterAgent(
             $this->config,
             $this->logger,
@@ -79,7 +108,7 @@ class Application
             $this->uploadManager,
             $this->repository,
             $this->executionHistoryRepository
-        );       
+        );
     }
 
     public function database(): Database
@@ -90,7 +119,8 @@ class Application
     public function agent(): BackupCenterAgent
     {
         return $this->agent;
-    }    
+    }
+
     public function uploadManager(): UploadManager
     {
         return $this->uploadManager;
@@ -109,8 +139,10 @@ class Application
     public function executionHistoryRepository(): ExecutionHistoryRepository
     {
         return $this->executionHistoryRepository;
-    }    
+    }
 
-    
-
+public function backupService(): BackupService
+{
+    return $this->backupService;
+}    
 }

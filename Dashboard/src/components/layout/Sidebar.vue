@@ -14,27 +14,52 @@
 
     <nav class="flex-1 p-4 space-y-2">
 
-        <RouterLink to="/" class="block px-4 py-3 rounded-lg hover:bg-neutral-800">
+        <RouterLink
+            to="/"
+            class="block px-4 py-3 rounded-lg hover:bg-neutral-800"
+        >
             Dashboard
         </RouterLink>
 
-        <RouterLink to="/jobs" class="block px-4 py-3 rounded-lg hover:bg-neutral-800">
+        <RouterLink
+            to="/jobs"
+            class="block px-4 py-3 rounded-lg hover:bg-neutral-800"
+        >
             Trabajos
         </RouterLink>
 
-        <RouterLink to="/history" class="block px-4 py-3 rounded-lg hover:bg-neutral-800">
+        <RouterLink
+            to="/connections"
+            class="block px-4 py-3 rounded-lg hover:bg-neutral-800"
+        >
+            Conexiones
+        </RouterLink>
+
+        <RouterLink
+            to="/history"
+            class="block px-4 py-3 rounded-lg hover:bg-neutral-800"
+        >
             Historial
         </RouterLink>
 
-        <RouterLink to="/logs" class="block px-4 py-3 rounded-lg hover:bg-neutral-800">
+        <RouterLink
+            to="/logs"
+            class="block px-4 py-3 rounded-lg hover:bg-neutral-800"
+        >
             Logs
         </RouterLink>
 
-        <RouterLink to="/settings" class="block px-4 py-3 rounded-lg hover:bg-neutral-800">
+        <RouterLink
+            to="/settings"
+            class="block px-4 py-3 rounded-lg hover:bg-neutral-800"
+        >
             Configuración
         </RouterLink>
 
-        <RouterLink to="/about" class="block px-4 py-3 rounded-lg hover:bg-neutral-800">
+        <RouterLink
+            to="/about"
+            class="block px-4 py-3 rounded-lg hover:bg-neutral-800"
+        >
             Acerca de
         </RouterLink>
 

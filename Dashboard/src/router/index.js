@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import DashboardView from '../views/DashboardView.vue'
 import JobsView from '../views/JobsView.vue'
+import ConnectionsView from '../views/ConnectionsView.vue'
 import HistoryView from '../views/HistoryView.vue'
 import LogsView from '../views/LogsView.vue'
 import SettingsView from '../views/SettingsView.vue'
@@ -21,6 +22,11 @@ const router = createRouter({
         {
             path: '/jobs',
             component: JobsView
+        },
+
+        {
+            path: '/connections',
+            component: ConnectionsView
         },
 
         {

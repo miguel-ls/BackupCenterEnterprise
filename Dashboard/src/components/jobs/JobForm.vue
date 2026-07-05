@@ -16,11 +16,11 @@
             class="w-full border rounded-lg p-3"
         >
 
-        <input
-            v-model="props.job.destination"
-            placeholder="Destino"
-            class="w-full border rounded-lg p-3"
-        >
+<input
+    v-model="props.job.destination"
+    placeholder="Carpeta remota (/backups/unimarket)"
+    class="w-full border rounded-lg p-3"
+>
 
         <input
             v-model="props.job.schedule"
@@ -28,13 +28,40 @@
             class="w-full border rounded-lg p-3"
         >
 
+        <!-- NUEVO -->
+
+        <select
+            v-model="props.job.connection_id"
+            class="w-full border rounded-lg p-3"
+        >
+
+            <option :value="null">
+
+                Seleccione una conexión
+
+            </option>
+
+            <option
+                v-for="connection in connections"
+                :key="connection.id"
+                :value="connection.id"
+            >
+
+                {{ connection.name }}
+
+            </option>
+
+        </select>
+
         <div class="flex justify-end">
 
             <button
                 @click="save"
                 class="bg-blue-600 text-white px-5 py-3 rounded-lg hover:bg-blue-700"
             >
+
                 Guardar
+
             </button>
 
         </div>
@@ -47,32 +74,42 @@
 
 <script setup>
 
+import {
+    onMounted,
+    ref
+} from 'vue'
 
-import { createJob, updateJob } from '../../api/client'
+import {
+    createJob,
+    updateJob,
+    getConnections
+} from '../../api/client'
 
-const emit = defineEmits(['saved'])
+const emit = defineEmits([
+    'saved'
+])
 
 const props = defineProps({
 
-    job: Object
+    job:Object
 
 })
 
+const connections = ref([])
+
+async function loadConnections(){
+
+    connections.value = await getConnections()
+
+}
+
 async function save(){
 
-    console.log(props.job)
-
-    console.log("ID:", props.job.id)
-
     if(props.job.id){
-
-        console.log("EDITAR")
 
         await updateJob(props.job)
 
     }else{
-
-        console.log("CREAR")
 
         await createJob(props.job)
 
@@ -81,5 +118,7 @@ async function save(){
     emit('saved')
 
 }
+
+onMounted(loadConnections)
 
 </script>

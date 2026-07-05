@@ -36,23 +36,23 @@ class ScriptBuilder
         return $this;
     }
 
-    public function put(string $localFile, ?string $remotePath = null): self
-    {
-        if ($remotePath === null) {
-            $this->lines[] = sprintf(
-                'put "%s"',
-                $localFile
-            );
-        } else {
-            $this->lines[] = sprintf(
-                'put "%s" "%s"',
-                $localFile,
-                $remotePath
-            );
-        }
-
-        return $this;
+public function put(string $localFile, ?string $remotePath = null): self
+{
+    if ($remotePath === null) {
+        $this->lines[] = sprintf(
+            'put "%s"',
+            $localFile
+        );
+    } else {
+        $this->lines[] = sprintf(
+            'put "%s" "%s"',
+            $localFile,
+            $remotePath
+        );
     }
+
+    return $this;
+}
 
     public function exit(): self
     {
@@ -60,8 +60,12 @@ class ScriptBuilder
         return $this;
     }
 
-    public function build(): string
-    {
-        return implode(PHP_EOL, $this->lines);
-    }
+public function build(): string
+{
+    $script = implode(PHP_EOL, $this->lines);
+
+    $this->lines = [];
+
+    return $script;
+}
 }

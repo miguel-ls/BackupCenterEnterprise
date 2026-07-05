@@ -15,13 +15,40 @@ class HostedAgent
         $this->scheduler = $scheduler;
     }
 
-    public function executeOnce(): void
-    {
-        $this->application
-            ->agent()
-            ->run();
-    }   
-        
+    /**
+     * Ejecuta una sola pasada del Scheduler.
+     */
+public function executeOnce(): void
+{
+$this->application
+    ->agent()
+    ->run(
+        $this->application->config()
+    );
+}
+
+    /**
+     * Ejecuta un trabajo específico.
+     */
+public function executeJob(JobConfiguration $configuration): bool
+{
+    $this->application
+        ->logger()
+        ->info(
+            'Ejecutando trabajo: ' .
+            $configuration->get('name')
+        );
+
+    $summary = $this->application
+        ->agent()
+        ->run($configuration);
+
+    return $summary->errors === 0;
+}
+
+    /**
+     * Servicio Windows.
+     */
     public function run(): void
     {
         $interval = $this->application
@@ -41,6 +68,4 @@ class HostedAgent
             $interval
         );
     }
-
- 
 }

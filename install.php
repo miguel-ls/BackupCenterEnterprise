@@ -1,8 +1,12 @@
 <?php
 
 require_once __DIR__ . '/vendor/autoload.php';
+
+use BackupCenter\Core\Database;
 use BackupCenter\Core\Paths;
+use BackupCenter\Repositories\UploadedFileRepository;
 use BackupCenter\Repositories\JobRepository;
+use BackupCenter\Repositories\ConnectionRepository;
 
 echo PHP_EOL;
 echo "============================================" . PHP_EOL;
@@ -98,24 +102,25 @@ echo "  [OK] config.json válido." . PHP_EOL;
 echo PHP_EOL;
 echo "[4/5] Inicializando base de datos..." . PHP_EOL;
 
-use BackupCenter\Core\Database;
-use BackupCenter\Repositories\UploadedFileRepository;
-
 $database = new Database(
     Paths::database() . '/backupcenter.db'
 );
 
 $uploadedRepository = new UploadedFileRepository($database);
-
 $uploadedRepository->initialize();
-
 $uploadedRepository->initializeExecutionHistory();
 
 $jobRepository = new JobRepository($database);
-
 $jobRepository->initialize();
 
+/*
+|--------------------------------------------------------------------------
+| NUEVO
+|--------------------------------------------------------------------------
+*/
 
+$connectionRepository = new ConnectionRepository($database);
+$connectionRepository->initialize();
 
 echo "  [OK] Base de datos inicializada." . PHP_EOL;
 
@@ -126,6 +131,4 @@ echo "============================================" . PHP_EOL;
 echo " Instalación completada correctamente" . PHP_EOL;
 echo "============================================" . PHP_EOL;
 echo PHP_EOL;
-echo "Ahora puedes ejecutar:" . PHP_EOL;
-echo PHP_EOL;
-echo "El motor fue instalado correctamente." . PHP_EOL;
+echo "Ahora puedes ejecutar el servicio." . PHP_EOL;

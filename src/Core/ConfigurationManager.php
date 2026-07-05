@@ -2,9 +2,10 @@
 
 namespace BackupCenter\Core;
 
+use BackupCenter\Contracts\IConfiguration;
 use BackupCenter\Models\ConnectionConfig;
 
-class ConfigurationManager
+class ConfigurationManager implements IConfiguration
 {
     private array $config = [];
 
@@ -45,7 +46,7 @@ class ConfigurationManager
     {
         return new ConnectionConfig(
             $this->get('sftp.host'),
-            (int) $this->get('sftp.port'),
+            (int)$this->get('sftp.port'),
             $this->get('sftp.username'),
             $this->get('sftp.password'),
             $this->get('sftp.hostkey')

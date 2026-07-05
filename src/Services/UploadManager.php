@@ -2,7 +2,7 @@
 
 namespace BackupCenter\Services;
 
-use BackupCenter\Core\ConfigurationManager;
+use BackupCenter\Contracts\IConfiguration;
 use BackupCenter\Builders\ScriptBuilder;
 use BackupCenter\Core\WinScpProvider;
 use BackupCenter\Models\BackupFile;
@@ -10,13 +10,13 @@ use BackupCenter\Core\RetryPolicy;
 
 class UploadManager
 {
-    private ConfigurationManager $config;
+    private IConfiguration $config;
     private WinScpProvider $provider;
     private RetryPolicy $retryPolicy;
     private ScriptBuilder $builder;
 
     public function __construct(
-        ConfigurationManager $config,
+        IConfiguration $config,
         WinScpProvider $provider,
         ScriptBuilder $builder,
         RetryPolicy $retryPolicy
@@ -26,6 +26,7 @@ class UploadManager
         $this->builder = $builder;
         $this->retryPolicy = $retryPolicy;
     }
+
     public function upload(BackupFile $file): string
     {
         $connection = $this->config->getConnectionConfig();
@@ -44,7 +45,7 @@ class UploadManager
                     ->batchAbort()
                     ->confirmOff()
                     ->open($connection)
-                    ->put($file->getPath())
+->put($file->getPath())
                     ->exit()
                     ->build();
 

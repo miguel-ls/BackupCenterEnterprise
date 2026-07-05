@@ -1,0 +1,332 @@
+[2026-07-05 00:01:17] [INFO] Ejecutando trabajo: TrueNAS Principal
+[2026-07-05 00:01:17] [INFO] === Backup Center iniciado ===
+[2026-07-05 00:01:17] [INFO] Subiendo: ERP_TEST.zip
+[2026-07-05 00:01:17] [INFO] Subiendo: ERP_TEST_01.zip
+[2026-07-05 00:01:17] [INFO] Subiendo: ERP_TEST_02.zip
+[2026-07-05 00:01:17] [INFO] Subiendo: ERP_TEST_03.zip
+[2026-07-05 00:01:17] [INFO] Subiendo: ERP_TEST_04.bak
+[2026-07-05 00:01:17] [INFO] Subiendo: ERP_TEST_05.7z
+[2026-07-05 00:01:17] [SUCCESS] Proceso finalizado.
+[2026-07-05 00:02:30] [INFO] Ejecutando trabajo: TrueNAS Principal
+[2026-07-05 00:02:30] [INFO] === Backup Center iniciado ===
+[2026-07-05 00:02:30] [INFO] Subiendo: ERP_TEST.zip
+[2026-07-05 00:02:30] [INFO] Subiendo: ERP_TEST_01.zip
+[2026-07-05 00:02:30] [INFO] Subiendo: ERP_TEST_02.zip
+[2026-07-05 00:02:30] [INFO] Subiendo: ERP_TEST_03.zip
+[2026-07-05 00:02:30] [INFO] Subiendo: ERP_TEST_04.bak
+[2026-07-05 00:02:30] [INFO] Subiendo: ERP_TEST_05.7z
+[2026-07-05 00:02:30] [INFO] Subiendo: ERP_TEST_06.zip
+[2026-07-05 00:02:30] [INFO] Subiendo: ERP_TEST_07.zip
+[2026-07-05 00:02:30] [INFO] Subiendo: ERP_TEST_08.zip
+[2026-07-05 00:02:30] [INFO] Subiendo: ERP_TEST_09.bak
+[2026-07-05 00:02:30] [INFO] Subiendo: ERP_TEST_10.7z
+[2026-07-05 00:02:30] [SUCCESS] Proceso finalizado.
+[2026-07-05 00:03:15] [INFO] Ejecutando trabajo: TrueNAS Principal
+[2026-07-05 00:03:15] [INFO] === Backup Center iniciado ===
+[2026-07-05 00:03:15] [INFO] Subiendo: ERP_TEST.zip
+[2026-07-05 00:03:15] [INFO] Subiendo: ERP_TEST_01.zip
+[2026-07-05 00:03:15] [INFO] Subiendo: ERP_TEST_02.zip
+[2026-07-05 00:03:15] [INFO] Subiendo: ERP_TEST_03.zip
+[2026-07-05 00:03:15] [INFO] Subiendo: ERP_TEST_04.bak
+[2026-07-05 00:03:15] [INFO] Subiendo: ERP_TEST_05.7z
+[2026-07-05 00:03:15] [INFO] Subiendo: ERP_TEST_06.zip
+[2026-07-05 00:03:15] [INFO] Subiendo: ERP_TEST_07.zip
+[2026-07-05 00:03:15] [INFO] Subiendo: ERP_TEST_08.zip
+[2026-07-05 00:03:15] [INFO] Subiendo: ERP_TEST_09.bak
+[2026-07-05 00:03:15] [INFO] Subiendo: ERP_TEST_10.7z
+[2026-07-05 00:03:15] [SUCCESS] Proceso finalizado.
+[2026-07-05 00:03:33] [INFO] Ejecutando trabajo: TrueNAS Principal
+[2026-07-05 00:03:33] [INFO] === Backup Center iniciado ===
+[2026-07-05 00:03:33] [INFO] Subiendo: ERP_TEST.zip
+[2026-07-05 00:03:33] [INFO] Subiendo: ERP_TEST_01.zip
+[2026-07-05 00:03:33] [INFO] Subiendo: ERP_TEST_02.zip
+[2026-07-05 00:03:33] [INFO] Subiendo: ERP_TEST_03.zip
+[2026-07-05 00:03:33] [INFO] Subiendo: ERP_TEST_04.bak
+[2026-07-05 00:03:33] [INFO] Subiendo: ERP_TEST_05.7z
+[2026-07-05 00:03:33] [INFO] Subiendo: ERP_TEST_06.zip
+[2026-07-05 00:03:33] [INFO] Subiendo: ERP_TEST_07.zip
+[2026-07-05 00:03:33] [INFO] Subiendo: ERP_TEST_08.zip
+[2026-07-05 00:03:33] [INFO] Subiendo: ERP_TEST_09.bak
+[2026-07-05 00:03:33] [INFO] Subiendo: ERP_TEST_10.7z
+[2026-07-05 00:03:33] [SUCCESS] Proceso finalizado.
+[2026-07-05 00:03:37] [INFO] Ejecutando trabajo: TrueNAS Principal
+[2026-07-05 00:03:37] [INFO] === Backup Center iniciado ===
+[2026-07-05 00:03:37] [INFO] Subiendo: ERP_TEST.zip
+[2026-07-05 00:03:37] [INFO] Subiendo: ERP_TEST_01.zip
+[2026-07-05 00:03:37] [INFO] Subiendo: ERP_TEST_02.zip
+[2026-07-05 00:03:37] [INFO] Subiendo: ERP_TEST_03.zip
+[2026-07-05 00:03:37] [INFO] Subiendo: ERP_TEST_04.bak
+[2026-07-05 00:03:37] [INFO] Subiendo: ERP_TEST_05.7z
+[2026-07-05 00:03:37] [INFO] Subiendo: ERP_TEST_06.zip
+[2026-07-05 00:03:37] [INFO] Subiendo: ERP_TEST_07.zip
+[2026-07-05 00:03:37] [INFO] Subiendo: ERP_TEST_08.zip
+[2026-07-05 00:03:37] [INFO] Subiendo: ERP_TEST_09.bak
+[2026-07-05 00:03:37] [INFO] Subiendo: ERP_TEST_10.7z
+[2026-07-05 00:03:37] [SUCCESS] Proceso finalizado.
+[2026-07-05 00:04:03] [INFO] Ejecutando trabajo: TrueNAS Principal
+[2026-07-05 00:04:03] [INFO] === Backup Center iniciado ===
+[2026-07-05 00:04:03] [INFO] Subiendo: ERP_TEST.zip
+[2026-07-05 00:04:03] [INFO] Subiendo: ERP_TEST_01.zip
+[2026-07-05 00:04:03] [INFO] Subiendo: ERP_TEST_02.zip
+[2026-07-05 00:04:03] [INFO] Subiendo: ERP_TEST_03.zip
+[2026-07-05 00:04:03] [INFO] Subiendo: ERP_TEST_04.bak
+[2026-07-05 00:04:03] [INFO] Subiendo: ERP_TEST_05.7z
+[2026-07-05 00:04:03] [INFO] Subiendo: ERP_TEST_06.zip
+[2026-07-05 00:04:03] [INFO] Subiendo: ERP_TEST_07.zip
+[2026-07-05 00:04:03] [INFO] Subiendo: ERP_TEST_08.zip
+[2026-07-05 00:04:03] [INFO] Subiendo: ERP_TEST_09.bak
+[2026-07-05 00:04:03] [INFO] Subiendo: ERP_TEST_10.7z
+[2026-07-05 00:04:03] [INFO] Subiendo: ERP_TEST_11.zip
+[2026-07-05 00:04:03] [SUCCESS] Proceso finalizado.
+[2026-07-05 00:06:44] [INFO] Ejecutando trabajo: TrueNAS Principal
+[2026-07-05 00:06:44] [INFO] === Backup Center iniciado ===
+[2026-07-05 00:06:44] [INFO] Subiendo: ERP_TEST.zip
+[2026-07-05 00:06:44] [INFO] Subiendo: ERP_TEST_01.zip
+[2026-07-05 00:06:44] [INFO] Subiendo: ERP_TEST_02.zip
+[2026-07-05 00:06:44] [INFO] Subiendo: ERP_TEST_03.zip
+[2026-07-05 00:06:44] [INFO] Subiendo: ERP_TEST_04.bak
+[2026-07-05 00:06:44] [INFO] Subiendo: ERP_TEST_05.7z
+[2026-07-05 00:06:44] [INFO] Subiendo: ERP_TEST_06.zip
+[2026-07-05 00:06:44] [INFO] Subiendo: ERP_TEST_07.zip
+[2026-07-05 00:06:44] [INFO] Subiendo: ERP_TEST_08.zip
+[2026-07-05 00:06:44] [INFO] Subiendo: ERP_TEST_09.bak
+[2026-07-05 00:06:44] [INFO] Subiendo: ERP_TEST_10.7z
+[2026-07-05 00:06:44] [INFO] Subiendo: ERP_TEST_11.zip
+[2026-07-05 00:06:44] [INFO] Subiendo: ERP_TEST_13.zip
+[2026-07-05 00:06:44] [SUCCESS] Proceso finalizado.
+[2026-07-05 01:47:57] [INFO] Ejecutando trabajo: TureNas Principal
+[2026-07-05 01:47:57] [INFO] === Backup Center iniciado ===
+[2026-07-05 01:47:57] [INFO] Subiendo: ERP_TEST.zip
+[2026-07-05 01:47:57] [INFO] Subiendo: ERP_TEST_01.zip
+[2026-07-05 01:47:57] [INFO] Subiendo: ERP_TEST_02.zip
+[2026-07-05 01:47:57] [INFO] Subiendo: ERP_TEST_03.zip
+[2026-07-05 01:47:57] [INFO] Subiendo: ERP_TEST_04.bak
+[2026-07-05 01:47:57] [INFO] Subiendo: ERP_TEST_05.7z
+[2026-07-05 01:47:57] [INFO] Subiendo: ERP_TEST_06.zip
+[2026-07-05 01:47:57] [INFO] Subiendo: ERP_TEST_07.zip
+[2026-07-05 01:47:57] [INFO] Subiendo: ERP_TEST_08.zip
+[2026-07-05 01:47:57] [INFO] Subiendo: ERP_TEST_09.bak
+[2026-07-05 01:47:57] [INFO] Subiendo: ERP_TEST_10.7z
+[2026-07-05 01:47:57] [INFO] Subiendo: ERP_TEST_11.zip
+[2026-07-05 01:47:57] [INFO] Subiendo: ERP_TEST_13.zip
+[2026-07-05 01:47:58] [SUCCESS] Proceso finalizado.
+[2026-07-05 01:48:17] [INFO] Ejecutando trabajo: TureNas Principal
+[2026-07-05 01:48:17] [INFO] === Backup Center iniciado ===
+[2026-07-05 01:48:17] [INFO] Subiendo: ERP_TEST.zip
+[2026-07-05 01:48:17] [INFO] Subiendo: ERP_TEST_01.zip
+[2026-07-05 01:48:17] [INFO] Subiendo: ERP_TEST_02.zip
+[2026-07-05 01:48:17] [INFO] Subiendo: ERP_TEST_03.zip
+[2026-07-05 01:48:17] [INFO] Subiendo: ERP_TEST_04.bak
+[2026-07-05 01:48:17] [INFO] Subiendo: ERP_TEST_05.7z
+[2026-07-05 01:48:17] [INFO] Subiendo: ERP_TEST_06.zip
+[2026-07-05 01:48:17] [INFO] Subiendo: ERP_TEST_07.zip
+[2026-07-05 01:48:17] [INFO] Subiendo: ERP_TEST_08.zip
+[2026-07-05 01:48:17] [INFO] Subiendo: ERP_TEST_09.bak
+[2026-07-05 01:48:17] [INFO] Subiendo: ERP_TEST_10.7z
+[2026-07-05 01:48:17] [INFO] Subiendo: ERP_TEST_11.zip
+[2026-07-05 01:48:17] [INFO] Subiendo: ERP_TEST_13.zip
+[2026-07-05 01:48:17] [SUCCESS] Proceso finalizado.
+[2026-07-05 01:48:22] [INFO] Ejecutando trabajo: TureNas Principal
+[2026-07-05 01:48:22] [INFO] === Backup Center iniciado ===
+[2026-07-05 01:48:22] [INFO] Subiendo: ERP_TEST.zip
+[2026-07-05 01:48:22] [INFO] Subiendo: ERP_TEST_01.zip
+[2026-07-05 01:48:22] [INFO] Subiendo: ERP_TEST_02.zip
+[2026-07-05 01:48:22] [INFO] Subiendo: ERP_TEST_03.zip
+[2026-07-05 01:48:22] [INFO] Subiendo: ERP_TEST_04.bak
+[2026-07-05 01:48:22] [INFO] Subiendo: ERP_TEST_05.7z
+[2026-07-05 01:48:22] [INFO] Subiendo: ERP_TEST_06.zip
+[2026-07-05 01:48:22] [INFO] Subiendo: ERP_TEST_07.zip
+[2026-07-05 01:48:22] [INFO] Subiendo: ERP_TEST_08.zip
+[2026-07-05 01:48:22] [INFO] Subiendo: ERP_TEST_09.bak
+[2026-07-05 01:48:22] [INFO] Subiendo: ERP_TEST_10.7z
+[2026-07-05 01:48:22] [INFO] Subiendo: ERP_TEST_11.zip
+[2026-07-05 01:48:22] [INFO] Subiendo: ERP_TEST_13.zip
+[2026-07-05 01:48:22] [SUCCESS] Proceso finalizado.
+[2026-07-05 01:48:55] [INFO] Ejecutando trabajo: TureNas Principal
+[2026-07-05 01:48:55] [INFO] === Backup Center iniciado ===
+[2026-07-05 01:48:55] [INFO] Subiendo: ERP_TEST.zip
+[2026-07-05 01:48:55] [INFO] Subiendo: ERP_TEST_01.zip
+[2026-07-05 01:48:55] [INFO] Subiendo: ERP_TEST_02.zip
+[2026-07-05 01:48:55] [INFO] Subiendo: ERP_TEST_03.zip
+[2026-07-05 01:48:55] [INFO] Subiendo: ERP_TEST_04.bak
+[2026-07-05 01:48:55] [INFO] Subiendo: ERP_TEST_05.7z
+[2026-07-05 01:48:55] [INFO] Subiendo: ERP_TEST_06.zip
+[2026-07-05 01:48:55] [INFO] Subiendo: ERP_TEST_07.zip
+[2026-07-05 01:48:55] [INFO] Subiendo: ERP_TEST_08.zip
+[2026-07-05 01:48:55] [INFO] Subiendo: ERP_TEST_09.bak
+[2026-07-05 01:48:55] [INFO] Subiendo: ERP_TEST_10.7z
+[2026-07-05 01:48:55] [INFO] Subiendo: ERP_TEST_11.zip
+[2026-07-05 01:48:55] [INFO] Subiendo: ERP_TEST_13.zip
+[2026-07-05 01:48:55] [INFO] Subiendo: ERP_TEST_14.zip
+[2026-07-05 01:48:56] [SUCCESS] Proceso finalizado.
+[2026-07-05 01:49:59] [INFO] Ejecutando trabajo: TureNas Principal
+[2026-07-05 01:49:59] [INFO] === Backup Center iniciado ===
+[2026-07-05 01:49:59] [INFO] Subiendo: ERP_TEST.zip
+[2026-07-05 01:49:59] [INFO] Subiendo: ERP_TEST_01.zip
+[2026-07-05 01:49:59] [INFO] Subiendo: ERP_TEST_02.zip
+[2026-07-05 01:49:59] [INFO] Subiendo: ERP_TEST_03.zip
+[2026-07-05 01:49:59] [INFO] Subiendo: ERP_TEST_04.bak
+[2026-07-05 01:49:59] [INFO] Subiendo: ERP_TEST_05.7z
+[2026-07-05 01:49:59] [INFO] Subiendo: ERP_TEST_06.zip
+[2026-07-05 01:49:59] [INFO] Subiendo: ERP_TEST_07.zip
+[2026-07-05 01:49:59] [INFO] Subiendo: ERP_TEST_08.zip
+[2026-07-05 01:49:59] [INFO] Subiendo: ERP_TEST_09.bak
+[2026-07-05 01:49:59] [INFO] Subiendo: ERP_TEST_10.7z
+[2026-07-05 01:49:59] [INFO] Subiendo: ERP_TEST_11.zip
+[2026-07-05 01:49:59] [INFO] Subiendo: ERP_TEST_13.zip
+[2026-07-05 01:49:59] [INFO] Subiendo: ERP_TEST_14.zip
+[2026-07-05 01:49:59] [SUCCESS] Proceso finalizado.
+[2026-07-05 01:58:40] [INFO] Ejecutando trabajo: TureNas Principal
+[2026-07-05 01:58:40] [INFO] === Backup Center iniciado ===
+[2026-07-05 01:58:40] [INFO] Subiendo: ERP_TEST.zip
+[2026-07-05 01:58:40] [INFO] Subiendo: ERP_TEST_01.zip
+[2026-07-05 01:58:40] [INFO] Subiendo: ERP_TEST_02.zip
+[2026-07-05 01:58:40] [INFO] Subiendo: ERP_TEST_03.zip
+[2026-07-05 01:58:40] [INFO] Subiendo: ERP_TEST_04.bak
+[2026-07-05 01:58:40] [INFO] Subiendo: ERP_TEST_05.7z
+[2026-07-05 01:58:40] [INFO] Subiendo: ERP_TEST_06.zip
+[2026-07-05 01:58:40] [INFO] Subiendo: ERP_TEST_07.zip
+[2026-07-05 01:58:40] [INFO] Subiendo: ERP_TEST_08.zip
+[2026-07-05 01:58:40] [INFO] Subiendo: ERP_TEST_09.bak
+[2026-07-05 01:58:40] [INFO] Subiendo: ERP_TEST_10.7z
+[2026-07-05 01:58:40] [INFO] Subiendo: ERP_TEST_11.zip
+[2026-07-05 01:58:40] [INFO] Subiendo: ERP_TEST_13.zip
+[2026-07-05 01:58:40] [INFO] Subiendo: ERP_TEST_14.zip
+[2026-07-05 01:58:40] [SUCCESS] Proceso finalizado.
+[2026-07-05 01:58:59] [INFO] Ejecutando trabajo: TureNas Principal
+[2026-07-05 01:58:59] [INFO] === Backup Center iniciado ===
+[2026-07-05 01:58:59] [INFO] Subiendo: ERP_TEST.zip
+[2026-07-05 01:58:59] [INFO] Subiendo: ERP_TEST_01.zip
+[2026-07-05 01:58:59] [INFO] Subiendo: ERP_TEST_02.zip
+[2026-07-05 01:58:59] [INFO] Subiendo: ERP_TEST_03.zip
+[2026-07-05 01:58:59] [INFO] Subiendo: ERP_TEST_04.bak
+[2026-07-05 01:58:59] [INFO] Subiendo: ERP_TEST_05.7z
+[2026-07-05 01:58:59] [INFO] Subiendo: ERP_TEST_06.zip
+[2026-07-05 01:58:59] [INFO] Subiendo: ERP_TEST_07.zip
+[2026-07-05 01:58:59] [INFO] Subiendo: ERP_TEST_08.zip
+[2026-07-05 01:58:59] [INFO] Subiendo: ERP_TEST_09.bak
+[2026-07-05 01:58:59] [INFO] Subiendo: ERP_TEST_10.7z
+[2026-07-05 01:58:59] [INFO] Subiendo: ERP_TEST_11.zip
+[2026-07-05 01:58:59] [INFO] Subiendo: ERP_TEST_13.zip
+[2026-07-05 01:58:59] [INFO] Subiendo: ERP_TEST_14.zip
+[2026-07-05 01:58:59] [SUCCESS] Proceso finalizado.
+[2026-07-05 02:01:39] [INFO] Ejecutando trabajo: ERP SQL 2
+[2026-07-05 02:01:39] [INFO] === Backup Center iniciado ===
+[2026-07-05 02:01:39] [INFO] Subiendo: ERP_TEST.zip
+[2026-07-05 02:01:40] [INFO] Subiendo: ERP_TEST_01.zip
+[2026-07-05 02:01:40] [INFO] Subiendo: ERP_TEST_02.zip
+[2026-07-05 02:01:40] [INFO] Subiendo: ERP_TEST_03.zip
+[2026-07-05 02:01:40] [INFO] Subiendo: ERP_TEST_04.bak
+[2026-07-05 02:01:40] [INFO] Subiendo: ERP_TEST_05.7z
+[2026-07-05 02:01:40] [INFO] Subiendo: ERP_TEST_06.zip
+[2026-07-05 02:01:40] [INFO] Subiendo: ERP_TEST_07.zip
+[2026-07-05 02:01:40] [INFO] Subiendo: ERP_TEST_08.zip
+[2026-07-05 02:01:40] [INFO] Subiendo: ERP_TEST_09.bak
+[2026-07-05 02:01:40] [INFO] Subiendo: ERP_TEST_10.7z
+[2026-07-05 02:01:40] [INFO] Subiendo: ERP_TEST_11.zip
+[2026-07-05 02:01:40] [INFO] Subiendo: ERP_TEST_13.zip
+[2026-07-05 02:01:40] [INFO] Subiendo: ERP_TEST_14.zip
+[2026-07-05 02:01:41] [SUCCESS] Proceso finalizado.
+[2026-07-05 02:08:25] [INFO] Ejecutando trabajo: ERP SQL 2
+[2026-07-05 02:08:25] [INFO] === Backup Center iniciado ===
+[2026-07-05 02:08:25] [INFO] Subiendo: ERP_TEST.zip
+[2026-07-05 02:08:25] [INFO] Subiendo: ERP_TEST_01.zip
+[2026-07-05 02:08:25] [INFO] Subiendo: ERP_TEST_02.zip
+[2026-07-05 02:08:25] [INFO] Subiendo: ERP_TEST_03.zip
+[2026-07-05 02:08:25] [INFO] Subiendo: ERP_TEST_04.bak
+[2026-07-05 02:08:25] [INFO] Subiendo: ERP_TEST_05.7z
+[2026-07-05 02:08:25] [INFO] Subiendo: ERP_TEST_06.zip
+[2026-07-05 02:08:25] [INFO] Subiendo: ERP_TEST_07.zip
+[2026-07-05 02:08:25] [INFO] Subiendo: ERP_TEST_08.zip
+[2026-07-05 02:08:25] [INFO] Subiendo: ERP_TEST_09.bak
+[2026-07-05 02:08:25] [INFO] Subiendo: ERP_TEST_10.7z
+[2026-07-05 02:08:25] [INFO] Subiendo: ERP_TEST_11.zip
+[2026-07-05 02:08:25] [INFO] Subiendo: ERP_TEST_13.zip
+[2026-07-05 02:08:25] [INFO] Subiendo: ERP_TEST_14.zip
+[2026-07-05 02:08:25] [SUCCESS] Proceso finalizado.
+[2026-07-05 02:15:32] [INFO] Ejecutando trabajo: ERP SQL
+[2026-07-05 02:15:32] [INFO] === Backup Center iniciado ===
+[2026-07-05 02:15:32] [INFO] Subiendo: ERP_TEST.zip
+[2026-07-05 02:15:32] [INFO] Subiendo: ERP_TEST_01.zip
+[2026-07-05 02:15:32] [INFO] Subiendo: ERP_TEST_02.zip
+[2026-07-05 02:15:32] [INFO] Subiendo: ERP_TEST_03.zip
+[2026-07-05 02:15:32] [INFO] Subiendo: ERP_TEST_04.bak
+[2026-07-05 02:15:32] [INFO] Subiendo: ERP_TEST_05.7z
+[2026-07-05 02:15:32] [INFO] Subiendo: ERP_TEST_06.zip
+[2026-07-05 02:15:32] [INFO] Subiendo: ERP_TEST_07.zip
+[2026-07-05 02:15:32] [INFO] Subiendo: ERP_TEST_08.zip
+[2026-07-05 02:15:32] [INFO] Subiendo: ERP_TEST_09.bak
+[2026-07-05 02:15:32] [INFO] Subiendo: ERP_TEST_10.7z
+[2026-07-05 02:15:32] [INFO] Subiendo: ERP_TEST_11.zip
+[2026-07-05 02:15:32] [INFO] Subiendo: ERP_TEST_13.zip
+[2026-07-05 02:15:33] [INFO] Subiendo: ERP_TEST_14.zip
+[2026-07-05 02:15:33] [SUCCESS] Proceso finalizado.
+[2026-07-05 02:42:08] [INFO] Ejecutando trabajo: ERP SQL
+[2026-07-05 02:42:08] [INFO] === Backup Center iniciado ===
+[2026-07-05 02:42:08] [INFO] Subiendo: ERP_TEST.zip
+[2026-07-05 02:42:08] [INFO] Subiendo: ERP_TEST_01.zip
+[2026-07-05 02:42:08] [INFO] Subiendo: ERP_TEST_02.zip
+[2026-07-05 02:42:08] [INFO] Subiendo: ERP_TEST_03.zip
+[2026-07-05 02:42:08] [INFO] Subiendo: ERP_TEST_04.bak
+[2026-07-05 02:42:08] [INFO] Subiendo: ERP_TEST_05.7z
+[2026-07-05 02:42:08] [INFO] Subiendo: ERP_TEST_06.zip
+[2026-07-05 02:42:08] [INFO] Subiendo: ERP_TEST_07.zip
+[2026-07-05 02:42:08] [INFO] Subiendo: ERP_TEST_08.zip
+[2026-07-05 02:42:08] [INFO] Subiendo: ERP_TEST_09.bak
+[2026-07-05 02:42:08] [INFO] Subiendo: ERP_TEST_10.7z
+[2026-07-05 02:42:08] [INFO] Subiendo: ERP_TEST_11.zip
+[2026-07-05 02:42:08] [INFO] Subiendo: ERP_TEST_13.zip
+[2026-07-05 02:42:08] [INFO] Subiendo: ERP_TEST_14.zip
+[2026-07-05 02:42:09] [SUCCESS] Proceso finalizado.
+[2026-07-05 03:00:32] [INFO] Ejecutando trabajo: ERP SQL
+[2026-07-05 03:00:32] [INFO] === Backup Center iniciado ===
+[2026-07-05 03:00:32] [INFO] Subiendo: ERP_TEST.zip
+[2026-07-05 03:00:33] [INFO] Subiendo: ERP_TEST_01.zip
+[2026-07-05 03:00:33] [INFO] Subiendo: ERP_TEST_02.zip
+[2026-07-05 03:00:33] [INFO] Subiendo: ERP_TEST_03.zip
+[2026-07-05 03:00:34] [INFO] Subiendo: ERP_TEST_04.bak
+[2026-07-05 03:00:34] [INFO] Subiendo: ERP_TEST_05.7z
+[2026-07-05 03:00:35] [INFO] Subiendo: ERP_TEST_06.zip
+[2026-07-05 03:00:35] [INFO] Subiendo: ERP_TEST_07.zip
+[2026-07-05 03:00:35] [INFO] Subiendo: ERP_TEST_08.zip
+[2026-07-05 03:00:36] [INFO] Subiendo: ERP_TEST_09.bak
+[2026-07-05 03:00:36] [INFO] Subiendo: ERP_TEST_10.7z
+[2026-07-05 03:00:36] [INFO] Subiendo: ERP_TEST_11.zip
+[2026-07-05 03:00:37] [INFO] Subiendo: ERP_TEST_13.zip
+[2026-07-05 03:00:37] [INFO] Subiendo: ERP_TEST_14.zip
+[2026-07-05 03:00:37] [SUCCESS] Proceso finalizado.
+[2026-07-05 03:02:33] [INFO] Ejecutando trabajo: ERP SQL
+[2026-07-05 03:02:33] [INFO] === Backup Center iniciado ===
+[2026-07-05 03:02:33] [INFO] Subiendo: ERP_TEST.zip
+[2026-07-05 03:02:33] [INFO] Subiendo: ERP_TEST_01.zip
+[2026-07-05 03:02:33] [INFO] Subiendo: ERP_TEST_02.zip
+[2026-07-05 03:02:33] [INFO] Subiendo: ERP_TEST_03.zip
+[2026-07-05 03:02:33] [INFO] Subiendo: ERP_TEST_04.bak
+[2026-07-05 03:02:33] [INFO] Subiendo: ERP_TEST_05.7z
+[2026-07-05 03:02:33] [INFO] Subiendo: ERP_TEST_06.zip
+[2026-07-05 03:02:33] [INFO] Subiendo: ERP_TEST_07.zip
+[2026-07-05 03:02:33] [INFO] Subiendo: ERP_TEST_08.zip
+[2026-07-05 03:02:33] [INFO] Subiendo: ERP_TEST_09.bak
+[2026-07-05 03:02:33] [INFO] Subiendo: ERP_TEST_10.7z
+[2026-07-05 03:02:33] [INFO] Subiendo: ERP_TEST_11.zip
+[2026-07-05 03:02:33] [INFO] Subiendo: ERP_TEST_13.zip
+[2026-07-05 03:02:33] [INFO] Subiendo: ERP_TEST_14.zip
+[2026-07-05 03:02:33] [SUCCESS] Proceso finalizado.
+[2026-07-05 03:03:17] [INFO] Ejecutando trabajo: ERP SQL
+[2026-07-05 03:03:17] [INFO] === Backup Center iniciado ===
+[2026-07-05 03:03:17] [INFO] Subiendo: ERP_TEST.zip
+[2026-07-05 03:03:17] [INFO] Subiendo: ERP_TEST_01.zip
+[2026-07-05 03:03:17] [INFO] Subiendo: ERP_TEST_02.zip
+[2026-07-05 03:03:17] [INFO] Subiendo: ERP_TEST_03.zip
+[2026-07-05 03:03:17] [INFO] Subiendo: ERP_TEST_04.bak
+[2026-07-05 03:03:17] [INFO] Subiendo: ERP_TEST_05.7z
+[2026-07-05 03:03:17] [INFO] Subiendo: ERP_TEST_06.zip
+[2026-07-05 03:03:17] [INFO] Subiendo: ERP_TEST_07.zip
+[2026-07-05 03:03:17] [INFO] Subiendo: ERP_TEST_08.zip
+[2026-07-05 03:03:17] [INFO] Subiendo: ERP_TEST_09.bak
+[2026-07-05 03:03:17] [INFO] Subiendo: ERP_TEST_10.7z
+[2026-07-05 03:03:17] [INFO] Subiendo: ERP_TEST_11.zip
+[2026-07-05 03:03:17] [INFO] Subiendo: ERP_TEST_13.zip
+[2026-07-05 03:03:17] [INFO] Subiendo: ERP_TEST_14.zip
+[2026-07-05 03:03:17] [INFO] Subiendo: ERP_TEST_15.zip
+[2026-07-05 03:03:17] [SUCCESS] Proceso finalizado.
