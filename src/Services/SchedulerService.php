@@ -3,6 +3,7 @@
 namespace BackupCenter\Services;
 
 use BackupCenter\Repositories\JobRepository;
+use Cron\CronExpression;
 
 class SchedulerService
 {
@@ -17,17 +18,30 @@ class SchedulerService
         $this->backupService = $backupService;
     }
 
-    public function run(): void
-    {
-        $jobs = $this->repository->getEnabledJobs();
+public function run(bool $force = false): void
+{
+    $jobs = $this->repository->getEnabledJobs();
 
-foreach ($jobs as $job) {
+    foreach ($jobs as $job) {
 
-    echo "Evaluando trabajo: {$job['name']}" . PHP_EOL;
+        echo "Evaluando trabajo: {$job['name']}" . PHP_EOL;
 
-    $this->backupService->run(
-        (int)$job['id']
-    );
+        $cron = new CronExpression(
+            $job['schedule']
+        );
+
+if (!$force && !$cron->isDue()) {
+
+    echo "No corresponde ejecutar." . PHP_EOL;
+
+    continue;
 }
+
+        echo "Ejecutando..." . PHP_EOL;
+
+        $this->backupService->run(
+            (int)$job['id']
+        );
     }
+}
 }

@@ -14,5 +14,7 @@
             "email": "mlopez@mgsa.com.pe"
         }
     ],
-    "require": {}
+    "require": {
+        "dragonmantank/cron-expression": "^3.6"
+    }
 }
