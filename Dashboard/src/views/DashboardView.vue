@@ -69,27 +69,18 @@
             <div class="space-y-3">
 
                 <div class="flex justify-between">
-
                     <span>Versión</span>
-
                     <span>{{ version.version }}</span>
-
                 </div>
 
                 <div class="flex justify-between">
-
                     <span>PHP</span>
-
                     <span>{{ version.php }}</span>
-
                 </div>
 
                 <div class="flex justify-between">
-
                     <span>Servidor</span>
-
                     <span>{{ version.time }}</span>
-
                 </div>
 
             </div>
@@ -107,35 +98,23 @@
             <div class="space-y-3">
 
                 <div class="flex justify-between">
-
                     <span>Trabajos</span>
-
                     <span>{{ status.jobs }}</span>
-
                 </div>
 
                 <div class="flex justify-between">
-
                     <span>Conexiones</span>
-
                     <span>{{ status.connections }}</span>
-
                 </div>
 
                 <div class="flex justify-between">
-
                     <span>Cola</span>
-
                     <span>{{ status.queue }}</span>
-
                 </div>
 
                 <div class="flex justify-between">
-
                     <span>Running</span>
-
                     <span>{{ status.running }}</span>
-
                 </div>
 
             </div>
@@ -144,11 +123,23 @@
 
     </div>
 
-    <div class="mt-8">
+    <!-- NUEVA FILA -->
 
-    <LastExecutions />
+    <div class="grid grid-cols-3 gap-6 mt-8">
 
-</div>
+        <div class="col-span-2">
+
+            <LastExecutions />
+
+        </div>
+
+        <div>
+
+            <SchedulerStatus />
+
+        </div>
+
+    </div>
 
 </MainLayout>
 
@@ -160,7 +151,9 @@ import { onMounted, ref } from "vue";
 
 import MainLayout from "../components/layout/MainLayout.vue";
 import StatCard from "../components/cards/StatCard.vue";
+
 import LastExecutions from "../components/dashboard/LastExecutions.vue";
+import SchedulerStatus from "../components/dashboard/widgets/SchedulerStatus.vue";
 
 import {
     getStatus,
