@@ -144,6 +144,12 @@
 
     </div>
 
+    <div class="mt-8">
+
+    <LastExecutions />
+
+</div>
+
 </MainLayout>
 
 </template>
@@ -154,6 +160,7 @@ import { onMounted, ref } from "vue";
 
 import MainLayout from "../components/layout/MainLayout.vue";
 import StatCard from "../components/cards/StatCard.vue";
+import LastExecutions from "../components/dashboard/LastExecutions.vue";
 
 import {
     getStatus,
