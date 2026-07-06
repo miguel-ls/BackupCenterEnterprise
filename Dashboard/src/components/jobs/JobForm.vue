@@ -99,7 +99,9 @@ const connections = ref([])
 
 async function loadConnections(){
 
-    connections.value = await getConnections()
+    const response = await getConnections()
+
+    connections.value = response.data
 
 }
 

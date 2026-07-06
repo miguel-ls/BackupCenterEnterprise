@@ -1,8 +1,9 @@
 <?php
 
 header('Access-Control-Allow-Origin: http://localhost:5173');
-header('Access-Control-Allow-Methods: GET, OPTIONS');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
+header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
@@ -13,34 +14,30 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 use BackupCenter\Core\Database;
 use BackupCenter\Core\Paths;
-use BackupCenter\Repositories\UploadedFileRepository;
 
-header('Content-Type: application/json; charset=utf-8');
+$db = new Database(
+    Paths::database() . '/backupcenter.db'
+);
 
-try {
+$pdo = $db->getConnection();
 
-    $database = new Database(
-        Paths::database() . '/backupcenter.db'
-    );
+$status = [
 
-    $repository = new UploadedFileRepository($database);
+    'jobs' => (int)$pdo->query("SELECT COUNT(*) FROM jobs")->fetchColumn(),
 
-    echo json_encode([
-        'success' => true,
-        'version' => trim(file_get_contents(__DIR__ . '/../../VERSION')),
-        'service' => 'running',
-        'database' => file_exists(Paths::database() . '/backupcenter.db'),
-        'php' => PHP_VERSION,
-        'time' => date('Y-m-d H:i:s')
-    ], JSON_PRETTY_PRINT);
+    'connections' => (int)$pdo->query("SELECT COUNT(*) FROM connections")->fetchColumn(),
 
-} catch (Throwable $e) {
+    'uploaded' => (int)$pdo->query("SELECT COUNT(*) FROM uploaded_files")->fetchColumn(),
 
-    http_response_code(500);
+    'executions' => (int)$pdo->query("SELECT COUNT(*) FROM execution_history")->fetchColumn(),
 
-    echo json_encode([
-        'success' => false,
-        'message' => $e->getMessage()
-    ], JSON_PRETTY_PRINT);
+    'queue' => (int)$pdo->query("SELECT COUNT(*) FROM job_queue WHERE status='Pending'")->fetchColumn(),
 
-}
+    'running' => (int)$pdo->query("SELECT COUNT(*) FROM job_queue WHERE status='Running'")->fetchColumn()
+
+];
+
+echo json_encode([
+    'success' => true,
+    'data' => $status
+]);

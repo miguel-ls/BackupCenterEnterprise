@@ -1,13 +1,7 @@
 <?php
 
-require_once __DIR__ . '/../../vendor/autoload.php';
-
-use BackupCenter\Core\Database;
-use BackupCenter\Core\Paths;
-
-
 header('Access-Control-Allow-Origin: http://localhost:5173');
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Methods: GET, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 header('Content-Type: application/json');
 
@@ -16,19 +10,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+use BackupCenter\Core\Database;
+use BackupCenter\Core\Paths;
+use BackupCenter\Repositories\NotificationRepository;
+
 $db = new Database(
     Paths::database() . '/backupcenter.db'
 );
 
-$pdo = $db->getConnection();
-
-$stmt = $pdo->query("
-SELECT *
-FROM jobs
-ORDER BY id
-");
+$repository = new NotificationRepository($db);
 
 echo json_encode([
     'success' => true,
-    'data' => $stmt->fetchAll(PDO::FETCH_ASSOC)
+    'data' => $repository->getAll()
 ]);

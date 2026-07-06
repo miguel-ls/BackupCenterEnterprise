@@ -3,7 +3,7 @@
 namespace BackupCenter\Scheduler;
 
 use BackupCenter\Repositories\JobRepository;
-use BackupCenter\Queue\JobQueue;
+use BackupCenter\Repositories\JobQueueRepository;
 
 class SchedulerEngine
 {
@@ -11,7 +11,7 @@ class SchedulerEngine
         private JobRepository $repository,
         private CronEvaluator $cron,
         private JobRunner $runner,
-        private JobQueue $queue
+        private JobQueueRepository $queue
     ) {
     }
 

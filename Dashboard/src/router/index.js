@@ -7,6 +7,7 @@ import HistoryView from '../views/HistoryView.vue'
 import LogsView from '../views/LogsView.vue'
 import SettingsView from '../views/SettingsView.vue'
 import AboutView from '../views/AboutView.vue'
+import QueueView from '../views/QueueView.vue'
 
 const router = createRouter({
 
@@ -29,6 +30,11 @@ const router = createRouter({
             component: ConnectionsView
         },
 
+{
+    path:'/queue',
+    component:QueueView
+},
+        
         {
             path: '/history',
             component: HistoryView

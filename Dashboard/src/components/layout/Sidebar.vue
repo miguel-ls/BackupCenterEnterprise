@@ -35,6 +35,13 @@
             Conexiones
         </RouterLink>
 
+<RouterLink
+    to="/queue"
+    class="block px-4 py-3 rounded-lg hover:bg-neutral-800"
+>
+    Cola
+</RouterLink>
+        
         <RouterLink
             to="/history"
             class="block px-4 py-3 rounded-lg hover:bg-neutral-800"

@@ -62,7 +62,9 @@ const selectedJob = ref({
 
 async function loadJobs(){
 
-    jobs.value = await getJobs()
+    const response = await getJobs()
+
+    jobs.value = response.data
 
 }
 

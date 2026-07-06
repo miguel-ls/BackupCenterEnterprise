@@ -7,6 +7,7 @@ use BackupCenter\Core\Paths;
 use BackupCenter\Repositories\UploadedFileRepository;
 use BackupCenter\Repositories\JobRepository;
 use BackupCenter\Repositories\ConnectionRepository;
+use BackupCenter\Repositories\NotificationRepository;
 
 echo PHP_EOL;
 echo "============================================" . PHP_EOL;
@@ -113,6 +114,9 @@ $uploadedRepository->initializeExecutionHistory();
 $jobRepository = new JobRepository($database);
 $jobRepository->initialize();
 
+$jobQueueRepository = new \BackupCenter\Repositories\JobQueueRepository($database);
+$jobQueueRepository->initialize();
+
 /*
 |--------------------------------------------------------------------------
 | NUEVO
@@ -121,6 +125,9 @@ $jobRepository->initialize();
 
 $connectionRepository = new ConnectionRepository($database);
 $connectionRepository->initialize();
+
+$notificationRepository = new NotificationRepository($database);
+$notificationRepository->initialize();
 
 echo "  [OK] Base de datos inicializada." . PHP_EOL;
 

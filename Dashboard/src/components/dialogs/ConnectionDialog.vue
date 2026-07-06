@@ -11,7 +11,7 @@
 
             <h2 class="text-2xl font-bold">
 
-                Nueva conexión
+                {{ connection?.id ? 'Editar conexión' : 'Nueva conexión' }}
 
             </h2>
 
@@ -25,6 +25,7 @@
         </div>
 
         <ConnectionForm
+            :connection="connection"
             @saved="saved"
         />
 
@@ -45,13 +46,15 @@ const emit = defineEmits([
 
 defineProps({
 
-    modelValue:Boolean
+    modelValue: Boolean,
+
+    connection: Object
 
 })
 
 function close(){
 
-    emit('update:modelValue',false)
+    emit('update:modelValue', false)
 
 }
 
@@ -59,7 +62,7 @@ function saved(){
 
     emit('saved')
 
-    emit('update:modelValue',false)
+    emit('update:modelValue', false)
 
 }
 

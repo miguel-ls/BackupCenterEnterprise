@@ -21,8 +21,10 @@ use BackupCenter\Scheduler\JobRunner;
 use BackupCenter\Scheduler\SchedulerEngine;
 use BackupCenter\Scheduler\SchedulerLoop;
 
-use BackupCenter\Queue\JobQueue;
+use BackupCenter\Repositories\JobQueueRepository;
 use BackupCenter\Workers\BackupWorker;
+
+use BackupCenter\Repositories\NotificationRepository;
 
 class Application
 {
@@ -46,8 +48,10 @@ class Application
     private SchedulerLoop $schedulerLoop;
     private SchedulerEngine $schedulerEngine;
 
-    private JobQueue $jobQueue;
+    private JobQueueRepository $jobQueue;
     private BackupWorker $backupWorker;
+
+    private NotificationRepository $notificationRepository;
 
     public function __construct()
     {
@@ -104,6 +108,12 @@ $this->connectionRepository = new ConnectionRepository(
 
 $this->connectionRepository->initialize();
 
+$this->notificationRepository = new NotificationRepository(
+    $this->database
+);
+
+$this->notificationRepository->initialize();
+
 $hostedAgent = new HostedAgent(
     $this,
     new Scheduler()
@@ -115,7 +125,11 @@ $this->backupService = new BackupService(
     $this->connectionRepository
 );
 
-$this->jobQueue = new JobQueue();
+$this->jobQueue = new JobQueueRepository(
+    $this->database
+);
+
+$this->jobQueue->initialize();
 
 $this->backupWorker = new BackupWorker(
     $this->jobQueue,

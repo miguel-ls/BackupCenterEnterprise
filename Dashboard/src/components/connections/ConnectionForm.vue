@@ -60,9 +60,7 @@
             @click="save"
             class="bg-blue-600 text-white px-5 py-3 rounded-lg"
         >
-
             Guardar
-
         </button>
 
     </div>
@@ -73,18 +71,29 @@
 
 <script setup>
 
-import { reactive } from 'vue'
+import {
+    reactive,
+    watch
+} from 'vue'
 
 import {
-    createConnection
+    createConnection,
+    updateConnection
 } from '../../api/client'
 
 const emit = defineEmits([
     'saved'
 ])
 
+const props = defineProps({
+
+    connection:Object
+
+})
+
 const connection = reactive({
 
+    id:null,
     name:'',
     host:'',
     port:22,
@@ -96,9 +105,51 @@ const connection = reactive({
 
 })
 
+watch(
+
+    () => props.connection,
+
+    (value)=>{
+
+        if(value){
+
+            Object.assign(connection,value)
+
+        }else{
+
+            Object.assign(connection,{
+                id:null,
+                name:'',
+                host:'',
+                port:22,
+                username:'',
+                password:'',
+                hostkey:'',
+                protocol:'SFTP',
+                remote_path:''
+            })
+
+        }
+
+    },
+
+    {
+        immediate:true
+    }
+
+)
+
 async function save(){
 
-    await createConnection(connection)
+    if(connection.id){
+
+        await updateConnection(connection)
+
+    }else{
+
+        await createConnection(connection)
+
+    }
 
     emit('saved')
 

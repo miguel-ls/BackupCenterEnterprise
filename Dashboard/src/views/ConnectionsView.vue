@@ -11,25 +11,25 @@
         </h1>
 
         <button
-            @click="showDialog=true"
+            @click="showDialog = true"
             class="bg-blue-600 text-white px-5 py-3 rounded-lg"
         >
-
             + Nueva conexión
-
         </button>
 
     </div>
 
-    <ConnectionDialog
-        v-model="showDialog"
-        @saved="connectionSaved"
-    />
+<ConnectionDialog
+    v-model="showDialog"
+    :connection="selectedConnection"
+    @saved="connectionSaved"
+/>
 
-    <ConnectionTable
-        :connections="connections"
-        @delete="removeConnection"
-    />
+<ConnectionTable
+    :connections="connections"
+    @edit="editConnection"
+    @delete="removeConnection"
+/>
 
 </MainLayout>
 
@@ -37,7 +37,7 @@
 
 <script setup>
 
-import { ref,onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 
 import MainLayout from '../components/layout/MainLayout.vue'
 import ConnectionDialog from '../components/dialogs/ConnectionDialog.vue'
@@ -48,21 +48,34 @@ import {
     deleteConnection
 } from '../api/client'
 
-const connections=ref([])
+const connections = ref([])
 
-const showDialog=ref(false)
+const showDialog = ref(false)
+const selectedConnection = ref(null)
 
 async function loadConnections(){
 
-    connections.value=await getConnections()
+    const response = await getConnections()
+
+    connections.value = response.data
 
 }
 
 function connectionSaved(){
 
-    showDialog.value=false
+    showDialog.value = false
 
     loadConnections()
+
+}
+
+function editConnection(connection){
+
+    selectedConnection.value = {
+        ...connection
+    }
+
+    showDialog.value = true
 
 }
 
@@ -74,7 +87,7 @@ async function removeConnection(id){
 
     await deleteConnection(id)
 
-    loadConnections()
+    await loadConnections()
 
 }
 

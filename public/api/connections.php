@@ -22,34 +22,22 @@ $db = new Database(
 
 $repository = new ConnectionRepository($db);
 
-switch ($_SERVER['REQUEST_METHOD']) {
+$method = $_SERVER['REQUEST_METHOD'];
 
-    /*
-    |--------------------------------------------------------------------------
-    | Obtener conexiones
-    |--------------------------------------------------------------------------
-    */
+switch ($method) {
 
     case 'GET':
 
-        echo json_encode(
-            $repository->getAll()
-        );
+        echo json_encode([
+            'success' => true,
+            'data' => $repository->getAll()
+        ]);
 
-        exit;
-
-    /*
-    |--------------------------------------------------------------------------
-    | Crear conexión
-    |--------------------------------------------------------------------------
-    */
+        break;
 
     case 'POST':
 
-        $data = json_decode(
-            file_get_contents('php://input'),
-            true
-        );
+        $data = json_decode(file_get_contents('php://input'), true);
 
         $id = $repository->create(
             $data['name'],
@@ -57,8 +45,8 @@ switch ($_SERVER['REQUEST_METHOD']) {
             (int)$data['port'],
             $data['username'],
             $data['password'],
-            $data['hostkey'],
-            $data['protocol'],
+            $data['hostkey'] ?? '',
+            $data['protocol'] ?? 'SFTP',
             $data['remote_path']
         );
 
@@ -67,20 +55,11 @@ switch ($_SERVER['REQUEST_METHOD']) {
             'id' => $id
         ]);
 
-        exit;
-
-    /*
-    |--------------------------------------------------------------------------
-    | Actualizar
-    |--------------------------------------------------------------------------
-    */
+        break;
 
     case 'PUT':
 
-        $data = json_decode(
-            file_get_contents('php://input'),
-            true
-        );
+        $data = json_decode(file_get_contents('php://input'), true);
 
         $repository->update(
             (int)$data['id'],
@@ -89,8 +68,8 @@ switch ($_SERVER['REQUEST_METHOD']) {
             (int)$data['port'],
             $data['username'],
             $data['password'],
-            $data['hostkey'],
-            $data['protocol'],
+            $data['hostkey'] ?? '',
+            $data['protocol'] ?? 'SFTP',
             $data['remote_path']
         );
 
@@ -98,20 +77,11 @@ switch ($_SERVER['REQUEST_METHOD']) {
             'success' => true
         ]);
 
-        exit;
-
-    /*
-    |--------------------------------------------------------------------------
-    | Eliminar
-    |--------------------------------------------------------------------------
-    */
+        break;
 
     case 'DELETE':
 
-        $data = json_decode(
-            file_get_contents('php://input'),
-            true
-        );
+        $data = json_decode(file_get_contents('php://input'), true);
 
         $repository->delete(
             (int)$data['id']
@@ -121,5 +91,15 @@ switch ($_SERVER['REQUEST_METHOD']) {
             'success' => true
         ]);
 
-        exit;
+        break;
+
+    default:
+
+        http_response_code(405);
+
+        echo json_encode([
+            'success' => false,
+            'message' => 'Método no permitido'
+        ]);
+
 }

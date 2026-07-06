@@ -1,169 +1,92 @@
-const API_URL = 'http://localhost:8000/api'
+const API = "http://localhost:8000/api";
 
-export async function getStatus() {
+async function request(endpoint, options = {}) {
 
-    const response = await fetch(`${API_URL}/status.php`)
-
-    if (!response.ok) {
-        throw new Error('No fue posible obtener el estado del servidor.')
-    }
-
-    return await response.json()
-
-}
-
-/* ==========================================================
-   JOBS
-========================================================== */
-
-export async function getJobs(){
-
-    const response = await fetch(`${API_URL}/jobs.php`)
-
-    return await response.json()
-
-}
-
-export async function createJob(job){
-
-    const response = await fetch(`${API_URL}/jobs.php`,{
-
-        method:'POST',
-
-        headers:{
-            'Content-Type':'application/json'
+    const response = await fetch(`${API}/${endpoint}`, {
+        headers: {
+            "Content-Type": "application/json"
         },
+        ...options
+    });
 
-        body:JSON.stringify(job)
-
-    })
-
-    return await response.json()
+    return await response.json();
 
 }
 
-export async function updateJob(job){
+/* ================= DASHBOARD ================= */
 
-    const response = await fetch(`${API_URL}/jobs.php`,{
+export const getStatus = () => request("status.php");
+export const getStatistics = () => request("statistics.php");
+export const getVersion = () => request("version.php");
 
-        method:'PUT',
+/* ================= QUEUE ================= */
 
-        headers:{
-            'Content-Type':'application/json'
-        },
+export const getQueue = () => request("job-queue.php");
 
-        body:JSON.stringify(job)
+/* ================= HISTORY ================= */
 
-    })
+export const getHistory = () => request("history.php");
 
-    return await response.json()
+/* ================= CONNECTIONS ================= */
 
-}
+export const getConnections = () => request("connections.php");
 
-export async function deleteJob(id){
+/* ================= JOBS ================= */
 
-    const response = await fetch(`${API_URL}/jobs.php`,{
+export const getJobs = () => request("jobs.php");
 
-        method:'DELETE',
+export const createJob = (job) =>
+    request("jobs.php", {
+        method: "POST",
+        body: JSON.stringify(job)
+    });
 
-        headers:{
-            'Content-Type':'application/json'
-        },
+export const updateJob = (job) =>
+    request("jobs.php", {
+        method: "PUT",
+        body: JSON.stringify(job)
+    });
 
-        body:JSON.stringify({
+export const deleteJob = (id) =>
+    request("jobs.php", {
+        method: "DELETE",
+        body: JSON.stringify({ id })
+    });
+
+export const runJob = (id) =>
+    request("jobs.php", {
+        method: "POST",
+        body: JSON.stringify({
+            action: "run",
             id
         })
+    });
 
-    })
+/* ================= CONNECTION CRUD ================= */
 
-    return await response.json()
+export const createConnection = (connection) =>
+    request("connections.php", {
+        method: "POST",
+        body: JSON.stringify(connection)
+    });
 
-}
+export const updateConnection = (connection) =>
+    request("connections.php", {
+        method: "PUT",
+        body: JSON.stringify(connection)
+    });
 
-export async function runJob(id){
+export const deleteConnection = (id) =>
+    request("connections.php", {
+        method: "DELETE",
+        body: JSON.stringify({ id })
+    });
 
-    const response = await fetch(`${API_URL}/jobs.php?action=run`,{
-
-        method:'POST',
-
-        headers:{
-            'Content-Type':'application/json'
-        },
-
-        body:JSON.stringify({
+export const testConnection = (id) =>
+    request("connections.php", {
+        method: "POST",
+        body: JSON.stringify({
+            action: "test",
             id
         })
-
-    })
-
-    return await response.json()
-
-}
-
-/* ==========================================================
-   CONNECTIONS
-========================================================== */
-
-export async function getConnections(){
-
-    const response = await fetch(`${API_URL}/connections.php`)
-
-    return await response.json()
-
-}
-
-export async function createConnection(connection){
-
-    const response = await fetch(`${API_URL}/connections.php`,{
-
-        method:'POST',
-
-        headers:{
-            'Content-Type':'application/json'
-        },
-
-        body:JSON.stringify(connection)
-
-    })
-
-    return await response.json()
-
-}
-
-export async function updateConnection(connection){
-
-    const response = await fetch(`${API_URL}/connections.php`,{
-
-        method:'PUT',
-
-        headers:{
-            'Content-Type':'application/json'
-        },
-
-        body:JSON.stringify(connection)
-
-    })
-
-    return await response.json()
-
-}
-
-export async function deleteConnection(id){
-
-    const response = await fetch(`${API_URL}/connections.php`,{
-
-        method:'DELETE',
-
-        headers:{
-            'Content-Type':'application/json'
-        },
-
-        body:JSON.stringify({
-            id
-        })
-
-    })
-
-    return await response.json()
-
-}
+    });    

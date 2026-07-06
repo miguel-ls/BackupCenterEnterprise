@@ -11,126 +11,138 @@
     <div class="grid grid-cols-4 gap-6">
 
         <StatCard
-            title="Versión"
-            :value="status.version"
+            title="Trabajos"
+            :value="status.jobs ?? 0"
         />
 
         <StatCard
-            title="Servicio"
-            :value="status.service"
+            title="Conexiones"
+            :value="status.connections ?? 0"
         />
 
         <StatCard
-            title="PHP"
-            :value="status.php"
+            title="En Cola"
+            :value="status.queue ?? 0"
         />
 
         <StatCard
-            title="Base de datos"
-            :value="status.database ? 'OK' : 'ERROR'"
+            title="Ejecutando"
+            :value="status.running ?? 0"
         />
 
     </div>
 
-<div class="grid grid-cols-3 gap-6 mt-8">
+    <div class="grid grid-cols-4 gap-6 mt-6">
 
-    <div class="col-span-2 bg-white rounded-xl border border-neutral-200 shadow-sm">
+        <StatCard
+            title="Subidos Hoy"
+            :value="statistics.uploaded_today ?? 0"
+        />
 
-        <div class="p-5 border-b">
+        <StatCard
+            title="Ejecuciones Hoy"
+            :value="statistics.executions_today ?? 0"
+        />
 
-            <h2 class="text-lg font-semibold">
-                Últimos trabajos
+        <StatCard
+            title="Errores Hoy"
+            :value="statistics.errors_today ?? 0"
+        />
+
+        <StatCard
+            title="Total Archivos"
+            :value="statistics.total_uploaded ?? 0"
+        />
+
+    </div>
+
+    <div class="grid grid-cols-2 gap-6 mt-8">
+
+        <div class="bg-white rounded-xl border border-neutral-200 shadow-sm p-6">
+
+            <h2 class="font-bold text-xl mb-4">
+
+                Información
+
             </h2>
 
+            <div class="space-y-3">
+
+                <div class="flex justify-between">
+
+                    <span>Versión</span>
+
+                    <span>{{ version.version }}</span>
+
+                </div>
+
+                <div class="flex justify-between">
+
+                    <span>PHP</span>
+
+                    <span>{{ version.php }}</span>
+
+                </div>
+
+                <div class="flex justify-between">
+
+                    <span>Servidor</span>
+
+                    <span>{{ version.time }}</span>
+
+                </div>
+
+            </div>
+
         </div>
 
-        <table class="w-full">
+        <div class="bg-white rounded-xl border border-neutral-200 shadow-sm p-6">
 
-            <thead class="bg-neutral-50">
+            <h2 class="font-bold text-xl mb-4">
 
-                <tr>
+                Estado General
 
-                    <th class="text-left p-4">Trabajo</th>
+            </h2>
 
-                    <th class="text-left p-4">Estado</th>
+            <div class="space-y-3">
 
-                    <th class="text-left p-4">Hora</th>
+                <div class="flex justify-between">
 
-                </tr>
+                    <span>Trabajos</span>
 
-            </thead>
+                    <span>{{ status.jobs }}</span>
 
-            <tbody>
+                </div>
 
-                <tr class="border-t">
+                <div class="flex justify-between">
 
-                    <td class="p-4">ERP SQL</td>
+                    <span>Conexiones</span>
 
-                    <td class="p-4 text-green-600 font-semibold">Correcto</td>
+                    <span>{{ status.connections }}</span>
 
-                    <td class="p-4">07:30</td>
+                </div>
 
-                </tr>
+                <div class="flex justify-between">
 
-                <tr class="border-t">
+                    <span>Cola</span>
 
-                    <td class="p-4">NAS Principal</td>
+                    <span>{{ status.queue }}</span>
 
-                    <td class="p-4 text-green-600 font-semibold">Correcto</td>
+                </div>
 
-                    <td class="p-4">06:45</td>
+                <div class="flex justify-between">
 
-                </tr>
+                    <span>Running</span>
 
-                <tr class="border-t">
+                    <span>{{ status.running }}</span>
 
-                    <td class="p-4">Documentos</td>
+                </div>
 
-                    <td class="p-4 text-red-600 font-semibold">Error</td>
-
-                    <td class="p-4">06:10</td>
-
-                </tr>
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-    <div class="bg-white rounded-xl border border-neutral-200 shadow-sm p-5">
-
-        <h2 class="text-lg font-semibold mb-4">
-            Estado
-        </h2>
-
-        <div class="space-y-3">
-
-            <div class="flex justify-between">
-                <span>Servicio</span>
-                <span class="text-green-600 font-semibold">{{ status.service }}</span>
-            </div>
-
-            <div class="flex justify-between">
-                <span>Versión</span>
-                <span>{{ status.version }}</span>
-            </div>
-
-            <div class="flex justify-between">
-                <span>PHP</span>
-                <span>{{ status.php }}</span>
-            </div>
-
-            <div class="flex justify-between">
-                <span>Hora</span>
-                <span>{{ status.time }}</span>
             </div>
 
         </div>
 
     </div>
-
-</div>    
 
 </MainLayout>
 
@@ -138,29 +150,39 @@
 
 <script setup>
 
-import { onMounted, ref } from 'vue'
+import { onMounted, ref } from "vue";
 
-import MainLayout from '../components/layout/MainLayout.vue'
-import StatCard from '../components/cards/StatCard.vue'
+import MainLayout from "../components/layout/MainLayout.vue";
+import StatCard from "../components/cards/StatCard.vue";
 
-import { getStatus } from '../api/client'
+import {
+    getStatus,
+    getStatistics,
+    getVersion
+} from "../api/client";
 
-const status = ref({
+const status = ref({});
+const statistics = ref({});
+const version = ref({});
 
-    version:'...',
+async function load(){
 
-    service:'...',
+    const s = await getStatus();
+    const st = await getStatistics();
+    const v = await getVersion();
 
-    php:'...',
+    status.value = s.data;
+    statistics.value = st.data;
+    version.value = v;
 
-    database:false
+}
 
-})
+onMounted(()=>{
 
-onMounted(async()=>{
+    load();
 
-    status.value = await getStatus()
+    setInterval(load,5000);
 
-})
+});
 
 </script>
