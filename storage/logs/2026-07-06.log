@@ -1,0 +1,18 @@
+[2026-07-06 04:32:18] [INFO] Ejecutando trabajo: ERP SQL
+[2026-07-06 04:32:18] [INFO] === Backup Center iniciado ===
+[2026-07-06 04:32:18] [INFO] Subiendo: ERP_TEST.zip
+[2026-07-06 04:32:20] [INFO] Subiendo: ERP_TEST_01.zip
+[2026-07-06 04:32:21] [INFO] Subiendo: ERP_TEST_02.zip
+[2026-07-06 04:32:21] [INFO] Subiendo: ERP_TEST_03.zip
+[2026-07-06 04:32:21] [INFO] Subiendo: ERP_TEST_04.bak
+[2026-07-06 04:32:22] [INFO] Subiendo: ERP_TEST_05.7z
+[2026-07-06 04:32:22] [INFO] Subiendo: ERP_TEST_06.zip
+[2026-07-06 04:32:22] [INFO] Subiendo: ERP_TEST_07.zip
+[2026-07-06 04:32:23] [INFO] Subiendo: ERP_TEST_08.zip
+[2026-07-06 04:32:23] [INFO] Subiendo: ERP_TEST_09.bak
+[2026-07-06 04:32:24] [INFO] Subiendo: ERP_TEST_10.7z
+[2026-07-06 04:32:24] [INFO] Subiendo: ERP_TEST_11.zip
+[2026-07-06 04:32:24] [INFO] Subiendo: ERP_TEST_13.zip
+[2026-07-06 04:32:25] [INFO] Subiendo: ERP_TEST_14.zip
+[2026-07-06 04:32:25] [INFO] Subiendo: ERP_TEST_15.zip
+[2026-07-06 04:32:26] [SUCCESS] Proceso finalizado.
