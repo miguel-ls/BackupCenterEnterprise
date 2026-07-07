@@ -16,8 +16,22 @@ async function request(endpoint, options = {}) {
 /* ================= DASHBOARD ================= */
 
 export const getStatus = () => request("status.php");
+
 export const getStatistics = () => request("statistics.php");
+
 export const getVersion = () => request("version.php");
+
+export const getChart = () => request("chart.php");
+
+/* ================= SETTINGS ================= */
+
+export const getSettings = () => request("settings.php");
+
+export const updateSettings = (settings) =>
+    request("settings.php", {
+        method: "PUT",
+        body: JSON.stringify(settings)
+    });
 
 /* ================= QUEUE ================= */
 
@@ -30,6 +44,33 @@ export const getHistory = () => request("history.php");
 /* ================= CONNECTIONS ================= */
 
 export const getConnections = () => request("connections.php");
+
+export const createConnection = (connection) =>
+    request("connections.php", {
+        method: "POST",
+        body: JSON.stringify(connection)
+    });
+
+export const updateConnection = (connection) =>
+    request("connections.php", {
+        method: "PUT",
+        body: JSON.stringify(connection)
+    });
+
+export const deleteConnection = (id) =>
+    request("connections.php", {
+        method: "DELETE",
+        body: JSON.stringify({ id })
+    });
+
+export const testConnection = (id) =>
+    request("connections.php", {
+        method: "POST",
+        body: JSON.stringify({
+            action: "test",
+            id
+        })
+    });
 
 /* ================= JOBS ================= */
 
@@ -61,32 +102,3 @@ export const runJob = (id) =>
             id
         })
     });
-
-/* ================= CONNECTION CRUD ================= */
-
-export const createConnection = (connection) =>
-    request("connections.php", {
-        method: "POST",
-        body: JSON.stringify(connection)
-    });
-
-export const updateConnection = (connection) =>
-    request("connections.php", {
-        method: "PUT",
-        body: JSON.stringify(connection)
-    });
-
-export const deleteConnection = (id) =>
-    request("connections.php", {
-        method: "DELETE",
-        body: JSON.stringify({ id })
-    });
-
-export const testConnection = (id) =>
-    request("connections.php", {
-        method: "POST",
-        body: JSON.stringify({
-            action: "test",
-            id
-        })
-    });    

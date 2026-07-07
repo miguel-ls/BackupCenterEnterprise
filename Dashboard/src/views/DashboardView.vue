@@ -8,6 +8,8 @@
 
     </h1>
 
+    <!-- KPIs -->
+
     <div class="grid grid-cols-4 gap-6">
 
         <StatCard
@@ -32,6 +34,8 @@
 
     </div>
 
+    <!-- Estadísticas -->
+
     <div class="grid grid-cols-4 gap-6 mt-6">
 
         <StatCard
@@ -55,6 +59,8 @@
         />
 
     </div>
+
+    <!-- Información -->
 
     <div class="grid grid-cols-2 gap-6 mt-8">
 
@@ -123,7 +129,7 @@
 
     </div>
 
-    <!-- NUEVA FILA -->
+    <!-- Widgets superiores -->
 
     <div class="grid grid-cols-3 gap-6 mt-8">
 
@@ -141,6 +147,24 @@
 
     </div>
 
+    <!-- Gráfico + Cola -->
+
+    <div class="grid grid-cols-3 gap-6 mt-6">
+
+        <div class="col-span-2">
+
+            <BackupChart />
+
+        </div>
+
+        <div>
+
+            <QueueWidget />
+
+        </div>
+
+    </div>
+
 </MainLayout>
 
 </template>
@@ -153,12 +177,17 @@ import MainLayout from "../components/layout/MainLayout.vue";
 import StatCard from "../components/cards/StatCard.vue";
 
 import LastExecutions from "../components/dashboard/LastExecutions.vue";
+
 import SchedulerStatus from "../components/dashboard/widgets/SchedulerStatus.vue";
+import QueueWidget from "../components/dashboard/widgets/QueueWidget.vue";
+import BackupChart from "../components/dashboard/widgets/BackupChart.vue";
 
 import {
+
     getStatus,
     getStatistics,
     getVersion
+
 } from "../api/client";
 
 const status = ref({});
