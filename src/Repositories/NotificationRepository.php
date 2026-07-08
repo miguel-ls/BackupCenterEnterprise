@@ -20,9 +20,9 @@ class NotificationRepository
         CREATE TABLE IF NOT EXISTS notifications
         (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            level TEXT,
-            title TEXT,
-            message TEXT,
+            level TEXT NOT NULL,
+            title TEXT NOT NULL,
+            message TEXT NOT NULL,
             created_at TEXT DEFAULT CURRENT_TIMESTAMP,
             is_read INTEGER DEFAULT 0
         );
@@ -33,7 +33,7 @@ class NotificationRepository
         string $level,
         string $title,
         string $message
-    ): void
+    ): int
     {
         $stmt = $this->db->prepare("
             INSERT INTO notifications
@@ -49,10 +49,12 @@ class NotificationRepository
         ");
 
         $stmt->execute([
-            $level,
+            strtoupper($level),
             $title,
             $message
         ]);
+
+        return (int)$this->db->lastInsertId();
     }
 
     public function getAll(): array
@@ -64,5 +66,69 @@ class NotificationRepository
         ");
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getUnread(): array
+    {
+        $stmt = $this->db->query("
+            SELECT *
+            FROM notifications
+            WHERE is_read = 0
+            ORDER BY id DESC
+        ");
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function countUnread(): int
+    {
+        return (int)$this->db
+            ->query("
+                SELECT COUNT(*)
+                FROM notifications
+                WHERE is_read = 0
+            ")
+            ->fetchColumn();
+    }
+
+    public function markAsRead(int $id): void
+    {
+        $stmt = $this->db->prepare("
+            UPDATE notifications
+            SET is_read = 1
+            WHERE id = ?
+        ");
+
+        $stmt->execute([
+            $id
+        ]);
+    }
+
+    public function markAllAsRead(): void
+    {
+        $this->db->exec("
+            UPDATE notifications
+            SET is_read = 1
+        ");
+    }
+
+    public function delete(int $id): void
+    {
+        $stmt = $this->db->prepare("
+            DELETE
+            FROM notifications
+            WHERE id = ?
+        ");
+
+        $stmt->execute([
+            $id
+        ]);
+    }
+
+    public function clear(): void
+    {
+        $this->db->exec("
+            DELETE FROM notifications
+        ");
     }
 }

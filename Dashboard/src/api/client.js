@@ -23,6 +23,8 @@ export const getVersion = () => request("version.php");
 
 export const getChart = () => request("chart.php");
 
+export const getSystemStatus = () => request("system-status.php");
+
 /* ================= SETTINGS ================= */
 
 export const getSettings = () => request("settings.php");
@@ -101,4 +103,27 @@ export const runJob = (id) =>
             action: "run",
             id
         })
+    });
+
+/* ================= LOGS ================= */
+
+export const getLogs = (
+    page = 1,
+    limit = 50
+) =>
+    request(`logs.php?page=${page}&limit=${limit}`);
+
+/* ================= NOTIFICATIONS ================= */
+
+export const getNotifications = () =>
+    request("notifications.php");
+
+export const markNotificationsAsRead = () =>
+    request("notifications.php", {
+        method: "PUT"
+    });
+
+export const clearNotifications = () =>
+    request("notifications.php", {
+        method: "DELETE"
     });

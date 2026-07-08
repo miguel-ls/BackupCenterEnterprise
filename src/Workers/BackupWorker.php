@@ -3,13 +3,15 @@
 namespace BackupCenter\Workers;
 
 use BackupCenter\Repositories\JobQueueRepository;
+use BackupCenter\Repositories\NotificationRepository;
 use BackupCenter\Services\BackupService;
 
 class BackupWorker
 {
     public function __construct(
         private JobQueueRepository $queue,
-        private BackupService $backupService
+        private BackupService $backupService,
+        private NotificationRepository $notifications
     ) {
     }
 
@@ -33,9 +35,6 @@ class BackupWorker
 
             echo "Worker ejecutando Job {$item['job_id']}" . PHP_EOL;
 
-            sleep(10);
-
-
             $this->backupService->run(
                 (int)$item['job_id']
             );
@@ -44,11 +43,23 @@ class BackupWorker
                 (int)$item['id']
             );
 
+            $this->notifications->add(
+                'INFO',
+                'Backup completado',
+                "El Job {$item['job_id']} finalizó correctamente."
+            );
+
         } catch (\Throwable $e) {
 
             $this->queue->fail(
                 (int)$item['id'],
                 $e->getMessage()
+            );
+
+            $this->notifications->add(
+                'ERROR',
+                'Backup fallido',
+                "El Job {$item['job_id']} falló: {$e->getMessage()}"
             );
 
             throw $e;

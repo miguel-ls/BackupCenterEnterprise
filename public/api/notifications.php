@@ -1,7 +1,7 @@
 <?php
 
 header('Access-Control-Allow-Origin: http://localhost:5173');
-header('Access-Control-Allow-Methods: GET, OPTIONS');
+header('Access-Control-Allow-Methods: GET, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 header('Content-Type: application/json');
 
@@ -22,7 +22,46 @@ $db = new Database(
 
 $repository = new NotificationRepository($db);
 
-echo json_encode([
-    'success' => true,
-    'data' => $repository->getAll()
-]);
+switch ($_SERVER['REQUEST_METHOD']) {
+
+    case 'GET':
+
+        echo json_encode([
+            'success' => true,
+            'data' => $repository->getAll(),
+            'unread' => $repository->countUnread()
+        ]);
+
+        break;
+
+    case 'PUT':
+
+        $repository->markAllAsRead();
+
+        echo json_encode([
+            'success' => true
+        ]);
+
+        break;
+
+    case 'DELETE':
+
+        $repository->clear();
+
+        echo json_encode([
+            'success' => true
+        ]);
+
+        break;
+
+    default:
+
+        http_response_code(405);
+
+        echo json_encode([
+            'success' => false,
+            'message' => 'Método no permitido.'
+        ]);
+
+        break;
+}

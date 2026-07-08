@@ -133,7 +133,8 @@ $this->jobQueue->initialize();
 
 $this->backupWorker = new BackupWorker(
     $this->jobQueue,
-    $this->backupService
+    $this->backupService,
+    $this->notificationRepository
 );
 
 $cron = new CronEvaluator();
