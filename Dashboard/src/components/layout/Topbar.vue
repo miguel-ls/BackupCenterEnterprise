@@ -14,6 +14,45 @@
 
     <div class="flex items-center gap-6">
 
+        <!-- Usuario -->
+
+        <div class="flex items-center gap-3">
+
+            <div
+                class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold"
+            >
+                {{ initial }}
+            </div>
+
+            <div>
+
+                <div class="font-semibold">
+
+                    {{ user.fullname }}
+
+                </div>
+
+                <div class="text-xs text-neutral-500">
+
+                    {{ user.role }}
+
+                </div>
+
+            </div>
+
+            <button
+                @click="logout"
+                class="ml-2 text-red-600 hover:underline text-sm"
+            >
+
+                Cerrar sesión
+
+            </button>
+
+        </div>
+
+        <!-- Notificaciones -->
+
         <div class="relative">
 
             <button
@@ -55,9 +94,7 @@
 
                 </div>
 
-                <div
-                    class="max-h-96 overflow-y-auto"
-                >
+                <div class="max-h-96 overflow-y-auto">
 
                     <div
                         v-for="item in notifications.slice(0,5)"
@@ -84,9 +121,7 @@
 
                         </div>
 
-                        <div
-                            class="text-sm text-neutral-600 mt-2"
-                        >
+                        <div class="text-sm text-neutral-600 mt-2">
 
                             {{ item.message }}
 
@@ -131,6 +166,8 @@
 
         </div>
 
+        <!-- Estado -->
+
         <div class="flex items-center gap-3">
 
             <div class="w-3 h-3 rounded-full bg-green-500"></div>
@@ -154,10 +191,13 @@
 import {
 
     ref,
+    computed,
     onMounted,
     onUnmounted
 
 } from "vue";
+
+import { useRouter } from "vue-router";
 
 import {
 
@@ -167,13 +207,35 @@ import {
 
 } from "@/api/client";
 
+const router = useRouter();
+
 const unread = ref(0);
 
 const notifications = ref([]);
 
 const show = ref(false);
 
+const user = JSON.parse(
+    localStorage.getItem("user") ?? "{}"
+);
+
+const initial = computed(()=>
+
+    (user.fullname ?? "?")
+        .substring(0,1)
+        .toUpperCase()
+
+);
+
 let timer = null;
+
+function logout(){
+
+    localStorage.removeItem("user");
+
+    router.push("/login");
+
+}
 
 function color(level){
 

@@ -2,168 +2,129 @@
 
 <MainLayout>
 
-    <h1 class="text-3xl font-bold mb-8">
+<h1 class="text-3xl font-bold mb-8">
 
-        Dashboard
+Dashboard
 
-    </h1>
+</h1>
 
-    <!-- KPIs -->
+<!-- KPI -->
 
-    <div class="grid grid-cols-4 gap-6">
+<div class="grid grid-cols-4 gap-6">
 
-        <StatCard
-            title="Trabajos"
-            :value="status.jobs ?? 0"
-        />
+<StatCard title="Trabajos" :value="status.jobs ?? 0"/>
 
-        <StatCard
-            title="Conexiones"
-            :value="status.connections ?? 0"
-        />
+<StatCard title="Conexiones" :value="status.connections ?? 0"/>
 
-        <StatCard
-            title="En Cola"
-            :value="status.queue ?? 0"
-        />
+<StatCard title="En Cola" :value="status.queue ?? 0"/>
 
-        <StatCard
-            title="Ejecutando"
-            :value="status.running ?? 0"
-        />
+<StatCard title="Ejecutando" :value="status.running ?? 0"/>
 
-    </div>
+</div>
 
-    <!-- Estadísticas -->
+<!-- Estadísticas -->
 
-    <div class="grid grid-cols-4 gap-6 mt-6">
+<div class="grid grid-cols-4 gap-6 mt-6">
 
-        <StatCard
-            title="Subidos Hoy"
-            :value="statistics.uploaded_today ?? 0"
-        />
+<StatCard title="Subidos Hoy" :value="statistics.uploaded_today ?? 0"/>
 
-        <StatCard
-            title="Ejecuciones Hoy"
-            :value="statistics.executions_today ?? 0"
-        />
+<StatCard title="Ejecuciones Hoy" :value="statistics.executions_today ?? 0"/>
 
-        <StatCard
-            title="Errores Hoy"
-            :value="statistics.errors_today ?? 0"
-        />
+<StatCard title="Errores Hoy" :value="statistics.errors_today ?? 0"/>
 
-        <StatCard
-            title="Total Archivos"
-            :value="statistics.total_uploaded ?? 0"
-        />
+<StatCard title="Total Archivos" :value="statistics.total_uploaded ?? 0"/>
 
-    </div>
+</div>
 
-    <!-- Información -->
+<!-- Sistema -->
 
-    <div class="grid grid-cols-2 gap-6 mt-8">
+<div class="grid grid-cols-2 gap-6 mt-6">
 
-        <div class="bg-white rounded-xl border border-neutral-200 shadow-sm p-6">
+<div class="bg-white rounded-xl border shadow-sm p-6">
 
-            <h2 class="font-bold text-xl mb-4">
+<h2 class="text-xl font-semibold mb-4">
 
-                Información
+Información del Servidor
 
-            </h2>
+</h2>
 
-            <div class="space-y-3">
+<div class="space-y-3">
 
-                <div class="flex justify-between">
-                    <span>Versión</span>
-                    <span>{{ version.version }}</span>
-                </div>
+<div class="flex justify-between">
+<span>Servidor</span>
+<strong>{{system.hostname}}</strong>
+</div>
 
-                <div class="flex justify-between">
-                    <span>PHP</span>
-                    <span>{{ version.php }}</span>
-                </div>
+<div class="flex justify-between">
+<span>Sistema</span>
+<strong>{{system.os}}</strong>
+</div>
 
-                <div class="flex justify-between">
-                    <span>Servidor</span>
-                    <span>{{ version.time }}</span>
-                </div>
+<div class="flex justify-between">
+<span>PHP</span>
+<strong>{{system.php_version}}</strong>
+</div>
 
-            </div>
+<div class="flex justify-between">
+<span>Hora</span>
+<strong>{{system.time}}</strong>
+</div>
 
-        </div>
+<div class="flex justify-between">
+<span>RAM usada</span>
+<strong>{{system.memory_usage}} MB</strong>
+</div>
 
-        <div class="bg-white rounded-xl border border-neutral-200 shadow-sm p-6">
+<div class="flex justify-between">
+<span>Pico RAM</span>
+<strong>{{system.memory_peak}} MB</strong>
+</div>
 
-            <h2 class="font-bold text-xl mb-4">
+<div class="flex justify-between">
+<span>Disco Libre</span>
+<strong>{{system.disk_free}} GB</strong>
+</div>
 
-                Estado General
+<div class="flex justify-between">
+<span>Disco Total</span>
+<strong>{{system.disk_total}} GB</strong>
+</div>
 
-            </h2>
+</div>
 
-            <div class="space-y-3">
+</div>
 
-                <div class="flex justify-between">
-                    <span>Trabajos</span>
-                    <span>{{ status.jobs }}</span>
-                </div>
+<div>
 
-                <div class="flex justify-between">
-                    <span>Conexiones</span>
-                    <span>{{ status.connections }}</span>
-                </div>
+<SchedulerStatus/>
 
-                <div class="flex justify-between">
-                    <span>Cola</span>
-                    <span>{{ status.queue }}</span>
-                </div>
+</div>
 
-                <div class="flex justify-between">
-                    <span>Running</span>
-                    <span>{{ status.running }}</span>
-                </div>
+</div>
 
-            </div>
+<!-- Últimas ejecuciones -->
 
-        </div>
+<div class="grid grid-cols-3 gap-6 mt-6">
 
-    </div>
+<div class="col-span-2">
 
-    <!-- Widgets superiores -->
+<LastExecutions/>
 
-    <div class="grid grid-cols-3 gap-6 mt-8">
+</div>
 
-        <div class="col-span-2">
+<div>
 
-            <LastExecutions />
+<QueueWidget/>
 
-        </div>
+</div>
 
-        <div>
+</div>
 
-            <SchedulerStatus />
+<div class="mt-6">
 
-        </div>
+<BackupChart/>
 
-    </div>
-
-    <!-- Gráfico + Cola -->
-
-    <div class="grid grid-cols-3 gap-6 mt-6">
-
-        <div class="col-span-2">
-
-            <BackupChart />
-
-        </div>
-
-        <div>
-
-            <QueueWidget />
-
-        </div>
-
-    </div>
+</div>
 
 </MainLayout>
 
@@ -171,46 +132,64 @@
 
 <script setup>
 
-import { onMounted, ref } from "vue";
+import {
+
+ref,
+onMounted,
+onUnmounted
+
+} from "vue";
 
 import MainLayout from "../components/layout/MainLayout.vue";
 import StatCard from "../components/cards/StatCard.vue";
 
-import LastExecutions from "../components/dashboard/LastExecutions.vue";
-
 import SchedulerStatus from "../components/dashboard/widgets/SchedulerStatus.vue";
+import LastExecutions from "../components/dashboard/LastExecutions.vue";
 import QueueWidget from "../components/dashboard/widgets/QueueWidget.vue";
 import BackupChart from "../components/dashboard/widgets/BackupChart.vue";
 
 import {
 
-    getStatus,
-    getStatistics,
-    getVersion
+getStatus,
+getStatistics,
+getVersion,
+getSystemInfo
 
 } from "../api/client";
 
-const status = ref({});
-const statistics = ref({});
-const version = ref({});
+const status=ref({});
+
+const statistics=ref({});
+
+const version=ref({});
+
+const system=ref({});
+
+let timer=null;
 
 async function load(){
 
-    const s = await getStatus();
-    const st = await getStatistics();
-    const v = await getVersion();
+status.value=(await getStatus()).data;
 
-    status.value = s.data;
-    statistics.value = st.data;
-    version.value = v;
+statistics.value=(await getStatistics()).data;
+
+version.value=(await getVersion()).data;
+
+system.value=(await getSystemInfo()).data;
 
 }
 
 onMounted(()=>{
 
-    load();
+load();
 
-    setInterval(load,5000);
+timer=setInterval(load,5000);
+
+});
+
+onUnmounted(()=>{
+
+clearInterval(timer);
 
 });
 

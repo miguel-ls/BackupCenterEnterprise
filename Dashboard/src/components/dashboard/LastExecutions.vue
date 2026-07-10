@@ -47,33 +47,23 @@
                 >
 
                     <td class="p-3 whitespace-nowrap">
-
                         {{ formatDate(item.executed_at) }}
-
                     </td>
 
                     <td class="p-3 font-medium">
-
                         {{ item.client }}
-
                     </td>
 
                     <td class="p-3 text-center">
-
                         {{ item.files_uploaded }}
-
                     </td>
 
                     <td class="p-3 text-center">
-
                         {{ item.errors }}
-
                     </td>
 
                     <td class="p-3 text-center">
-
                         {{ Number(item.duration).toFixed(2) }} s
-
                     </td>
 
                     <td class="p-3 text-center">
@@ -89,7 +79,7 @@
 
                 </tr>
 
-                <tr v-if="history.length === 0">
+                <tr v-if="history.length===0">
 
                     <td
                         colspan="6"
@@ -129,11 +119,14 @@ async function load(){
 
     try{
 
-        const response = await getHistory();
+        const response = await getHistory(1,5);
 
-        history.value = response.data ?? [];
+        history.value = Array.isArray(response.data)
+            ? response.data
+            : [];
 
-    }catch(error){
+    }
+    catch(error){
 
         console.error(error);
 
@@ -151,7 +144,9 @@ function formatDate(date){
 
     }
 
-    return new Date(date.replace(" ","T")).toLocaleString();
+    return new Date(
+        date.replace(" ","T")
+    ).toLocaleString();
 
 }
 
@@ -160,19 +155,15 @@ function badgeClass(status){
     switch(status){
 
         case "OK":
-
             return "bg-green-100 text-green-700";
 
         case "ERROR":
-
             return "bg-red-100 text-red-700";
 
         case "WARNING":
-
             return "bg-yellow-100 text-yellow-700";
 
         default:
-
             return "bg-gray-100 text-gray-700";
 
     }

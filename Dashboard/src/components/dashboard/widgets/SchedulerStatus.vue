@@ -2,85 +2,118 @@
 
 <div class="bg-white rounded-xl border border-neutral-200 shadow-sm p-6">
 
-    <div class="flex justify-between items-center mb-5">
+    <div class="flex items-center justify-between mb-6">
 
-        <h2 class="text-lg font-semibold">
+        <h2 class="text-xl font-bold">
 
             Estado del Sistema
 
         </h2>
 
-        <span
-            class="text-xs px-3 py-1 rounded-full bg-green-100 text-green-700 font-semibold"
-        >
-            ONLINE
-        </span>
+        <div class="flex items-center gap-2 text-green-600 font-semibold">
+
+            <span class="w-3 h-3 rounded-full bg-green-500"></span>
+
+            Operativo
+
+        </div>
 
     </div>
 
     <div class="space-y-4">
 
-        <div class="flex justify-between">
+        <div class="flex justify-between items-center">
 
-            <span class="text-neutral-600">
+            <span>Scheduler</span>
 
-                Scheduler
-
+            <span
+                class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-semibold"
+            >
+                {{ data.scheduler }}
             </span>
 
-            <span class="font-semibold text-green-600">
+        </div>
 
-                ● Activo
+        <div class="flex justify-between items-center">
+
+            <span>Worker</span>
+
+            <span
+                class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-semibold"
+            >
+                {{ data.worker }}
+            </span>
+
+        </div>
+
+        <div class="flex justify-between items-center">
+
+            <span>Pendientes</span>
+
+            <span class="font-bold">
+
+                {{ data.queue }}
 
             </span>
 
         </div>
 
-        <div class="flex justify-between">
+        <div class="flex justify-between items-center">
 
-            <span class="text-neutral-600">
+            <span>Ejecutándose</span>
 
-                Worker
+            <span class="font-bold">
 
-            </span>
-
-            <span class="font-semibold text-green-600">
-
-                ● Activo
+                {{ data.running }}
 
             </span>
 
         </div>
 
-        <div class="flex justify-between">
+        <div class="flex justify-between items-center">
 
-            <span class="text-neutral-600">
+            <span>Con errores</span>
 
-                Hora actual
+            <span
+                class="font-bold"
+                :class="data.failed>0
+                    ? 'text-red-600'
+                    : 'text-green-600'"
+            >
 
-            </span>
-
-            <span>
-
-                {{ time }}
+                {{ data.failed }}
 
             </span>
 
         </div>
 
+        <hr>
+
         <div class="flex justify-between">
 
-            <span class="text-neutral-600">
+            <span>Total ejecuciones</span>
 
-                Uptime
+            <span class="font-bold">
 
-            </span>
-
-            <span>
-
-                {{ uptime }}
+                {{ data.executions }}
 
             </span>
+
+        </div>
+
+        <div>
+
+            <div class="text-sm text-neutral-500 mb-1">
+
+                Última ejecución
+
+            </div>
+
+            <div class="font-semibold">
+
+                {{ data.last_execution || '-' }}
+
+            </div>
 
         </div>
 
@@ -98,35 +131,27 @@ import {
     onUnmounted
 } from "vue";
 
-const time = ref("");
+import {
+    getSystemStatus
+} from "@/api/client";
 
-const uptime = ref("00:00:00");
-
-let seconds = 0;
+const data = ref({});
 
 let timer = null;
 
-function refresh(){
+async function load(){
 
-    time.value = new Date().toLocaleTimeString();
+    const response = await getSystemStatus();
 
-    seconds++;
-
-    const h = String(Math.floor(seconds / 3600)).padStart(2,"0");
-
-    const m = String(Math.floor((seconds % 3600) / 60)).padStart(2,"0");
-
-    const s = String(seconds % 60).padStart(2,"0");
-
-    uptime.value = `${h}:${m}:${s}`;
+    data.value = response.data;
 
 }
 
 onMounted(()=>{
 
-    refresh();
+    load();
 
-    timer = setInterval(refresh,1000);
+    timer = setInterval(load,5000);
 
 });
 

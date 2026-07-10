@@ -25,6 +25,8 @@ export const getChart = () => request("chart.php");
 
 export const getSystemStatus = () => request("system-status.php");
 
+export const getSystemInfo = () => request("system-info.php");
+
 /* ================= SETTINGS ================= */
 
 export const getSettings = () => request("settings.php");
@@ -41,7 +43,41 @@ export const getQueue = () => request("job-queue.php");
 
 /* ================= HISTORY ================= */
 
-export const getHistory = () => request("history.php");
+export const getHistory = (
+    page = 1,
+    limit = 5
+) =>
+    request(
+        `history.php?page=${page}&limit=${limit}`
+    );
+
+/* ================= USERS ================= */
+
+export const getUsers = () =>
+    request("users.php");
+
+export const createUser = (user) =>
+    request("users.php", {
+        method: "POST",
+        body: JSON.stringify(user)
+    });
+
+export const updateUser = (user) =>
+    request("users.php", {
+        method: "PUT",
+        body: JSON.stringify(user)
+    });
+
+export const deleteUser = (id) =>
+    request("users.php", {
+        method: "DELETE",
+        body: JSON.stringify({ id })
+    });
+
+/* ================= AUDIT ================= */
+
+export const getAudit = () =>
+    request("audit.php");
 
 /* ================= CONNECTIONS ================= */
 
