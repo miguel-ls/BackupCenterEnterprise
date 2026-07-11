@@ -21,35 +21,64 @@
             class="space-y-5"
         >
 
-            <div>
+            <div v-if="!requires2FA">
 
-                <label class="block mb-2">
+                <div>
 
-                    Usuario
+                    <label class="block mb-2">
 
-                </label>
+                        Usuario
 
-                <input
-                    v-model="username"
-                    class="w-full border rounded-lg p-3"
-                    autocomplete="username"
-                >
+                    </label>
+
+                    <input
+                        v-model="username"
+                        class="w-full border rounded-lg p-3"
+                    >
+
+                </div>
+
+                <div class="mt-4">
+
+                    <label class="block mb-2">
+
+                        Contraseña
+
+                    </label>
+
+                    <input
+                        v-model="password"
+                        type="password"
+                        class="w-full border rounded-lg p-3"
+                    >
+
+                </div>
 
             </div>
 
-            <div>
+            <div v-else>
 
-                <label class="block mb-2">
+                <div class="text-center">
 
-                    Contraseña
+                    <div class="text-lg font-semibold">
 
-                </label>
+                        Verificación en dos pasos
+
+                    </div>
+
+                    <div class="text-sm text-neutral-500 mt-2">
+
+                        Abra Google Authenticator e ingrese el código de 6 dígitos.
+
+                    </div>
+
+                </div>
 
                 <input
-                    v-model="password"
-                    type="password"
-                    class="w-full border rounded-lg p-3"
-                    autocomplete="current-password"
+                    v-model="code"
+                    maxlength="6"
+                    placeholder="123456"
+                    class="w-full border rounded-lg p-3 text-center text-2xl tracking-[8px] mt-5"
                 >
 
             </div>
@@ -67,7 +96,7 @@
                 class="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-lg p-3 font-semibold"
             >
 
-                Iniciar sesión
+                {{ requires2FA ? 'Verificar código' : 'Iniciar sesión' }}
 
             </button>
 
@@ -82,41 +111,117 @@
 <script setup>
 
 import { ref } from "vue";
-
 import { useRouter } from "vue-router";
 
 const router = useRouter();
 
 const username = ref("");
-
 const password = ref("");
+const code = ref("");
 
 const error = ref("");
+
+const requires2FA = ref(false);
+
+const challenge = ref("");
 
 async function login(){
 
     error.value="";
 
-    const response = await fetch(
-        "http://localhost:8000/api/login.php",
+    if(!requires2FA.value){
+
+        const response = await fetch(
+
+            "http://localhost:8000/api/login.php",
+
+            {
+
+                method:"POST",
+
+                headers:{
+
+                    "Content-Type":"application/json"
+
+                },
+
+                credentials:"include",
+
+                body:JSON.stringify({
+
+                    username:username.value,
+
+                    password:password.value
+
+                })
+
+            }
+
+        );
+
+        const json=await response.json();
+
+        if(!json.success){
+
+            error.value=json.message;
+
+            return;
+
+        }
+
+        if(json.data.requires2FA){
+
+            requires2FA.value=true;
+
+            challenge.value=json.data.challenge;
+
+            return;
+
+        }
+
+        localStorage.setItem(
+
+            "user",
+
+            JSON.stringify(json.data)
+
+        );
+
+        router.push("/");
+
+        return;
+
+    }
+
+    const response=await fetch(
+
+        "http://localhost:8000/api/2fa-verify.php",
+
         {
+
             method:"POST",
 
             headers:{
+
                 "Content-Type":"application/json"
+
             },
+
+            credentials:"include",
 
             body:JSON.stringify({
 
-                username:username.value,
+                challenge:challenge.value,
 
-                password:password.value
+                code:code.value
 
             })
+
         }
+
     );
 
-    const json = await response.json();
+    const json=await response.json();
 
     if(!json.success){
 

@@ -14,179 +14,189 @@ class JobQueueRepository
         $this->db = $database->getConnection();
     }
 
-public function initialize(): void
-{
-    $this->db->exec("
-    CREATE TABLE IF NOT EXISTS job_queue
-    (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        job_id INTEGER NOT NULL,
-        status TEXT NOT NULL,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        started_at TEXT,
-        finished_at TEXT,
-        worker TEXT,
-        attempts INTEGER DEFAULT 0,
-        last_error TEXT
-    );
-    ");
-}
-
-public function enqueue(int $jobId): void
-{
-    if ($this->existsPendingOrRunning($jobId)) {
-
-        echo "Job {$jobId} ya está en cola." . PHP_EOL;
-
-        return;
+    public function initialize(): void
+    {
+        $this->db->exec("
+        CREATE TABLE IF NOT EXISTS job_queue
+        (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            job_id INTEGER NOT NULL,
+            status TEXT NOT NULL,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            started_at TEXT,
+            finished_at TEXT,
+            worker TEXT,
+            attempts INTEGER DEFAULT 0,
+            last_error TEXT
+        );
+        ");
     }
 
-    $stmt = $this->db->prepare("
-        INSERT INTO job_queue
-        (
-            job_id,
-            status
-        )
-        VALUES
-        (
-            ?,
-            'Pending'
-        )
-    ");
+    public function enqueue(int $jobId): void
+    {
+        if ($this->existsPendingOrRunning($jobId)) {
 
-    $stmt->execute([
-        $jobId
-    ]);
-}
+            echo "Job {$jobId} ya está en cola." . PHP_EOL;
 
-public function getNext(): ?array
-{
-    $stmt = $this->db->query("
-        SELECT *
-        FROM job_queue
-        WHERE status='Pending'
-        ORDER BY id
-        LIMIT 1
-    ");
+            return;
+        }
 
-    $job = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt = $this->db->prepare("
+            INSERT INTO job_queue
+            (
+                job_id,
+                status
+            )
+            VALUES
+            (
+                ?,
+                'Pending'
+            )
+        ");
 
-    return $job ?: null;
-}
+        $stmt->execute([
+            $jobId
+        ]);
+    }
 
-public function start(int $id,string $worker): void
-{
-    $stmt = $this->db->prepare("
-        UPDATE job_queue
-        SET
-            status='Running',
-            started_at=datetime('now'),
-            worker=?
-        WHERE id=?
-    ");
+    public function getNext(): ?array
+    {
+        $stmt = $this->db->query("
+            SELECT *
+            FROM job_queue
+            WHERE status='Pending'
+            ORDER BY id
+            LIMIT 1
+        ");
 
-    $stmt->execute([
-        $worker,
-        $id
-    ]);
-}
+        $job = $stmt->fetch(PDO::FETCH_ASSOC);
 
-public function finish(int $id): void
-{
-    $stmt = $this->db->prepare("
-        UPDATE job_queue
-        SET
-            status='Completed',
-            finished_at=datetime('now')
-        WHERE id=?
-    ");
+        return $job ?: null;
+    }
 
-    $stmt->execute([
-        $id
-    ]);
-}
+    public function start(int $id, string $worker): void
+    {
+        $stmt = $this->db->prepare("
+            UPDATE job_queue
+            SET
+                status='Running',
+                started_at=datetime('now'),
+                worker=?
+            WHERE id=?
+        ");
 
-public function incrementAttempts(
-    int $id,
-    string $error = ''
-): void
-{
-    $stmt = $this->db->prepare("
-        UPDATE job_queue
-        SET
-            attempts = attempts + 1,
-            last_error = ?
-        WHERE id = ?
-    ");
+        $stmt->execute([
+            $worker,
+            $id
+        ]);
+    }
 
-    $stmt->execute([
-        $error,
-        $id
-    ]);
-}
+    public function finish(int $id): void
+    {
+        /*
+         * El trabajo terminó correctamente.
+         * Ya existe en execution_history,
+         * por lo tanto se elimina de la cola.
+         */
 
-public function fail(
-    int $id,
-    string $error
-): void
-{
-    $this->incrementAttempts(
-        $id,
-        $error
-    );
+        $stmt = $this->db->prepare("
+            DELETE
+            FROM job_queue
+            WHERE id=?
+        ");
 
-    $stmt = $this->db->prepare("
-        UPDATE job_queue
-        SET
-            status='Failed',
-            finished_at=datetime('now')
-        WHERE id=?
-    ");
+        $stmt->execute([
+            $id
+        ]);
+    }
 
-    $stmt->execute([
-        $id
-    ]);
-}
+    public function incrementAttempts(
+        int $id,
+        string $error = ''
+    ): void
+    {
+        $stmt = $this->db->prepare("
+            UPDATE job_queue
+            SET
+                attempts = attempts + 1,
+                last_error = ?
+            WHERE id = ?
+        ");
 
-public function existsPendingOrRunning(int $jobId): bool
-{
-    $stmt = $this->db->prepare("
-        SELECT COUNT(*)
-        FROM job_queue
-        WHERE job_id = ?
-        AND status IN ('Pending','Running')
-    ");
+        $stmt->execute([
+            $error,
+            $id
+        ]);
+    }
 
-    $stmt->execute([
-        $jobId
-    ]);
+    public function fail(
+        int $id,
+        string $error
+    ): void
+    {
+        $this->incrementAttempts(
+            $id,
+            $error
+        );
 
-    return (int)$stmt->fetchColumn() > 0;
-}
+        $stmt = $this->db->prepare("
+            UPDATE job_queue
+            SET
+                status='Failed',
+                finished_at=datetime('now')
+            WHERE id=?
+        ");
 
-public function getAll(): array
-{
-    $stmt = $this->db->query("
-        SELECT
-            q.id,
-            q.job_id,
-            j.name,
-            q.status,
-            q.worker,
-            q.attempts,
-            q.created_at,
-            q.started_at,
-            q.finished_at,
-            q.last_error
-        FROM job_queue q
+        $stmt->execute([
+            $id
+        ]);
+    }
 
-        INNER JOIN jobs j
-            ON j.id=q.job_id
+    public function existsPendingOrRunning(int $jobId): bool
+    {
+        $stmt = $this->db->prepare("
+            SELECT COUNT(*)
+            FROM job_queue
+            WHERE job_id = ?
+            AND status IN ('Pending','Running')
+        ");
 
-        ORDER BY q.id DESC
-    ");
+        $stmt->execute([
+            $jobId
+        ]);
 
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
+        return (int)$stmt->fetchColumn() > 0;
+    }
 
+    public function getAll(): array
+    {
+        /*
+         * La cola solo muestra trabajos activos
+         * o con error.
+         */
+
+        $stmt = $this->db->query("
+            SELECT
+                q.id,
+                q.job_id,
+                j.name,
+                q.status,
+                q.worker,
+                q.attempts,
+                q.created_at,
+                q.started_at,
+                q.finished_at,
+                q.last_error
+            FROM job_queue q
+
+            INNER JOIN jobs j
+                ON j.id=q.job_id
+
+            WHERE q.status IN ('Pending','Running','Failed')
+
+            ORDER BY q.id DESC
+        ");
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

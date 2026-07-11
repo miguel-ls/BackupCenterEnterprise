@@ -25,6 +25,8 @@ use BackupCenter\Repositories\JobQueueRepository;
 use BackupCenter\Workers\BackupWorker;
 
 use BackupCenter\Repositories\NotificationRepository;
+use BackupCenter\Repositories\UserRepository;
+use BackupCenter\Repositories\AuditRepository;
 
 class Application
 {
@@ -52,6 +54,9 @@ class Application
     private BackupWorker $backupWorker;
 
     private NotificationRepository $notificationRepository;
+    private UserRepository $userRepository;
+    private AuditRepository $auditRepository;
+
 
     public function __construct()
     {
@@ -113,6 +118,20 @@ $this->notificationRepository = new NotificationRepository(
 );
 
 $this->notificationRepository->initialize();
+
+$this->userRepository = new UserRepository(
+    $this->database
+);
+
+$this->userRepository->initialize();
+
+$this->auditRepository = new AuditRepository(
+    $this->database
+);
+
+Audit::initialize(
+    $this->auditRepository
+);
 
 $hostedAgent = new HostedAgent(
     $this,
@@ -226,4 +245,13 @@ public function backupWorker(): BackupWorker
     return $this->backupWorker;
 }
 
+public function userRepository(): UserRepository
+{
+    return $this->userRepository;
+}
+
+public function auditRepository(): AuditRepository
+{
+    return $this->auditRepository;
+}
 }

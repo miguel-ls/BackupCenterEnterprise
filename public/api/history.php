@@ -1,7 +1,7 @@
 <?php
 
 header('Access-Control-Allow-Origin: http://localhost:5173');
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Methods: GET, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 header('Content-Type: application/json');
 
@@ -15,29 +15,90 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 use BackupCenter\Core\Database;
 use BackupCenter\Core\Paths;
 
+
 $db = new Database(
     Paths::database() . '/backupcenter.db'
 );
 
 $pdo = $db->getConnection();
 
-$stmt = $pdo->query("
-SELECT
-    id,
-    executed_at,
-    client,
-    files_found,
-    files_uploaded,
-    files_skipped,
-    errors,
-    duration,
-    status
-FROM execution_history
-ORDER BY id DESC
-LIMIT 100
+$page = max(
+    1,
+    (int)($_GET['page'] ?? 1)
+);
+
+$limit = (int)($_GET['limit'] ?? 10);
+
+/*
+|--------------------------------------------------------------------------
+| Solo permitimos estos tamaños
+|--------------------------------------------------------------------------
+*/
+
+$allowedLimits = [10,20,50,100];
+
+if (!in_array($limit, $allowedLimits, true)) {
+
+    $limit = 10;
+
+}
+
+$offset = ($page - 1) * $limit;
+
+$total = (int)$pdo
+    ->query("
+        SELECT COUNT(*)
+        FROM execution_history
+    ")
+    ->fetchColumn();
+
+$stmt = $pdo->prepare("
+    SELECT
+        id,
+        executed_at,
+        client,
+        files_found,
+        files_uploaded,
+        files_skipped,
+        errors,
+        duration,
+        status
+    FROM execution_history
+    ORDER BY id DESC
+    LIMIT ?
+    OFFSET ?
 ");
 
+$stmt->bindValue(
+    1,
+    $limit,
+    \PDO::PARAM_INT
+);
+
+$stmt->bindValue(
+    2,
+    $offset,
+    \PDO::PARAM_INT
+);
+
+$stmt->execute();
+
 echo json_encode([
+
     'success' => true,
-    'data' => $stmt->fetchAll(PDO::FETCH_ASSOC)
+
+    'page' => $page,
+
+    'limit' => $limit,
+
+    'total' => $total,
+
+    'pages' => (int)ceil(
+        $total / $limit
+    ),
+
+    'data' => $stmt->fetchAll(
+        \PDO::FETCH_ASSOC
+    )
+
 ]);

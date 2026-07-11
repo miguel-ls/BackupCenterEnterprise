@@ -14,6 +14,7 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 use BackupCenter\Core\Database;
 use BackupCenter\Core\Paths;
+use BackupCenter\Core\Audit;
 
 $db = new Database(
     Paths::database() . '/backupcenter.db'
@@ -22,7 +23,7 @@ $db = new Database(
 $pdo = $db->getConnection();
 
 /*==================================================
-  CREAR TABLA SI NO EXISTE
+TABLA
 ==================================================*/
 
 $pdo->exec("
@@ -50,10 +51,10 @@ CREATE TABLE IF NOT EXISTS settings(
 ");
 
 /*==================================================
-  INSERTAR CONFIGURACIÓN INICIAL
+REGISTRO INICIAL
 ==================================================*/
 
-$count = $pdo->query("
+$count=$pdo->query("
 SELECT COUNT(*)
 FROM settings
 ")->fetchColumn();
@@ -61,18 +62,14 @@ FROM settings
 if($count==0){
 
     $pdo->exec("
-    INSERT INTO settings(
-        id
-    )
-    VALUES(
-        1
-    )
+    INSERT INTO settings(id)
+    VALUES(1)
     ");
 
 }
 
 /*==================================================
-  GET
+GET
 ==================================================*/
 
 if($_SERVER['REQUEST_METHOD']=="GET"){
@@ -96,7 +93,7 @@ if($_SERVER['REQUEST_METHOD']=="GET"){
 }
 
 /*==================================================
-  PUT
+PUT
 ==================================================*/
 
 if($_SERVER['REQUEST_METHOD']=="PUT"){
@@ -108,20 +105,20 @@ if($_SERVER['REQUEST_METHOD']=="PUT"){
 
     $stmt=$pdo->prepare("
 
-    UPDATE settings
+        UPDATE settings
 
-    SET
+        SET
 
-        scheduler_interval=?,
-        max_threads=?,
-        retry_count=?,
-        retention_days=?,
-        compression=?,
-        log_level=?,
-        log_path=?,
-        connection_timeout=?
+            scheduler_interval=?,
+            max_threads=?,
+            retry_count=?,
+            retention_days=?,
+            compression=?,
+            log_level=?,
+            log_path=?,
+            connection_timeout=?
 
-    WHERE id=1
+        WHERE id=1
 
     ");
 
@@ -138,9 +135,23 @@ if($_SERVER['REQUEST_METHOD']=="PUT"){
 
     ]);
 
+    Audit::info(
+
+        "SETTINGS",
+
+        "UPDATE",
+
+        "Configuración modificada",
+
+        "admin"
+
+    );
+
     echo json_encode([
 
-        "success"=>true
+        "success"=>true,
+
+        "message"=>"Configuración actualizada."
 
     ]);
 

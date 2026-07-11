@@ -224,4 +224,26 @@ public function getRunningJobs(): array
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+public function executedThisMinute(int $id): bool
+{
+    $stmt = $this->db->prepare("
+        SELECT last_run
+        FROM jobs
+        WHERE id = ?
+    ");
+
+    $stmt->execute([$id]);
+
+    $lastRun = $stmt->fetchColumn();
+
+    if (!$lastRun) {
+        return false;
+    }
+
+    return date('Y-m-d H:i') === date(
+        'Y-m-d H:i',
+        strtotime($lastRun)
+    );
+}
+
 }

@@ -2,25 +2,22 @@
 
 namespace BackupCenter\Core;
 
-use BackupCenter\Services\UploadManager;
-use BackupCenter\Repositories\UploadedFileRepository;
+use BackupCenter\Contracts\IConfiguration;
 use BackupCenter\Models\ExecutionSummary;
 use BackupCenter\Repositories\ExecutionHistoryRepository;
-use BackupCenter\Contracts\IConfiguration;
+use BackupCenter\Repositories\UploadedFileRepository;
+use BackupCenter\Services\UploadManager;
 
 class BackupCenterAgent
 {
     private FileLockValidator $lockValidator;
     private UploadedFileRepository $repository;
     private UploadManager $uploadManager;
-
-
-private IConfiguration $config;
+    private IConfiguration $config;
     private Logger $logger;
     private FileScanner $scanner;
     private FileValidator $validator;
     private ExecutionHistoryRepository $executionHistoryRepository;
-
 
     public function __construct(
         IConfiguration $config,
@@ -30,7 +27,6 @@ private IConfiguration $config;
         UploadManager $uploadManager,
         UploadedFileRepository $repository,
         ExecutionHistoryRepository $executionHistoryRepository
-        
     ) {
         $this->config = $config;
         $this->logger = $logger;
@@ -39,112 +35,168 @@ private IConfiguration $config;
         $this->uploadManager = $uploadManager;
         $this->lockValidator = new FileLockValidator();
         $this->executionHistoryRepository = $executionHistoryRepository;
-        $this->repository = $repository;    
+        $this->repository = $repository;
     }
 
     public function run(
-    IConfiguration $configuration
-): ExecutionSummary
+        IConfiguration $configuration
+    ): ExecutionSummary
     {
+        $client = $configuration->get('client.name')
+            ?? $configuration->get('name')
+            ?? 'Sin nombre';
+
+        Audit::info(
+            "AGENT",
+            "START",
+            "Inicio respaldo {$client}",
+            "SYSTEM"
+        );
+
         $this->logger->info('=== Backup Center iniciado ===');
+
         $summary = new ExecutionSummary();
 
-$path = $configuration->get('backup.local_path')
-    ?? $configuration->get('source');
+        $path = $configuration->get('backup.local_path')
+            ?? $configuration->get('source');
 
-$extensions = $configuration->get('backup.extensions')
-    ?? ['zip', 'bak', '7z'];
+        $extensions = $configuration->get('backup.extensions')
+            ?? ['zip','bak','7z'];
 
-$files = $this->scanner->scan(
-    $path,
-    $extensions
-);
+        $files = $this->scanner->scan(
+            $path,
+            $extensions
+        );
 
         $summary->found = count($files);
 
+        echo "Ruta: {$path}" . PHP_EOL;
+        echo "Archivos encontrados: {$summary->found}" . PHP_EOL;
 
-        echo "Ruta: " . $configuration->get('backup.local_path') . PHP_EOL;
-        echo "Archivos encontrados: " . count($files) . PHP_EOL;
+        foreach($files as $file){
 
-        foreach ($files as $file) {
-
-            if (!$this->validator->validate($file)) {
+            if(!$this->validator->validate($file)){
                 continue;
             }
 
-            if ($this->lockValidator->isLocked($file->getPath())) {
-                echo "Omitido: " . $file->getName() . " (archivo en uso)" . PHP_EOL;
+            if($this->lockValidator->isLocked($file->getPath())){
+
                 $summary->skipped++;
 
                 $this->logger->info(
-                    "Archivo en uso: " . $file->getName()
+                    "Archivo en uso: ".$file->getName()
+                );
+
+                Audit::info(
+                    "AGENT",
+                    "SKIPPED",
+                    $file->getName()." bloqueado",
+                    "SYSTEM"
                 );
 
                 continue;
-            }            
+            }
 
-            $this->logger->info(
-                'Subiendo: ' . $file->getName()
-            );
-
-            echo "JOB ID = " . $configuration->get('id') . PHP_EOL;
-
-            if (
+            if(
                 $this->repository->exists(
                     (int)$configuration->get('id'),
                     $file->getName(),
                     $file->getSize()
                 )
-            ) {
+            ){
 
                 $summary->skipped++;
 
-                echo "Omitido: " . $file->getName() . " (ya fue subido)" . PHP_EOL;
+                Audit::info(
+                    "AGENT",
+                    "SKIPPED",
+                    $file->getName()." ya fue enviado",
+                    "SYSTEM"
+                );
 
                 continue;
             }
 
-            echo "Subiendo: " . $file->getName() . PHP_EOL;
+            try{
 
-            try {
+                $this->uploadManager->upload($file);
 
-                $result = $this->uploadManager->upload($file);
-
-                $sha256 = $this->repository->calculateSha256($file->getPath());
+                $sha256 = $this->repository->calculateSha256(
+                    $file->getPath()
+                );
 
                 $this->repository->save(
+
                     (int)$configuration->get('id'),
+
                     $file->getName(),
+
                     $file->getSize(),
+
                     $sha256
+
                 );
 
                 $summary->uploaded++;
 
-            } catch (\Throwable $e) {
+                Audit::info(
+
+                    "UPLOAD",
+
+                    "SUCCESS",
+
+                    $file->getName(),
+
+                    "SYSTEM"
+
+                );
+
+            }catch(\Throwable $e){
 
                 $summary->errors++;
 
-                echo "ERROR: " . $e->getMessage() . PHP_EOL;
+                $this->logger->error($e->getMessage());
 
-                $this->logger->error(
-                    "Error subiendo {$file->getName()}: {$e->getMessage()}"
+                Audit::error(
+
+                    "UPLOAD",
+
+                    "FAILED",
+
+                    $file->getName()." : ".$e->getMessage(),
+
+                    "SYSTEM"
+
                 );
 
                 continue;
             }
 
-            }
+        }
 
         $summary->finish();
 
         $this->executionHistoryRepository->save(
-            $summary,
-$configuration->get('client.name')
-    ?? $configuration->get('name')
-        );            
 
-        $this->logger->success('Proceso finalizado.');
+            $summary,
+
+            $client
+
+        );
+
+        Audit::info(
+
+            "AGENT",
+
+            "FINISH",
+
+            "Encontrados {$summary->found}, Subidos {$summary->uploaded}, Omitidos {$summary->skipped}, Errores {$summary->errors}",
+
+            "SYSTEM"
+
+        );
+
+        $this->logger->success("Proceso finalizado.");
 
         echo PHP_EOL;
         echo "==========================================" . PHP_EOL;

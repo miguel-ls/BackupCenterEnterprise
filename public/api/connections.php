@@ -14,6 +14,7 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 use BackupCenter\Core\Database;
 use BackupCenter\Core\Paths;
+use BackupCenter\Core\Audit;
 use BackupCenter\Repositories\ConnectionRepository;
 
 $db = new Database(
@@ -26,80 +27,156 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 switch ($method) {
 
-    case 'GET':
+case 'GET':
 
-        echo json_encode([
-            'success' => true,
-            'data' => $repository->getAll()
-        ]);
+    echo json_encode([
+        'success' => true,
+        'data' => $repository->getAll()
+    ]);
 
-        break;
+break;
 
-    case 'POST':
+case 'POST':
 
-        $data = json_decode(file_get_contents('php://input'), true);
+    $data = json_decode(
+        file_get_contents('php://input'),
+        true
+    );
 
-        $id = $repository->create(
-            $data['name'],
-            $data['host'],
-            (int)$data['port'],
-            $data['username'],
-            $data['password'],
-            $data['hostkey'] ?? '',
-            $data['protocol'] ?? 'SFTP',
-            $data['remote_path']
-        );
+    $id = $repository->create(
 
-        echo json_encode([
-            'success' => true,
-            'id' => $id
-        ]);
+        $data['name'],
 
-        break;
+        $data['host'],
 
-    case 'PUT':
+        (int)$data['port'],
 
-        $data = json_decode(file_get_contents('php://input'), true);
+        $data['username'],
 
-        $repository->update(
-            (int)$data['id'],
-            $data['name'],
-            $data['host'],
-            (int)$data['port'],
-            $data['username'],
-            $data['password'],
-            $data['hostkey'] ?? '',
-            $data['protocol'] ?? 'SFTP',
-            $data['remote_path']
-        );
+        $data['password'],
 
-        echo json_encode([
-            'success' => true
-        ]);
+        $data['hostkey'] ?? '',
 
-        break;
+        $data['protocol'] ?? 'SFTP',
 
-    case 'DELETE':
+        $data['remote_path']
 
-        $data = json_decode(file_get_contents('php://input'), true);
+    );
 
-        $repository->delete(
-            (int)$data['id']
-        );
+    Audit::info(
 
-        echo json_encode([
-            'success' => true
-        ]);
+        "CONNECTIONS",
 
-        break;
+        "CREATE",
 
-    default:
+        "Conexión ".$data['name']." creada",
 
-        http_response_code(405);
+        "admin"
 
-        echo json_encode([
-            'success' => false,
-            'message' => 'Método no permitido'
-        ]);
+    );
+
+    echo json_encode([
+
+        'success'=>true,
+
+        'id'=>$id
+
+    ]);
+
+break;
+
+case 'PUT':
+
+    $data=json_decode(
+        file_get_contents('php://input'),
+        true
+    );
+
+    $repository->update(
+
+        (int)$data['id'],
+
+        $data['name'],
+
+        $data['host'],
+
+        (int)$data['port'],
+
+        $data['username'],
+
+        $data['password'],
+
+        $data['hostkey'] ?? '',
+
+        $data['protocol'] ?? 'SFTP',
+
+        $data['remote_path']
+
+    );
+
+    Audit::info(
+
+        "CONNECTIONS",
+
+        "UPDATE",
+
+        "Conexión ".$data['name']." actualizada",
+
+        "admin"
+
+    );
+
+    echo json_encode([
+
+        'success'=>true
+
+    ]);
+
+break;
+
+case 'DELETE':
+
+    $data=json_decode(
+        file_get_contents('php://input'),
+        true
+    );
+
+    $repository->delete(
+
+        (int)$data['id']
+
+    );
+
+    Audit::info(
+
+        "CONNECTIONS",
+
+        "DELETE",
+
+        "Conexión ID ".$data['id']." eliminada",
+
+        "admin"
+
+    );
+
+    echo json_encode([
+
+        'success'=>true
+
+    ]);
+
+break;
+
+default:
+
+    http_response_code(405);
+
+    echo json_encode([
+
+        'success'=>false,
+
+        'message'=>'Método no permitido'
+
+    ]);
 
 }

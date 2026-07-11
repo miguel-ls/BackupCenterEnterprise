@@ -23,9 +23,17 @@ $pdo = $db->getConnection();
 
 $data = [
 
+    /*
+     * En la siguiente versión estos valores
+     * vendrán del Servicio Windows.
+     */
     'scheduler' => 'Activo',
 
     'worker' => 'Activo',
+
+    /*
+     * Cola
+     */
 
     'queue' => (int)$pdo->query("
         SELECT COUNT(*)
@@ -39,22 +47,24 @@ $data = [
         WHERE status='Running'
     ")->fetchColumn(),
 
-    'completed' => (int)$pdo->query("
-        SELECT COUNT(*)
-        FROM job_queue
-        WHERE status='Completed'
-    ")->fetchColumn(),
-
     'failed' => (int)$pdo->query("
         SELECT COUNT(*)
         FROM job_queue
         WHERE status='Failed'
     ")->fetchColumn(),
 
+    /*
+     * Historial
+     */
+
+    'executions' => (int)$pdo->query("
+        SELECT COUNT(*)
+        FROM execution_history
+    ")->fetchColumn(),
+
     'last_execution' => $pdo->query("
-        SELECT MAX(finished_at)
-        FROM job_queue
-        WHERE status='Completed'
+        SELECT MAX(executed_at)
+        FROM execution_history
     ")->fetchColumn()
 
 ];

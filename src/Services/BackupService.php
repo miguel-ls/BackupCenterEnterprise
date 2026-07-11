@@ -2,10 +2,11 @@
 
 namespace BackupCenter\Services;
 
+use BackupCenter\Core\Audit;
 use BackupCenter\Core\HostedAgent;
 use BackupCenter\Core\JobConfiguration;
-use BackupCenter\Repositories\JobRepository;
 use BackupCenter\Repositories\ConnectionRepository;
+use BackupCenter\Repositories\JobRepository;
 
 class BackupService
 {
@@ -28,28 +29,98 @@ class BackupService
      */
     public function run(int $jobId): bool
     {
+        Audit::info(
+            "BACKUP",
+            "START",
+            "Inicio Job {$jobId}",
+            "SYSTEM"
+        );
+
         $job = $this->jobRepository->getJob($jobId);
 
         if (!$job) {
+
+            Audit::error(
+                "BACKUP",
+                "JOB_NOT_FOUND",
+                "Job {$jobId} no existe.",
+                "SYSTEM"
+            );
+
             return false;
         }
 
         $connection = null;
 
         if (!empty($job['connection_id'])) {
+
             $connection = $this->connectionRepository->get(
                 (int)$job['connection_id']
             );
+
         }
 
         if (!$connection) {
+
+            Audit::error(
+                "BACKUP",
+                "CONNECTION_NOT_FOUND",
+                "No existe conexión para Job {$jobId}.",
+                "SYSTEM"
+            );
+
             return false;
         }
 
-$configuration = new JobConfiguration(
-    $job + $connection
-);
+        $configuration = new JobConfiguration(
+            $job + $connection
+        );
 
-        return $this->agent->executeJob($configuration);
+        $start = microtime(true);
+
+        try {
+
+            $ok = $this->agent->executeJob(
+                $configuration
+            );
+
+            $seconds = round(
+                microtime(true) - $start,
+                2
+            );
+
+            if($ok){
+
+                Audit::info(
+                    "BACKUP",
+                    "SUCCESS",
+                    "Job {$job['name']} completado en {$seconds} segundos.",
+                    "SYSTEM"
+                );
+
+            }else{
+
+                Audit::error(
+                    "BACKUP",
+                    "FAILED",
+                    "Job {$job['name']} terminó con errores.",
+                    "SYSTEM"
+                );
+
+            }
+
+            return $ok;
+
+        } catch (\Throwable $e) {
+
+            Audit::error(
+                "BACKUP",
+                "EXCEPTION",
+                $e->getMessage(),
+                "SYSTEM"
+            );
+
+            throw $e;
+        }
     }
 }

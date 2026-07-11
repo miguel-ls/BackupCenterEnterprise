@@ -9,6 +9,8 @@ class NotificationRepository
 {
     private PDO $db;
 
+    private const MAX_NOTIFICATIONS = 200;
+
     public function __construct(Database $database)
     {
         $this->db = $database->getConnection();
@@ -54,6 +56,8 @@ class NotificationRepository
             $message
         ]);
 
+        $this->cleanup();
+
         return (int)$this->db->lastInsertId();
     }
 
@@ -63,6 +67,7 @@ class NotificationRepository
             SELECT *
             FROM notifications
             ORDER BY id DESC
+            LIMIT 50
         ");
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -75,6 +80,7 @@ class NotificationRepository
             FROM notifications
             WHERE is_read = 0
             ORDER BY id DESC
+            LIMIT 50
         ");
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -129,6 +135,20 @@ class NotificationRepository
     {
         $this->db->exec("
             DELETE FROM notifications
+        ");
+    }
+
+    private function cleanup(): void
+    {
+        $this->db->exec("
+            DELETE FROM notifications
+            WHERE id NOT IN
+            (
+                SELECT id
+                FROM notifications
+                ORDER BY id DESC
+                LIMIT " . self::MAX_NOTIFICATIONS . "
+            )
         ");
     }
 }

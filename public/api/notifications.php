@@ -14,6 +14,7 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 use BackupCenter\Core\Database;
 use BackupCenter\Core\Paths;
+use BackupCenter\Core\Audit;
 use BackupCenter\Repositories\NotificationRepository;
 
 $db = new Database(
@@ -24,44 +25,78 @@ $repository = new NotificationRepository($db);
 
 switch ($_SERVER['REQUEST_METHOD']) {
 
-    case 'GET':
+case 'GET':
 
-        echo json_encode([
-            'success' => true,
-            'data' => $repository->getAll(),
-            'unread' => $repository->countUnread()
-        ]);
+    echo json_encode([
 
-        break;
+        'success' => true,
 
-    case 'PUT':
+        'data' => $repository->getAll(),
 
-        $repository->markAllAsRead();
+        'unread' => $repository->countUnread()
 
-        echo json_encode([
-            'success' => true
-        ]);
+    ]);
 
-        break;
+break;
 
-    case 'DELETE':
+case 'PUT':
 
-        $repository->clear();
+    $repository->markAllAsRead();
 
-        echo json_encode([
-            'success' => true
-        ]);
+    Audit::info(
 
-        break;
+        "NOTIFICATIONS",
 
-    default:
+        "MARK_ALL_READ",
 
-        http_response_code(405);
+        "Todas las notificaciones fueron marcadas como leídas",
 
-        echo json_encode([
-            'success' => false,
-            'message' => 'Método no permitido.'
-        ]);
+        "admin"
 
-        break;
+    );
+
+    echo json_encode([
+
+        'success'=>true
+
+    ]);
+
+break;
+
+case 'DELETE':
+
+    $repository->clear();
+
+    Audit::info(
+
+        "NOTIFICATIONS",
+
+        "CLEAR",
+
+        "Se eliminaron todas las notificaciones",
+
+        "admin"
+
+    );
+
+    echo json_encode([
+
+        'success'=>true
+
+    ]);
+
+break;
+
+default:
+
+    http_response_code(405);
+
+    echo json_encode([
+
+        'success'=>false,
+
+        'message'=>'Método no permitido.'
+
+    ]);
+
 }

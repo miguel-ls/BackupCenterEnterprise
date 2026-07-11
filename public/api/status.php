@@ -6,38 +6,51 @@ header('Access-Control-Allow-Headers: Content-Type');
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+
     http_response_code(200);
+
     exit;
+
 }
 
-require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/bootstrap.php';
 
-use BackupCenter\Core\Database;
-use BackupCenter\Core\Paths;
-
-$db = new Database(
-    Paths::database() . '/backupcenter.db'
-);
-
-$pdo = $db->getConnection();
+use BackupCenter\Core\ApiResponse;
 
 $status = [
 
-    'jobs' => (int)$pdo->query("SELECT COUNT(*) FROM jobs")->fetchColumn(),
+    'jobs' => (int)$pdo->query("
+        SELECT COUNT(*)
+        FROM jobs
+    ")->fetchColumn(),
 
-    'connections' => (int)$pdo->query("SELECT COUNT(*) FROM connections")->fetchColumn(),
+    'connections' => (int)$pdo->query("
+        SELECT COUNT(*)
+        FROM connections
+    ")->fetchColumn(),
 
-    'uploaded' => (int)$pdo->query("SELECT COUNT(*) FROM uploaded_files")->fetchColumn(),
+    'uploaded' => (int)$pdo->query("
+        SELECT COUNT(*)
+        FROM uploaded_files
+    ")->fetchColumn(),
 
-    'executions' => (int)$pdo->query("SELECT COUNT(*) FROM execution_history")->fetchColumn(),
+    'executions' => (int)$pdo->query("
+        SELECT COUNT(*)
+        FROM execution_history
+    ")->fetchColumn(),
 
-    'queue' => (int)$pdo->query("SELECT COUNT(*) FROM job_queue WHERE status='Pending'")->fetchColumn(),
+    'queue' => (int)$pdo->query("
+        SELECT COUNT(*)
+        FROM job_queue
+        WHERE status='Pending'
+    ")->fetchColumn(),
 
-    'running' => (int)$pdo->query("SELECT COUNT(*) FROM job_queue WHERE status='Running'")->fetchColumn()
+    'running' => (int)$pdo->query("
+        SELECT COUNT(*)
+        FROM job_queue
+        WHERE status='Running'
+    ")->fetchColumn()
 
 ];
 
-echo json_encode([
-    'success' => true,
-    'data' => $status
-]);
+ApiResponse::success($status);
