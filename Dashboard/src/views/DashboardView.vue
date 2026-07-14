@@ -132,13 +132,7 @@ Información del Servidor
 
 <script setup>
 
-import {
-
-ref,
-onMounted,
-onUnmounted
-
-} from "vue";
+import { ref } from "vue";
 
 import MainLayout from "../components/layout/MainLayout.vue";
 import StatCard from "../components/cards/StatCard.vue";
@@ -149,48 +143,53 @@ import QueueWidget from "../components/dashboard/widgets/QueueWidget.vue";
 import BackupChart from "../components/dashboard/widgets/BackupChart.vue";
 
 import {
-
-getStatus,
-getStatistics,
-getVersion,
-getSystemInfo
-
+    getStatus,
+    getStatistics,
+    getVersion,
+    getSystemInfo
 } from "../api/client";
 
-const status=ref({});
+import { useAutoRefresh } from "../composables/useAutoRefresh";
 
-const statistics=ref({});
+const status = ref({});
+const statistics = ref({});
+const version = ref({});
+const system = ref({});
 
-const version=ref({});
+async function load() {
 
-const system=ref({});
+    try {
 
-let timer=null;
+        const [
+            statusResponse,
+            statisticsResponse,
+            versionResponse,
+            systemResponse
+        ] = await Promise.all([
 
-async function load(){
+            getStatus(),
+            getStatistics(),
+            getVersion(),
+            getSystemInfo()
 
-status.value=(await getStatus()).data;
+        ]);
 
-statistics.value=(await getStatistics()).data;
+        status.value = statusResponse.data;
 
-version.value=(await getVersion()).data;
+        statistics.value = statisticsResponse.data;
 
-system.value=(await getSystemInfo()).data;
+        version.value = versionResponse.data;
+
+        system.value = systemResponse.data;
+
+    } catch (e) {
+
+        console.error(e);
+
+    }
 
 }
 
-onMounted(()=>{
-
-load();
-
-timer=setInterval(load,5000);
-
-});
-
-onUnmounted(()=>{
-
-clearInterval(timer);
-
-});
+useAutoRefresh(load,5000);
 
 </script>

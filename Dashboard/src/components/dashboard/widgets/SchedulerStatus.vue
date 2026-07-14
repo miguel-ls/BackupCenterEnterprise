@@ -76,9 +76,7 @@
 
             <span
                 class="font-bold"
-                :class="data.failed>0
-                    ? 'text-red-600'
-                    : 'text-green-600'"
+                :class="data.failed > 0 ? 'text-red-600' : 'text-green-600'"
             >
 
                 {{ data.failed }}
@@ -111,7 +109,7 @@
 
             <div class="font-semibold">
 
-                {{ data.last_execution || '-' }}
+                {{ data.last_execution || "-" }}
 
             </div>
 
@@ -126,36 +124,48 @@
 <script setup>
 
 import {
+
     ref,
     onMounted,
     onUnmounted
+
 } from "vue";
 
 import {
+
     getSystemStatus
+
 } from "@/api/client";
 
 const data = ref({});
 
 let timer = null;
 
-async function load(){
+async function load() {
 
-    const response = await getSystemStatus();
+    try {
 
-    data.value = response.data;
+        const response = await getSystemStatus();
+
+        data.value = response.data ?? {};
+
+    } catch (e) {
+
+        console.error(e);
+
+    }
 
 }
 
-onMounted(()=>{
+onMounted(() => {
 
     load();
 
-    timer = setInterval(load,5000);
+    timer = setInterval(load, 5000);
 
 });
 
-onUnmounted(()=>{
+onUnmounted(() => {
 
     clearInterval(timer);
 

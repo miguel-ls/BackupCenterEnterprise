@@ -1,5 +1,4 @@
 <template>
-
 <div class="bg-white rounded-xl border border-neutral-200 shadow-sm">
 
     <div class="flex items-center justify-between p-5 border-b">
@@ -35,9 +34,7 @@
             v-if="loading"
             class="text-center text-neutral-500 py-10"
         >
-
             Cargando...
-
         </div>
 
         <template v-else>
@@ -48,107 +45,50 @@
             >
 
                 <div class="flex justify-between">
-
-                    <span class="text-neutral-500">
-
-                        Trabajo
-
-                    </span>
-
-                    <strong>
-
-                        {{ last.name }}
-
-                    </strong>
-
+                    <span>Trabajo</span>
+                    <strong>{{ last.name }}</strong>
                 </div>
 
                 <div class="flex justify-between">
-
-                    <span class="text-neutral-500">
-
-                        Estado
-
-                    </span>
+                    <span>Estado</span>
 
                     <span
                         class="px-3 py-1 rounded-full text-xs font-semibold"
                         :class="badge(last.status)"
                     >
-
                         {{ last.status }}
-
                     </span>
 
                 </div>
 
                 <div class="flex justify-between">
-
-                    <span class="text-neutral-500">
-
-                        Worker
-
-                    </span>
-
-                    <strong>
-
-                        {{ last.worker || "-" }}
-
-                    </strong>
-
+                    <span>Worker</span>
+                    <strong>{{ last.worker || "-" }}</strong>
                 </div>
 
                 <div class="flex justify-between">
-
-                    <span class="text-neutral-500">
-
-                        Intentos
-
-                    </span>
-
-                    <strong>
-
-                        {{ last.attempts }}
-
-                    </strong>
-
+                    <span>Intentos</span>
+                    <strong>{{ last.attempts }}</strong>
                 </div>
 
                 <div class="flex justify-between">
-
-                    <span class="text-neutral-500">
-
-                        Inicio
-
-                    </span>
-
-                    <strong>
-
-                        {{ format(last.started_at) }}
-
-                    </strong>
-
+                    <span>Creado</span>
+                    <strong>{{ last.created_at }}</strong>
                 </div>
 
                 <div class="flex justify-between">
+                    <span>Inicio</span>
+                    <strong>{{ last.started_at || "-" }}</strong>
+                </div>
 
-                    <span class="text-neutral-500">
-
-                        Fin
-
-                    </span>
-
-                    <strong>
-
-                        {{ format(last.finished_at) }}
-
-                    </strong>
-
+                <div class="flex justify-between">
+                    <span>Fin</span>
+                    <strong>{{ last.finished_at || "-" }}</strong>
                 </div>
 
                 <div
                     v-if="last.last_error"
-                    class="mt-4 rounded-lg bg-red-50 border border-red-200 p-3"
+                    class="rounded-lg border border-red-200 bg-red-50 p-3"
                 >
 
                     <div class="font-semibold text-red-700">
@@ -157,7 +97,7 @@
 
                     </div>
 
-                    <div class="text-sm text-red-600 mt-2">
+                    <div class="text-red-600 text-sm mt-2">
 
                         {{ last.last_error }}
 
@@ -172,7 +112,7 @@
                 class="text-center text-neutral-500 py-10"
             >
 
-                No existen ejecuciones registradas.
+                No existen trabajos en cola.
 
             </div>
 
@@ -181,117 +121,87 @@
     </div>
 
 </div>
-
 </template>
 
 <script setup>
 
 import {
-
     ref,
     computed,
     onMounted,
     onUnmounted
-
 } from "vue";
 
 import {
-
     getQueue
-
 } from "@/api/client";
 
 const queue = ref([]);
 
-const loading = ref(true);
+const loading = ref(false);
 
 let timer = null;
 
-const last = computed(()=>{
+const last = computed(() => {
 
-    if(queue.value.length===0){
-
+    if (!queue.value.length) {
         return null;
-
     }
 
     return queue.value[0];
 
 });
 
-async function load(){
+async function load() {
 
-    try{
+    loading.value = true;
 
-        loading.value=true;
+    try {
 
-        const response=await getQueue();
+        const response = await getQueue();
 
-        queue.value=response.data ?? response;
+        queue.value = response.data ?? [];
 
-    }
-    catch(error){
+    } finally {
 
-        console.error(error);
-
-    }
-    finally{
-
-        loading.value=false;
+        loading.value = false;
 
     }
 
 }
 
-function format(value){
+function badge(status) {
 
-    if(!value){
-
-        return "-";
-
-    }
-
-    return value;
-
-}
-
-function badge(status){
-
-    switch(status){
-
-        case "Completed":
-
-            return "bg-green-100 text-green-700";
-
-        case "Running":
-
-            return "bg-blue-100 text-blue-700";
+    switch (status) {
 
         case "Pending":
-
             return "bg-yellow-100 text-yellow-700";
 
-        case "Failed":
+        case "Running":
+            return "bg-blue-100 text-blue-700";
 
+        case "Completed":
+            return "bg-green-100 text-green-700";
+
+        case "Failed":
             return "bg-red-100 text-red-700";
 
         default:
-
             return "bg-neutral-100 text-neutral-700";
 
     }
 
 }
 
-onMounted(()=>{
+onMounted(() => {
 
     load();
 
-    timer=setInterval(load,5000);
+    timer = setInterval(load, 3000);
 
 });
 
-onUnmounted(()=>{
+onUnmounted(() => {
 
     clearInterval(timer);
 

@@ -4,9 +4,8 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 use BackupCenter\Core\Application;
 use BackupCenter\Core\Audit;
-use BackupCenter\Core\Database;
-use BackupCenter\Core\Paths;
 use BackupCenter\Repositories\JobRepository;
+use BackupCenter\Repositories\JobQueueRepository;
 
 header('Access-Control-Allow-Origin: http://localhost:5173');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
@@ -20,11 +19,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 $app = new Application();
 
-$db = new Database(
-    Paths::database() . '/backupcenter.db'
-);
+$db = $app->database();
 
 $repository = new JobRepository($db);
+
+$queue = new JobQueueRepository($db);
+
+$queue->initialize();
 
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -33,175 +34,155 @@ $body = json_decode(
     true
 );
 
-if (!$body) {
+if (!is_array($body)) {
     $body = [];
 }
 
 switch ($method) {
 
-case 'GET':
-
-    echo json_encode([
-        'success' => true,
-        'data' => $repository->getJobs()
-    ]);
-
-break;
-
-case 'POST':
-
-    if (($body['action'] ?? '') === 'run') {
-
-        $ok = $app
-            ->backupService()
-            ->run((int)$body['id']);
-
-        if($ok){
-
-            Audit::info(
-                "JOBS",
-                "RUN",
-                "Trabajo ID ".$body['id']." ejecutado",
-                "admin"
-            );
-
-        }else{
-
-            Audit::error(
-                "JOBS",
-                "RUN",
-                "Error ejecutando trabajo ID ".$body['id'],
-                "admin"
-            );
-
-        }
+    case 'GET':
 
         echo json_encode([
-            'success'=>$ok,
-            'message'=>$ok
-                ?'Trabajo ejecutado correctamente.'
-                :'No fue posible ejecutar el trabajo.'
+            'success' => true,
+            'data' => $repository->getJobs()
         ]);
 
         break;
-    }
 
-    $id=$repository->createJob(
+    case 'POST':
 
-        !empty($body['connection_id'])
-            ?(int)$body['connection_id']
-            :null,
+        /*
+        |--------------------------------------------------------------------------
+        | Ejecutar trabajo
+        |--------------------------------------------------------------------------
+        */
 
-        $body['name'] ?? '',
+        if (($body['action'] ?? '') === 'run') {
 
-        $body['source'] ?? '',
+            $ok = $queue->enqueue(
+                (int)$body['id']
+            );
 
-        $body['destination'] ?? '',
+            if ($ok) {
 
-        $body['schedule'] ?? ''
+                Audit::info(
+                    "JOBS",
+                    "QUEUE",
+                    "Trabajo {$body['id']} agregado a la cola.",
+                    "admin"
+                );
 
-    );
+                echo json_encode([
+                    "success" => true,
+                    "message" => "Trabajo agregado a la cola."
+                ]);
 
-    Audit::info(
+            } else {
 
-        "JOBS",
+                echo json_encode([
+                    "success" => false,
+                    "message" => "El trabajo ya estaba en cola o ejecutándose."
+                ]);
 
-        "CREATE",
+            }
 
-        "Trabajo ".$body['name']." creado",
+            exit;
+        }
 
-        "admin"
+        /*
+        |--------------------------------------------------------------------------
+        | Crear trabajo
+        |--------------------------------------------------------------------------
+        */
 
-    );
+        $id = $repository->createJob(
 
-    echo json_encode([
+            !empty($body['connection_id'])
+                ? (int)$body['connection_id']
+                : null,
 
-        'success'=>true,
+            $body['name'] ?? '',
 
-        'id'=>$id
+            $body['source'] ?? '',
 
-    ]);
+            $body['destination'] ?? '',
 
-break;
+            $body['schedule'] ?? ''
 
-case 'PUT':
+        );
 
-    $ok=$repository->updateJob(
+        Audit::info(
+            "JOBS",
+            "CREATE",
+            "Trabajo " . ($body['name'] ?? '') . " creado",
+            "admin"
+        );
 
-        (int)$body['id'],
+        echo json_encode([
+            "success" => true,
+            "id" => $id
+        ]);
 
-        !empty($body['connection_id'])
-            ?(int)$body['connection_id']
-            :null,
+        break;
 
-        $body['name'] ?? '',
+    case 'PUT':
 
-        $body['source'] ?? '',
+        $ok = $repository->updateJob(
 
-        $body['destination'] ?? '',
+            (int)$body['id'],
 
-        $body['schedule'] ?? ''
+            !empty($body['connection_id'])
+                ? (int)$body['connection_id']
+                : null,
 
-    );
+            $body['name'] ?? '',
 
-    Audit::info(
+            $body['source'] ?? '',
 
-        "JOBS",
+            $body['destination'] ?? '',
 
-        "UPDATE",
+            $body['schedule'] ?? ''
 
-        "Trabajo ".$body['name']." actualizado",
+        );
 
-        "admin"
+        Audit::info(
+            "JOBS",
+            "UPDATE",
+            "Trabajo " . ($body['name'] ?? '') . " actualizado",
+            "admin"
+        );
 
-    );
+        echo json_encode([
+            "success" => $ok
+        ]);
 
-    echo json_encode([
+        break;
 
-        'success'=>$ok
+    case 'DELETE':
 
-    ]);
+        $ok = $repository->deleteJob(
+            (int)$body['id']
+        );
 
-break;
+        Audit::info(
+            "JOBS",
+            "DELETE",
+            "Trabajo {$body['id']} eliminado",
+            "admin"
+        );
 
-case 'DELETE':
+        echo json_encode([
+            "success" => $ok
+        ]);
 
-    $ok=$repository->deleteJob(
+        break;
 
-        (int)$body['id']
+    default:
 
-    );
+        http_response_code(405);
 
-    Audit::info(
-
-        "JOBS",
-
-        "DELETE",
-
-        "Trabajo ID ".$body['id']." eliminado",
-
-        "admin"
-
-    );
-
-    echo json_encode([
-
-        'success'=>$ok
-
-    ]);
-
-break;
-
-default:
-
-    http_response_code(405);
-
-    echo json_encode([
-
-        'success'=>false,
-
-        'message'=>'Método no permitido'
-
-    ]);
-
+        echo json_encode([
+            "success" => false,
+            "message" => "Método no permitido"
+        ]);
 }

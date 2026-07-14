@@ -1,7 +1,7 @@
 <?php
 
 header('Access-Control-Allow-Origin: http://localhost:5173');
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Methods: GET, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 header('Content-Type: application/json');
 
@@ -11,29 +11,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 require_once __DIR__ . '/../../vendor/autoload.php';
-require_once __DIR__ . '/../../vendor/autoload.php';
 
-use BackupCenter\Core\Database;
-use BackupCenter\Core\Paths;
+use BackupCenter\Core\Application;
 use BackupCenter\Repositories\JobQueueRepository;
 
-$db = new Database(
-    Paths::database() . '/backupcenter.db'
+$app = new Application();
+
+$repository = new JobQueueRepository(
+    $app->database()
 );
 
-$repository = new JobQueueRepository($db);
+$repository->initialize();
 
-switch ($_SERVER['REQUEST_METHOD']) {
+echo json_encode([
 
-case 'GET':
+    "success" => true,
 
-    $rows = $repository->getAll();
+    "data" => $repository->getAll()
 
-    echo json_encode([
-        'success' => true,
-        'count' => count($rows),
-        'data' => $rows
-    ]);
-
-    exit;
-}
+]);

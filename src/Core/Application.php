@@ -60,6 +60,8 @@ class Application
 
     public function __construct()
     {
+        date_default_timezone_set('America/Lima');
+        
         $this->database = new Database(
             Paths::database() . '/backupcenter.db'
         );
@@ -254,4 +256,25 @@ public function auditRepository(): AuditRepository
 {
     return $this->auditRepository;
 }
+
+public function jobQueue(): JobQueueRepository
+{
+    return $this->jobQueue;
+}
+
+public function notificationRepository(): NotificationRepository
+{
+    return $this->notificationRepository;
+}
+
+public function jobRepository(): JobRepository
+{
+    return $this->jobRepository;
+}
+
+public function connectionRepository(): ConnectionRepository
+{
+    return $this->connectionRepository;
+}
+
 }

@@ -28,8 +28,11 @@ class BackupWorker
         }
 
         $this->queue->start(
-            (int)$item['id'],
+
+            (int)$item["id"],
+
             gethostname()
+
         );
 
         Audit::info(
@@ -50,46 +53,77 @@ class BackupWorker
 
             echo "Worker ejecutando Job {$item['job_id']}" . PHP_EOL;
 
-            $this->backupService->run(
-                (int)$item['job_id']
-            );
+            $ok = $this->backupService->run(
 
-            $this->queue->finish(
-                (int)$item['id']
-            );
-
-            $seconds = round(
-                microtime(true) - $start,
-                2
-            );
-
-            $this->notifications->add(
-
-                'INFO',
-
-                'Backup completado',
-
-                "El Job {$item['job_id']} finalizó correctamente."
+                (int)$item["job_id"]
 
             );
 
-            Audit::info(
+            if ($ok) {
 
-                "WORKER",
+                $this->queue->finish(
 
-                "SUCCESS",
+                    (int)$item["id"]
 
-                "Job {$item['job_id']} completado en {$seconds} segundos.",
+                );
 
-                "SYSTEM"
+                $seconds = round(
 
-            );
+                    microtime(true) - $start,
+
+                    2
+
+                );
+
+                $this->notifications->add(
+
+                    "INFO",
+
+                    "Backup completado",
+
+                    "El Job {$item['job_id']} finalizó correctamente."
+
+                );
+
+                Audit::info(
+
+                    "WORKER",
+
+                    "SUCCESS",
+
+                    "Job {$item['job_id']} completado en {$seconds} segundos.",
+
+                    "SYSTEM"
+
+                );
+
+            } else {
+
+                $this->queue->fail(
+
+                    (int)$item["id"],
+
+                    "Backup finalizó con errores."
+
+                );
+
+                $this->notifications->add(
+
+                    "ERROR",
+
+                    "Backup fallido",
+
+                    "El Job {$item['job_id']} terminó con errores."
+
+                );
+
+            }
 
         } catch (\Throwable $e) {
 
             $this->queue->fail(
 
-                (int)$item['id'],
+                (int)$item["id"],
 
                 $e->getMessage()
 
@@ -97,9 +131,9 @@ class BackupWorker
 
             $this->notifications->add(
 
-                'ERROR',
+                "ERROR",
 
-                'Backup fallido',
+                "Backup fallido",
 
                 "El Job {$item['job_id']} falló: {$e->getMessage()}"
 
@@ -117,7 +151,6 @@ class BackupWorker
 
             );
 
-            throw $e;
         }
     }
 }

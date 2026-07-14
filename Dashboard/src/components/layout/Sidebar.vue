@@ -1,18 +1,50 @@
 <template>
 
-<aside class="w-64 bg-neutral-900 text-white flex flex-col">
+<aside class="w-72 bg-slate-900 text-white flex flex-col shadow-2xl">
 
-    <div class="h-16 flex items-center justify-center border-b border-neutral-800">
+    <!-- Logo -->
 
-        <h1 class="text-xl font-bold">
+    <div class="border-b border-slate-700 p-6">
+
+        <h1 class="text-2xl font-bold tracking-wide">
 
             Backup Center
 
         </h1>
 
+        <p class="text-sm text-slate-400 mt-1">
+
+            Enterprise Edition
+
+        </p>
+
     </div>
 
-    <nav class="flex-1 p-4">
+    <!-- Estado -->
+
+    <div class="px-5 py-4 border-b border-slate-700">
+
+        <div class="flex items-center justify-between">
+
+            <span class="text-sm text-slate-300">
+
+                Estado
+
+            </span>
+
+            <span
+                class="bg-green-600 px-2 py-1 rounded-full text-xs font-semibold"
+            >
+                ONLINE
+            </span>
+
+        </div>
+
+    </div>
+
+    <!-- Menú -->
+
+    <nav class="flex-1 px-4 py-5 overflow-y-auto">
 
         <div class="title">
 
@@ -44,7 +76,7 @@
             📄 Logs
         </RouterLink>
 
-        <div class="title mt-6">
+        <div class="title mt-8">
 
             SEGURIDAD
 
@@ -58,7 +90,7 @@
             🛡 Auditoría
         </RouterLink>
 
-        <div class="title mt-6">
+        <div class="title mt-8">
 
             SISTEMA
 
@@ -73,6 +105,32 @@
         </RouterLink>
 
     </nav>
+
+    <!-- Pie -->
+
+    <div
+        class="border-t border-slate-700 p-5 text-xs text-slate-400"
+    >
+
+        <div class="font-semibold text-white">
+
+            Backup Center Enterprise
+
+        </div>
+
+        <div class="mt-1">
+
+            Versión 1.0.0
+
+        </div>
+
+        <div class="mt-3 text-green-400">
+
+            ● Sistema operativo
+
+        </div>
+
+    </div>
 
 </aside>
 
@@ -90,15 +148,15 @@ import { RouterLink } from "vue-router"
 
     font-size:11px;
 
-    color:#9ca3af;
+    color:#94a3b8;
 
-    font-weight:bold;
+    font-weight:700;
 
-    letter-spacing:1px;
+    letter-spacing:2px;
 
-    margin-bottom:10px;
+    margin-bottom:12px;
 
-    padding-left:10px;
+    padding-left:12px;
 
 }
 
@@ -106,19 +164,23 @@ import { RouterLink } from "vue-router"
 
     display:block;
 
-    padding:12px 14px;
+    padding:14px 16px;
 
-    margin-bottom:6px;
+    margin-bottom:8px;
 
-    border-radius:10px;
+    border-radius:12px;
 
-    transition:.2s;
+    transition:all .20s;
+
+    color:#e5e7eb;
 
 }
 
 .menu:hover{
 
-    background:#262626;
+    background:#1e293b;
+
+    transform:translateX(4px);
 
 }
 
@@ -128,7 +190,9 @@ import { RouterLink } from "vue-router"
 
     color:white;
 
-    font-weight:600;
+    font-weight:700;
+
+    box-shadow:0 0 15px rgba(37,99,235,.35);
 
 }
 

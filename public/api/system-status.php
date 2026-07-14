@@ -12,64 +12,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-use BackupCenter\Core\Database;
-use BackupCenter\Core\Paths;
+use BackupCenter\Core\Application;
+use BackupCenter\Repositories\JobQueueRepository;
+use BackupCenter\Repositories\ExecutionHistoryRepository;
 
-$db = new Database(
-    Paths::database() . '/backupcenter.db'
+$app = new Application();
+
+$queue = new JobQueueRepository(
+    $app->database()
 );
 
-$pdo = $db->getConnection();
+$history = new ExecutionHistoryRepository(
+    $app->database()
+);
+
+$queue->initialize();
+
+$last = $history->latest(1);
 
 $data = [
 
-    /*
-     * En la siguiente versión estos valores
-     * vendrán del Servicio Windows.
-     */
-    'scheduler' => 'Activo',
+    "scheduler" => "Activo",
 
-    'worker' => 'Activo',
+    "worker" => "Activo",
 
-    /*
-     * Cola
-     */
+    "queue" => $queue->countPending(),
 
-    'queue' => (int)$pdo->query("
-        SELECT COUNT(*)
-        FROM job_queue
-        WHERE status='Pending'
-    ")->fetchColumn(),
+    "running" => $queue->countRunning(),
 
-    'running' => (int)$pdo->query("
-        SELECT COUNT(*)
-        FROM job_queue
-        WHERE status='Running'
-    ")->fetchColumn(),
+    "failed" => $queue->countFailed(),
 
-    'failed' => (int)$pdo->query("
-        SELECT COUNT(*)
-        FROM job_queue
-        WHERE status='Failed'
-    ")->fetchColumn(),
+    "completed" => $queue->countCompleted(),
 
-    /*
-     * Historial
-     */
+    "executions" => $history->statistics()["total_runs"] ?? 0,
 
-    'executions' => (int)$pdo->query("
-        SELECT COUNT(*)
-        FROM execution_history
-    ")->fetchColumn(),
-
-    'last_execution' => $pdo->query("
-        SELECT MAX(executed_at)
-        FROM execution_history
-    ")->fetchColumn()
+    "last_execution" => $last[0]["executed_at"] ?? "-"
 
 ];
 
 echo json_encode([
-    'success' => true,
-    'data' => $data
+
+    "success" => true,
+
+    "data" => $data
+
 ]);

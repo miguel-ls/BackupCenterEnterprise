@@ -14,49 +14,12 @@
 
     <div class="flex items-center gap-6">
 
-        <!-- Usuario -->
-
-        <div class="flex items-center gap-3">
-
-            <div
-                class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold"
-            >
-                {{ initial }}
-            </div>
-
-            <div>
-
-                <div class="font-semibold">
-
-                    {{ user.fullname }}
-
-                </div>
-
-                <div class="text-xs text-neutral-500">
-
-                    {{ user.role }}
-
-                </div>
-
-            </div>
-
-            <button
-                @click="logout"
-                class="ml-2 text-red-600 hover:underline text-sm"
-            >
-
-                Cerrar sesión
-
-            </button>
-
-        </div>
-
-        <!-- Notificaciones -->
+        <!-- NOTIFICACIONES -->
 
         <div class="relative">
 
             <button
-                @click="show = !show"
+                @click="showNotifications=!showNotifications"
                 class="relative text-2xl hover:scale-110 transition"
             >
 
@@ -74,7 +37,7 @@
             </button>
 
             <div
-                v-if="show"
+                v-if="showNotifications"
                 class="absolute right-0 mt-3 w-96 bg-white border rounded-xl shadow-xl z-50"
             >
 
@@ -86,11 +49,7 @@
 
                     </h3>
 
-                    <span class="text-sm text-neutral-500">
-
-                        {{ notifications.length }}
-
-                    </span>
+                    <span>{{notifications.length}}</span>
 
                 </div>
 
@@ -99,42 +58,20 @@
                     <div
                         v-for="item in notifications.slice(0,5)"
                         :key="item.id"
-                        class="p-4 border-b hover:bg-neutral-50"
+                        class="p-4 border-b"
                     >
 
-                        <div class="flex justify-between">
+                        <div class="font-semibold">
 
-                            <span
-                                class="font-semibold"
-                                :class="color(item.level)"
-                            >
-
-                                {{ item.title }}
-
-                            </span>
-
-                            <span class="text-xs text-neutral-500">
-
-                                {{ item.created_at }}
-
-                            </span>
+                            {{item.title}}
 
                         </div>
 
-                        <div class="text-sm text-neutral-600 mt-2">
+                        <div class="text-sm text-neutral-500">
 
-                            {{ item.message }}
+                            {{item.message}}
 
                         </div>
-
-                    </div>
-
-                    <div
-                        v-if="notifications.length===0"
-                        class="text-center p-8 text-neutral-500"
-                    >
-
-                        No existen notificaciones.
 
                     </div>
 
@@ -143,7 +80,7 @@
                 <div class="flex justify-between p-4 border-t">
 
                     <button
-                        class="text-blue-600 hover:underline"
+                        class="text-blue-600"
                         @click="markAll"
                     >
 
@@ -152,7 +89,7 @@
                     </button>
 
                     <button
-                        class="text-red-600 hover:underline"
+                        class="text-red-600"
                         @click="clearAll"
                     >
 
@@ -166,17 +103,117 @@
 
         </div>
 
-        <!-- Estado -->
+        <!-- USUARIO -->
 
-        <div class="flex items-center gap-3">
+        <div class="relative">
 
-            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+            <button
 
-            <span class="text-sm text-neutral-600">
+                @click="showMenu=!showMenu"
 
-                Servicio activo
+                class="flex items-center gap-3 hover:bg-neutral-100 rounded-xl px-3 py-2"
 
-            </span>
+            >
+
+                <div
+                    class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold"
+                >
+
+                    {{initial}}
+
+                </div>
+
+                <div>
+
+                    <div class="font-semibold">
+
+                        {{user.fullname}}
+
+                    </div>
+
+                    <div class="text-xs text-neutral-500">
+
+                        {{user.role}}
+
+                    </div>
+
+                </div>
+
+                ▼
+
+            </button>
+
+            <div
+
+                v-if="showMenu"
+
+                class="absolute right-0 mt-2 w-64 bg-white border rounded-xl shadow-xl overflow-hidden z-50"
+
+            >
+
+                <button
+
+                    @click="openProfile"
+
+                    class="w-full text-left px-5 py-3 hover:bg-neutral-100"
+
+                >
+
+                    👤 Mi Perfil
+
+                </button>
+
+                <button
+
+                    @click="openPassword"
+
+                    class="w-full text-left px-5 py-3 hover:bg-neutral-100"
+
+                >
+
+                    🔒 Cambiar contraseña
+
+                </button>
+
+                <button
+
+                    @click="openRecovery"
+
+                    class="w-full text-left px-5 py-3 hover:bg-neutral-100"
+
+                >
+
+                    🔑 Recovery Codes
+
+                </button>
+
+                <button
+
+                    @click="openSessions"
+
+                    class="w-full text-left px-5 py-3 hover:bg-neutral-100"
+
+                >
+
+                    🖥 Sesiones
+
+                </button>
+
+                <hr>
+
+                <button
+
+                    @click="logout"
+
+                    class="w-full text-left px-5 py-3 text-red-600 hover:bg-red-50"
+
+                >
+
+                    🚪 Cerrar sesión
+
+                </button>
+
+            </div>
 
         </div>
 
@@ -184,132 +221,173 @@
 
 </header>
 
+<ProfileModal
+v-model="showProfile"
+/>
+
+<ChangePasswordModal
+v-model="showPassword"
+/>
+
+<RecoveryCodesModal
+v-model="showRecovery"
+:user="user"
+/>
+
+<SessionsModal
+v-model="showSessions"
+/>
+
 </template>
 
 <script setup>
 
 import {
 
-    ref,
-    computed,
-    onMounted,
-    onUnmounted
+ref,
 
-} from "vue";
+computed,
 
-import { useRouter } from "vue-router";
+onMounted,
+
+onUnmounted
+
+} from "vue"
+
+import {useRouter} from "vue-router"
 
 import {
 
-    getNotifications,
-    markNotificationsAsRead,
-    clearNotifications
+getNotifications,
 
-} from "@/api/client";
+markNotificationsAsRead,
 
-const router = useRouter();
+clearNotifications
 
-const unread = ref(0);
+} from "@/api/client"
 
-const notifications = ref([]);
+import ProfileModal from "../profile/ProfileModal.vue"
 
-const show = ref(false);
+import ChangePasswordModal from "../profile/ChangePasswordModal.vue"
 
-const user = JSON.parse(
-    localStorage.getItem("user") ?? "{}"
-);
+import RecoveryCodesModal from "../profile/RecoveryCodesModal.vue"
 
-const initial = computed(()=>
+import SessionsModal from "../profile/SessionsModal.vue"
 
-    (user.fullname ?? "?")
-        .substring(0,1)
-        .toUpperCase()
+const router=useRouter()
 
-);
+const showMenu=ref(false)
 
-let timer = null;
+const showNotifications=ref(false)
 
-function logout(){
+const showPassword=ref(false)
 
-    localStorage.removeItem("user");
+const showProfile=ref(false)
 
-    router.push("/login");
+const showRecovery=ref(false)
+
+const showSessions=ref(false)
+
+const unread=ref(0)
+
+const notifications=ref([])
+
+const user=JSON.parse(
+
+localStorage.getItem("user")??"{}"
+
+)
+
+const initial=computed(()=>
+
+(user.fullname??"?")
+
+.substring(0,1)
+
+.toUpperCase()
+
+)
+
+let timer=null
+
+function openProfile(){
+
+showMenu.value=false
+
+showProfile.value=true
 
 }
 
-function color(level){
+function openPassword(){
 
-    switch(level){
+showMenu.value=false
 
-        case "ERROR":
+showPassword.value=true
 
-            return "text-red-600";
+}
 
-        case "WARNING":
+function openRecovery(){
 
-            return "text-yellow-600";
+showMenu.value=false
 
-        default:
+showRecovery.value=true
 
-            return "text-green-600";
+}
 
-    }
+function openSessions(){
+
+showMenu.value=false
+
+showSessions.value=true
+
+}
+
+function logout(){
+
+localStorage.removeItem("user")
+
+router.push("/login")
 
 }
 
 async function load(){
 
-    try{
+const r=await getNotifications()
 
-        const response = await getNotifications();
+notifications.value=r.data
 
-        notifications.value = response.data;
-
-        unread.value = response.unread;
-
-    }
-    catch(e){
-
-        console.error(e);
-
-    }
+unread.value=r.unread
 
 }
 
 async function markAll(){
 
-    await markNotificationsAsRead();
+await markNotificationsAsRead()
 
-    await load();
+load()
 
 }
 
 async function clearAll(){
 
-    if(!confirm("¿Eliminar todas las notificaciones?")){
+await clearNotifications()
 
-        return;
-
-    }
-
-    await clearNotifications();
-
-    await load();
+load()
 
 }
 
 onMounted(()=>{
 
-    load();
+load()
 
-    timer = setInterval(load,5000);
+timer=setInterval(load,5000)
 
-});
+})
 
 onUnmounted(()=>{
 
-    clearInterval(timer);
+clearInterval(timer)
 
-});
+})
 
 </script>

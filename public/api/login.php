@@ -3,6 +3,7 @@
 use BackupCenter\Core\ApiController;
 use BackupCenter\Core\ApiResponse;
 use BackupCenter\Core\Audit;
+use BackupCenter\Repositories\SessionRepository;
 
 require_once __DIR__ . '/bootstrap.php';
 
@@ -100,23 +101,23 @@ if (!password_verify($password, $user['password'])) {
 |--------------------------------------------------------------------------
 */
 
-if((int)$user["twofactor_enabled"]===1){
+if ((int)$user["twofactor_enabled"] === 1) {
 
-    if(session_status()===PHP_SESSION_NONE){
+    if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
 
-    $challenge=bin2hex(random_bytes(32));
+    $challenge = bin2hex(random_bytes(32));
 
-    $_SESSION["2fa"]=[
+    $_SESSION["2fa"] = [
 
-        "challenge"=>$challenge,
+        "challenge" => $challenge,
 
-        "user_id"=>$user["id"],
+        "user_id" => $user["id"],
 
-        "username"=>$user["username"],
+        "username" => $user["username"],
 
-        "expires"=>time()+300
+        "expires" => time() + 300
 
     ];
 
@@ -134,11 +135,11 @@ if((int)$user["twofactor_enabled"]===1){
 
     ApiResponse::success([
 
-        "requires2FA"=>true,
+        "requires2FA" => true,
 
-        "challenge"=>$challenge,
+        "challenge" => $challenge,
 
-        "username"=>$username
+        "username" => $username
 
     ]);
 
@@ -146,7 +147,7 @@ if((int)$user["twofactor_enabled"]===1){
 
 /*
 |--------------------------------------------------------------------------
-| Login normal
+| Login correcto
 |--------------------------------------------------------------------------
 */
 
@@ -157,6 +158,29 @@ WHERE id=?
 ")->execute([
     $user["id"]
 ]);
+
+$token = bin2hex(random_bytes(32));
+
+$sessionRepository = new SessionRepository(
+    $app->database()
+);
+
+$sessionRepository->create(
+
+    (int)$user["id"],
+
+    $token,
+
+    $_SERVER["HTTP_USER_AGENT"] ?? "Unknown",
+
+    $_SERVER["REMOTE_ADDR"] ?? "LOCAL",
+
+    date(
+        "Y-m-d H:i:s",
+        strtotime("+30 days")
+    )
+
+);
 
 Audit::info(
 
@@ -172,6 +196,6 @@ Audit::info(
 
 unset($user["password"]);
 
-unset($user["twofactor_enabled"]);
+$user["token"] = $token;
 
 ApiResponse::success($user);

@@ -52,39 +52,40 @@ public function exists(
     return (int)$stmt->fetchColumn() > 0;
 }
 
-    public function save(
-        int $jobId,
-        string $filename,
-        int $filesize,
-        string $sha256
-    ): void
-    {
-        $stmt = $this->db->prepare("
-            INSERT INTO uploaded_files
-            (
-                job_id,
-                filename,
-                filesize,
-                sha256,
-                uploaded_at
-            )
-            VALUES
-            (
-                ?,
-                ?,
-                ?,
-                ?,
-                datetime('now')
-            )
-        ");
+public function save(
+    int $jobId,
+    string $filename,
+    int $filesize,
+    string $sha256
+): void
+{
+    $stmt = $this->db->prepare("
+        INSERT INTO uploaded_files
+        (
+            job_id,
+            filename,
+            filesize,
+            sha256,
+            uploaded_at
+        )
+        VALUES
+        (
+            ?,
+            ?,
+            ?,
+            ?,
+            ?
+        )
+    ");
 
-        $stmt->execute([
-            $jobId,
-            $filename,
-            $filesize,
-            $sha256
-        ]);
-    }
+    $stmt->execute([
+        $jobId,
+        $filename,
+        $filesize,
+        $sha256,
+        date('Y-m-d H:i:s')
+    ]);
+}
 
     public function calculateSha256(string $file): string
     {

@@ -1,68 +1,151 @@
 <template>
 
-<table class="w-full border border-neutral-200 bg-white rounded-lg overflow-hidden">
+<div class="bg-white rounded-xl shadow-sm border border-neutral-200 overflow-hidden">
 
-    <thead class="bg-neutral-100">
+    <!-- Encabezado -->
 
-        <tr>
+    <div class="flex items-center justify-between px-6 py-4 border-b bg-neutral-50">
 
-            <th class="text-left p-3">ID</th>
-            <th class="text-left p-3">Trabajo</th>
-            <th class="text-left p-3">Estado</th>
-            <th class="text-left p-3">Worker</th>
-            <th class="text-left p-3">Intentos</th>
-            <th class="text-left p-3">Inicio</th>
-            <th class="text-left p-3">Fin</th>
+        <div>
 
-        </tr>
+            <h2 class="text-lg font-bold">
 
-    </thead>
+                Estado de Trabajos
 
-    <tbody>
+            </h2>
 
-        <tr
-            v-for="item in items"
-            :key="item.id"
-            class="border-t hover:bg-neutral-50"
-        >
+            <p class="text-sm text-neutral-500">
 
-            <td class="p-3">{{ item.id }}</td>
+                Total registros: {{ items.length }}
 
-            <td class="p-3">{{ item.name }}</td>
+            </p>
 
-            <td class="p-3">
+        </div>
 
-                <StatusBadge
-                    :status="item.status"
-                />
+    </div>
 
-            </td>
+    <div class="overflow-x-auto">
 
-            <td class="p-3">{{ item.worker }}</td>
+        <table class="w-full">
 
-            <td class="p-3">{{ item.attempts }}</td>
+            <thead class="bg-slate-100">
 
-            <td class="p-3">{{ item.started_at }}</td>
+                <tr>
 
-            <td class="p-3">{{ item.finished_at }}</td>
+                    <th class="text-left px-4 py-3 font-semibold">ID</th>
 
-        </tr>
+                    <th class="text-left px-4 py-3 font-semibold">Trabajo</th>
 
-    </tbody>
+                    <th class="text-center px-4 py-3 font-semibold">Estado</th>
 
-</table>
+                    <th class="text-left px-4 py-3 font-semibold">Worker</th>
+
+                    <th class="text-center px-4 py-3 font-semibold">Intentos</th>
+
+                    <th class="text-left px-4 py-3 font-semibold">Inicio</th>
+
+                    <th class="text-left px-4 py-3 font-semibold">Fin</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody v-if="items.length">
+
+                <tr
+                    v-for="item in items"
+                    :key="item.id"
+                    class="border-t hover:bg-blue-50 transition-colors"
+                >
+
+                    <td class="px-4 py-3 font-semibold text-slate-700">
+
+                        #{{ item.id }}
+
+                    </td>
+
+                    <td class="px-4 py-3">
+
+                        {{ item.name }}
+
+                    </td>
+
+                    <td class="px-4 py-3 text-center">
+
+                        <StatusBadge
+                            :status="item.status"
+                        />
+
+                    </td>
+
+                    <td class="px-4 py-3">
+
+                        {{ item.worker || "-" }}
+
+                    </td>
+
+                    <td class="px-4 py-3 text-center">
+
+                        <span
+                            class="inline-flex items-center justify-center min-w-[34px] h-8 rounded-full bg-slate-100 font-semibold"
+                        >
+
+                            {{ item.attempts }}
+
+                        </span>
+
+                    </td>
+
+                    <td class="px-4 py-3 text-sm text-slate-600">
+
+                        {{ item.started_at || "-" }}
+
+                    </td>
+
+                    <td class="px-4 py-3 text-sm text-slate-600">
+
+                        {{ item.finished_at || "-" }}
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+            <tbody v-else>
+
+                <tr>
+
+                    <td
+                        colspan="7"
+                        class="text-center py-12 text-neutral-500"
+                    >
+
+                        No existen trabajos en la cola.
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
 
 </template>
 
 <script setup>
 
-import StatusBadge from '@/components/common/StatusBadge.vue'
+import StatusBadge from "@/components/common/StatusBadge.vue"
 
 defineProps({
 
-    items: {
-        type: Array,
-        required: true
+    items:{
+        type:Array,
+        default:()=>[]
     }
 
 })

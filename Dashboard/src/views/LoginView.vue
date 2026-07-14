@@ -34,6 +34,7 @@
                     <input
                         v-model="username"
                         class="w-full border rounded-lg p-3"
+                        autocomplete="username"
                     >
 
                 </div>
@@ -50,6 +51,7 @@
                         v-model="password"
                         type="password"
                         class="w-full border rounded-lg p-3"
+                        autocomplete="current-password"
                     >
 
                 </div>
@@ -110,24 +112,22 @@
 
 <script setup>
 
-import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { ref } from "vue"
+import { useRouter } from "vue-router"
 
-const router = useRouter();
+const router = useRouter()
 
-const username = ref("");
-const password = ref("");
-const code = ref("");
+const username = ref("")
+const password = ref("")
+const code = ref("")
+const error = ref("")
 
-const error = ref("");
-
-const requires2FA = ref(false);
-
-const challenge = ref("");
+const requires2FA = ref(false)
+const challenge = ref("")
 
 async function login(){
 
-    error.value="";
+    error.value=""
 
     if(!requires2FA.value){
 
@@ -157,25 +157,25 @@ async function login(){
 
             }
 
-        );
+        )
 
-        const json=await response.json();
+        const json = await response.json()
 
         if(!json.success){
 
-            error.value=json.message;
+            error.value=json.message
 
-            return;
+            return
 
         }
 
         if(json.data.requires2FA){
 
-            requires2FA.value=true;
+            requires2FA.value=true
 
-            challenge.value=json.data.challenge;
+            challenge.value=json.data.challenge
 
-            return;
+            return
 
         }
 
@@ -185,15 +185,23 @@ async function login(){
 
             JSON.stringify(json.data)
 
-        );
+        )
 
-        router.push("/");
+        localStorage.setItem(
 
-        return;
+            "token",
+
+            json.data.token
+
+        )
+
+        router.push("/")
+
+        return
 
     }
 
-    const response=await fetch(
+    const response = await fetch(
 
         "http://localhost:8000/api/2fa-verify.php",
 
@@ -219,15 +227,15 @@ async function login(){
 
         }
 
-    );
+    )
 
-    const json=await response.json();
+    const json = await response.json()
 
     if(!json.success){
 
-        error.value=json.message;
+        error.value=json.message
 
-        return;
+        return
 
     }
 
@@ -237,9 +245,21 @@ async function login(){
 
         JSON.stringify(json.data)
 
-    );
+    )
 
-    router.push("/");
+    if(json.data.token){
+
+        localStorage.setItem(
+
+            "token",
+
+            json.data.token
+
+        )
+
+    }
+
+    router.push("/")
 
 }
 

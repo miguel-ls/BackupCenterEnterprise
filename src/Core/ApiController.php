@@ -6,37 +6,26 @@ class ApiController
 {
     public static function boot(): void
     {
-        header('Access-Control-Allow-Origin: http://localhost:5173');
+        header("Access-Control-Allow-Origin: http://localhost:5173");
+        header("Access-Control-Allow-Credentials: true");
+        header("Access-Control-Allow-Headers: Content-Type, Authorization");
+        header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+        header("Content-Type: application/json; charset=utf-8");
 
-        header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-
-        header('Access-Control-Allow-Headers: Content-Type');
-
-        header('Content-Type: application/json');
-
-        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-
+        if ($_SERVER["REQUEST_METHOD"] === "OPTIONS") {
             http_response_code(200);
-
             exit;
-
         }
     }
 
-    public static function method(
-        string|array $methods
-    ): void
+    public static function method(string|array $methods): void
     {
-        if (!is_array($methods)) {
+        $methods = (array)$methods;
 
-            $methods = [$methods];
-
-        }
-
-        if (!in_array($_SERVER['REQUEST_METHOD'], $methods)) {
+        if (!in_array($_SERVER["REQUEST_METHOD"], $methods)) {
 
             ApiResponse::error(
-                'Método no permitido',
+                "Método no permitido.",
                 405
             );
 
@@ -45,9 +34,28 @@ class ApiController
 
     public static function body(): array
     {
-        return json_decode(
-            file_get_contents('php://input'),
+        $body = json_decode(
+            file_get_contents("php://input"),
             true
-        ) ?? [];
+        );
+
+        return is_array($body) ? $body : [];
+    }
+
+    public static function bearerToken(): ?string
+    {
+        $header = $_SERVER["HTTP_AUTHORIZATION"] ?? "";
+
+        if (
+            preg_match(
+                "/Bearer\s+(.*)$/i",
+                $header,
+                $match
+            )
+        ) {
+            return trim($match[1]);
+        }
+
+        return null;
     }
 }

@@ -35,11 +35,11 @@ $limit = (int)($_GET['limit'] ?? 10);
 |--------------------------------------------------------------------------
 */
 
-$allowedLimits = [10,20,50,100];
+$allowedLimits = [5,10,20,50,100];
 
 if (!in_array($limit, $allowedLimits, true)) {
 
-    $limit = 10;
+    $limit = 5;
 
 }
 
