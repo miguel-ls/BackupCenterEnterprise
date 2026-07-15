@@ -1,18 +1,28 @@
 <template>
 
-<div class="bg-white rounded-xl border border-neutral-200 shadow-sm p-6">
+<div class="bg-white rounded-xl border border-neutral-200 shadow-sm">
 
-    <div class="flex justify-between items-center mb-6">
+    <div class="flex items-center justify-between px-6 py-5 border-b">
 
-        <h2 class="text-lg font-semibold">
+        <div>
 
-            Actividad de Backups (7 días)
+            <h2 class="text-xl font-bold">
 
-        </h2>
+                Actividad de Backups
+
+            </h2>
+
+            <div class="text-sm text-neutral-500 mt-1">
+
+                Últimos 7 días
+
+            </div>
+
+        </div>
 
         <button
             @click="load"
-            class="text-sm text-blue-600 hover:underline"
+            class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
         >
 
             Actualizar
@@ -21,20 +31,24 @@
 
     </div>
 
-    <div style="height:320px">
+    <div class="p-6">
 
-        <Bar
-            v-if="loaded"
-            :data="chartData"
-            :options="chartOptions"
-        />
+        <div style="height:360px">
 
-        <div
-            v-else
-            class="text-center py-24 text-neutral-500"
-        >
+            <Bar
+                v-if="loaded"
+                :data="chartData"
+                :options="chartOptions"
+            />
 
-            Cargando gráfico...
+            <div
+                v-else
+                class="flex items-center justify-center h-full text-neutral-500"
+            >
+
+                Cargando gráfico...
+
+            </div>
 
         </div>
 
@@ -49,15 +63,16 @@
 import {
 
     ref,
-    onMounted
+    onMounted,
+    onUnmounted
 
-} from "vue";
+} from "vue"
 
 import {
 
     Bar
 
-} from "vue-chartjs";
+} from "vue-chartjs"
 
 import {
 
@@ -72,13 +87,13 @@ import {
     CategoryScale,
     LinearScale
 
-} from "chart.js";
+} from "chart.js"
 
 import {
 
     getChart
 
-} from "@/api/client";
+} from "@/api/client"
 
 ChartJS.register(
 
@@ -91,9 +106,9 @@ ChartJS.register(
     CategoryScale,
     LinearScale
 
-);
+)
 
-const loaded = ref(false);
+const loaded = ref(false)
 
 const chartData = ref({
 
@@ -101,13 +116,45 @@ const chartData = ref({
 
     datasets:[]
 
-});
+})
 
-const chartOptions={
+const chartOptions = {
 
     responsive:true,
 
     maintainAspectRatio:false,
+
+    interaction:{
+
+        intersect:false,
+
+        mode:"index"
+
+    },
+
+    plugins:{
+
+        legend:{
+
+            display:true,
+
+            position:"top"
+
+        },
+
+        title:{
+
+            display:false
+
+        },
+
+        tooltip:{
+
+            enabled:true
+
+        }
+
+    },
 
     scales:{
 
@@ -115,9 +162,25 @@ const chartOptions={
 
             beginAtZero:true,
 
+            grid:{
+
+                color:"#E5E7EB"
+
+            },
+
             ticks:{
 
                 precision:0
+
+            }
+
+        },
+
+        x:{
+
+            grid:{
+
+                display:false
 
             }
 
@@ -125,17 +188,19 @@ const chartOptions={
 
     }
 
-};
+}
+
+let timer = null
 
 async function load(){
 
-    loaded.value=false;
+    loaded.value = false
 
-    const json=await getChart();
+    const response = await getChart()
 
-    chartData.value={
+    chartData.value = {
 
-        labels:json.data.map(x=>x.day),
+        labels: response.data.map(item => item.day),
 
         datasets:[
 
@@ -143,18 +208,36 @@ async function load(){
 
                 label:"Archivos subidos",
 
-                data:json.data.map(x=>x.uploaded)
+                data: response.data.map(item => item.uploaded),
+
+                backgroundColor:"#2563EB",
+
+                borderRadius:8,
+
+                borderSkipped:false
 
             }
 
         ]
 
-    };
+    }
 
-    loaded.value=true;
+    loaded.value = true
 
 }
 
-onMounted(load);
+onMounted(()=>{
+
+    load()
+
+    timer = setInterval(load,5000)
+
+})
+
+onUnmounted(()=>{
+
+    clearInterval(timer)
+
+})
 
 </script>

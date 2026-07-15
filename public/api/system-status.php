@@ -28,13 +28,54 @@ $history = new ExecutionHistoryRepository(
 
 $queue->initialize();
 
+function serviceStatus(string $service): string
+{
+    if (PHP_OS_FAMILY !== 'Windows') {
+        return 'No soportado';
+    }
+
+    $powershell = 'C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe';
+
+    $command =
+        '"' .
+        $powershell .
+        '" -NoProfile -ExecutionPolicy Bypass -Command "Get-Service -Name ' .
+        $service .
+        ' | Select-Object -ExpandProperty Status"';
+
+    $output = shell_exec($command);
+
+    if ($output === null) {
+        return 'Desconocido';
+    }
+
+    $status = strtoupper(trim($output));
+
+    switch ($status) {
+
+        case 'RUNNING':
+            return 'Activo';
+
+        case 'STOPPED':
+            return 'Inactivo';
+
+        case 'PAUSED':
+            return 'Pausado';
+
+        default:
+            return 'Desconocido';
+    }
+}
+
 $last = $history->latest(1);
+
+$stats = $history->statistics();
 
 $data = [
 
-    "scheduler" => "Activo",
+    "scheduler" => serviceStatus("BackupCenterScheduler"),
 
-    "worker" => "Activo",
+    "worker" => serviceStatus("BackupCenterWorker"),
 
     "queue" => $queue->countPending(),
 
@@ -44,16 +85,13 @@ $data = [
 
     "completed" => $queue->countCompleted(),
 
-    "executions" => $history->statistics()["total_runs"] ?? 0,
+    "executions" => (int)($stats["total_runs"] ?? 0),
 
     "last_execution" => $last[0]["executed_at"] ?? "-"
 
 ];
 
 echo json_encode([
-
     "success" => true,
-
     "data" => $data
-
 ]);

@@ -1,117 +1,185 @@
 <template>
 
-<div class="bg-white rounded-xl border border-neutral-200 shadow-sm p-6">
+<div class="bg-white rounded-xl border border-neutral-200 shadow-sm">
 
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center justify-between px-6 py-5 border-b">
 
-        <h2 class="text-xl font-bold">
+        <div>
 
-            Estado del Sistema
+            <h2 class="text-xl font-bold">
 
-        </h2>
+                Centro de Monitoreo
 
-        <div class="flex items-center gap-2 text-green-600 font-semibold">
+            </h2>
 
-            <span class="w-3 h-3 rounded-full bg-green-500"></span>
+            <div class="text-sm text-neutral-500">
 
-            Operativo
+                Actualización automática cada 5 segundos
+
+            </div>
+
+        </div>
+
+        <div class="flex items-center gap-2">
+
+            <span
+                class="w-3 h-3 rounded-full"
+                :class="online ? 'bg-green-500 animate-pulse' : 'bg-red-500'"
+            ></span>
+
+            <span
+                class="font-semibold"
+                :class="online ? 'text-green-600' : 'text-red-600'"
+            >
+
+                {{ online ? "ONLINE" : "OFFLINE" }}
+
+            </span>
 
         </div>
 
     </div>
 
-    <div class="space-y-4">
+    <div class="grid grid-cols-2 gap-4 p-6">
 
-        <div class="flex justify-between items-center">
+        <div class="card">
 
-            <span>Scheduler</span>
+            <div class="label">
 
-            <span
-                class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-semibold"
+                Scheduler
+
+            </div>
+
+            <div
+                class="value"
+                :class="badge(data.scheduler)"
             >
+
                 {{ data.scheduler }}
-            </span>
+
+            </div>
 
         </div>
 
-        <div class="flex justify-between items-center">
+        <div class="card">
 
-            <span>Worker</span>
+            <div class="label">
 
-            <span
-                class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-semibold"
+                Worker
+
+            </div>
+
+            <div
+                class="value"
+                :class="badge(data.worker)"
             >
+
                 {{ data.worker }}
-            </span>
+
+            </div>
 
         </div>
 
-        <div class="flex justify-between items-center">
+        <div class="card">
 
-            <span>Pendientes</span>
+            <div class="label">
 
-            <span class="font-bold">
+                Pendientes
+
+            </div>
+
+            <div class="number">
 
                 {{ data.queue }}
 
-            </span>
+            </div>
 
         </div>
 
-        <div class="flex justify-between items-center">
+        <div class="card">
 
-            <span>Ejecutándose</span>
+            <div class="label">
 
-            <span class="font-bold">
+                Ejecutándose
+
+            </div>
+
+            <div class="number text-blue-600">
 
                 {{ data.running }}
 
-            </span>
+            </div>
 
         </div>
 
-        <div class="flex justify-between items-center">
+        <div class="card">
 
-            <span>Con errores</span>
+            <div class="label">
 
-            <span
-                class="font-bold"
-                :class="data.failed > 0 ? 'text-red-600' : 'text-green-600'"
+                Completados
+
+            </div>
+
+            <div class="number text-green-600">
+
+                {{ data.completed }}
+
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <div class="label">
+
+                Fallidos
+
+            </div>
+
+            <div
+                class="number"
+                :class="data.failed>0 ? 'text-red-600' : 'text-green-600'"
             >
 
                 {{ data.failed }}
 
-            </span>
+            </div>
 
         </div>
 
-        <hr>
+    </div>
 
-        <div class="flex justify-between">
+    <div class="border-t p-6">
 
-            <span>Total ejecuciones</span>
+        <div class="flex justify-between mb-3">
 
-            <span class="font-bold">
+            <span class="text-neutral-500">
+
+                Total ejecuciones
+
+            </span>
+
+            <strong>
 
                 {{ data.executions }}
 
-            </span>
+            </strong>
 
         </div>
 
-        <div>
+        <div class="flex justify-between">
 
-            <div class="text-sm text-neutral-500 mb-1">
+            <span class="text-neutral-500">
 
                 Última ejecución
 
-            </div>
+            </span>
 
-            <div class="font-semibold">
+            <strong>
 
                 {{ data.last_execution || "-" }}
 
-            </div>
+            </strong>
 
         </div>
 
@@ -127,48 +195,135 @@ import {
 
     ref,
     onMounted,
-    onUnmounted
+    onUnmounted,
+    computed
 
-} from "vue";
+} from "vue"
 
 import {
 
     getSystemStatus
 
-} from "@/api/client";
+} from "@/api/client"
 
-const data = ref({});
+const data = ref({
 
-let timer = null;
+    scheduler:"-",
 
-async function load() {
+    worker:"-",
 
-    try {
+    queue:0,
 
-        const response = await getSystemStatus();
+    running:0,
 
-        data.value = response.data ?? {};
+    completed:0,
 
-    } catch (e) {
+    failed:0,
 
-        console.error(e);
+    executions:0,
+
+    last_execution:"-"
+
+})
+
+const online = computed(()=>{
+
+    return data.value.scheduler==="Activo"
+
+})
+
+function badge(value){
+
+    return value==="Activo"
+
+        ? "text-green-600"
+
+        : "text-red-600"
+
+}
+
+async function load(){
+
+    try{
+
+        const response = await getSystemStatus()
+
+        data.value = response.data
+
+    }
+
+    catch(error){
+
+        console.error(error)
 
     }
 
 }
 
-onMounted(() => {
+let timer = null
 
-    load();
+onMounted(()=>{
 
-    timer = setInterval(load, 5000);
+    load()
 
-});
+    timer = setInterval(load,5000)
 
-onUnmounted(() => {
+})
 
-    clearInterval(timer);
+onUnmounted(()=>{
 
-});
+    clearInterval(timer)
+
+})
 
 </script>
+
+<style scoped>
+
+.card{
+
+    border:1px solid #e5e7eb;
+
+    border-radius:12px;
+
+    padding:18px;
+
+    transition:.2s;
+
+}
+
+.card:hover{
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+    transform:translateY(-2px);
+
+}
+
+.label{
+
+    font-size:13px;
+
+    color:#6b7280;
+
+    margin-bottom:10px;
+
+}
+
+.number{
+
+    font-size:30px;
+
+    font-weight:700;
+
+}
+
+.value{
+
+    font-size:20px;
+
+    font-weight:700;
+
+}
+
+</style>
