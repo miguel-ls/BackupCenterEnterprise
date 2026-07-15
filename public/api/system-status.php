@@ -15,6 +15,7 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 use BackupCenter\Core\Application;
 use BackupCenter\Repositories\JobQueueRepository;
 use BackupCenter\Repositories\ExecutionHistoryRepository;
+use BackupCenter\Services\WindowsServiceMonitor;
 
 $app = new Application();
 
@@ -28,70 +29,42 @@ $history = new ExecutionHistoryRepository(
 
 $queue->initialize();
 
-function serviceStatus(string $service): string
-{
-    if (PHP_OS_FAMILY !== 'Windows') {
-        return 'No soportado';
-    }
-
-    $powershell = 'C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe';
-
-    $command =
-        '"' .
-        $powershell .
-        '" -NoProfile -ExecutionPolicy Bypass -Command "Get-Service -Name ' .
-        $service .
-        ' | Select-Object -ExpandProperty Status"';
-
-    $output = shell_exec($command);
-
-    if ($output === null) {
-        return 'Desconocido';
-    }
-
-    $status = strtoupper(trim($output));
-
-    switch ($status) {
-
-        case 'RUNNING':
-            return 'Activo';
-
-        case 'STOPPED':
-            return 'Inactivo';
-
-        case 'PAUSED':
-            return 'Pausado';
-
-        default:
-            return 'Desconocido';
-    }
-}
+$monitor = new WindowsServiceMonitor();
 
 $last = $history->latest(1);
 
 $stats = $history->statistics();
 
-$data = [
+$scheduler = $monitor->getServiceInfo(
+    "BackupCenterScheduler"
+);
 
-    "scheduler" => serviceStatus("BackupCenterScheduler"),
-
-    "worker" => serviceStatus("BackupCenterWorker"),
-
-    "queue" => $queue->countPending(),
-
-    "running" => $queue->countRunning(),
-
-    "failed" => $queue->countFailed(),
-
-    "completed" => $queue->countCompleted(),
-
-    "executions" => (int)($stats["total_runs"] ?? 0),
-
-    "last_execution" => $last[0]["executed_at"] ?? "-"
-
-];
+$worker = $monitor->getServiceInfo(
+    "BackupCenterWorker"
+);
 
 echo json_encode([
-    "success" => true,
-    "data" => $data
+
+    "success"=>true,
+
+    "data"=>[
+
+        "scheduler"=>$scheduler,
+
+        "worker"=>$worker,
+
+        "queue"=>$queue->countPending(),
+
+        "running"=>$queue->countRunning(),
+
+        "failed"=>$queue->countFailed(),
+
+        "completed"=>$queue->countCompleted(),
+
+        "executions"=>(int)($stats["total_runs"] ?? 0),
+
+        "last_execution"=>$last[0]["executed_at"] ?? "-"
+
+    ]
+
 ]);

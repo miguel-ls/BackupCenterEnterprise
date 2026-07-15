@@ -2,127 +2,217 @@
 
 <MainLayout>
 
-<h1 class="text-3xl font-bold mb-8">
+    <h1 class="text-3xl font-bold mb-8">
+        Dashboard
+    </h1>
 
-Dashboard
+    <!-- KPI -->
 
-</h1>
+    <div class="grid grid-cols-4 gap-6">
 
-<!-- KPI -->
+        <StatCard title="Trabajos" :value="status.jobs ?? 0"/>
 
-<div class="grid grid-cols-4 gap-6">
+        <StatCard title="Conexiones" :value="status.connections ?? 0"/>
 
-<StatCard title="Trabajos" :value="status.jobs ?? 0"/>
+        <StatCard title="En Cola" :value="status.queue ?? 0"/>
 
-<StatCard title="Conexiones" :value="status.connections ?? 0"/>
+        <StatCard title="Ejecutando" :value="status.running ?? 0"/>
 
-<StatCard title="En Cola" :value="status.queue ?? 0"/>
+    </div>
 
-<StatCard title="Ejecutando" :value="status.running ?? 0"/>
+    <!-- Estadísticas -->
 
-</div>
+    <div class="grid grid-cols-4 gap-6 mt-6">
 
-<!-- Estadísticas -->
+        <StatCard title="Subidos Hoy" :value="statistics.uploaded_today ?? 0"/>
 
-<div class="grid grid-cols-4 gap-6 mt-6">
+        <StatCard title="Ejecuciones Hoy" :value="statistics.executions_today ?? 0"/>
 
-<StatCard title="Subidos Hoy" :value="statistics.uploaded_today ?? 0"/>
+        <StatCard title="Errores Hoy" :value="statistics.errors_today ?? 0"/>
 
-<StatCard title="Ejecuciones Hoy" :value="statistics.executions_today ?? 0"/>
+        <StatCard title="Total Archivos" :value="statistics.total_uploaded ?? 0"/>
 
-<StatCard title="Errores Hoy" :value="statistics.errors_today ?? 0"/>
+    </div>
 
-<StatCard title="Total Archivos" :value="statistics.total_uploaded ?? 0"/>
+    <!-- Servidor + Monitor -->
 
-</div>
+    <div class="grid grid-cols-2 gap-6 mt-6">
 
-<!-- Sistema -->
+        <div class="bg-white rounded-xl border shadow-sm p-6">
+
+            <h2 class="text-xl font-bold mb-6">
+
+                🖥 Infraestructura
+
+            </h2>
+
+            <div class="space-y-5">
+
+                <div class="flex justify-between">
+
+                    <span>Servidor</span>
+
+                    <strong>{{ system.hostname }}</strong>
+
+                </div>
+
+                <div class="flex justify-between">
+
+                    <span>Sistema</span>
+
+                    <strong>{{ system.os }}</strong>
+
+                </div>
+
+                <div class="flex justify-between">
+
+                    <span>PHP</span>
+
+                    <strong>{{ system.php_version }}</strong>
+
+                </div>
+
+                <div class="flex justify-between">
+
+                    <span>Uptime</span>
+
+                    <strong>{{ system.uptime }}</strong>
+
+                </div>
+
+                <!-- CPU -->
+
+                <div>
+
+                    <div class="flex justify-between mb-1">
+
+                        <span>CPU</span>
+
+                        <strong>{{ system.cpu }} %</strong>
+
+                    </div>
+
+                    <div class="w-full bg-neutral-200 rounded-full h-3">
+
+                        <div
+
+                            class="h-3 rounded-full transition-all"
+
+                            :style="{
+
+                                width: system.cpu + '%',
+
+                                background: cpuColor
+
+                            }"
+
+                        ></div>
+
+                    </div>
+
+                </div>
+
+                <!-- RAM -->
+
+                <div>
+
+                    <div class="flex justify-between mb-1">
+
+                        <span>RAM</span>
+
+                        <strong>
+
+                            {{ system.memory_used }} / {{ system.memory_total }} GB
+
+                        </strong>
+
+                    </div>
+
+                    <div class="w-full bg-neutral-200 rounded-full h-3">
+
+                        <div
+
+                            class="h-3 rounded-full transition-all"
+
+                            :style="{
+
+                                width: ramPercent + '%',
+
+                                background: ramColor
+
+                            }"
+
+                        ></div>
+
+                    </div>
+
+                </div>
+
+                <!-- Disco -->
+
+                <div>
+
+                    <div class="flex justify-between mb-1">
+
+                        <span>Disco</span>
+
+                        <strong>
+
+                            {{ system.disk_free }} / {{ system.disk_total }} GB
+
+                        </strong>
+
+                    </div>
+
+                    <div class="w-full bg-neutral-200 rounded-full h-3">
+
+                        <div
+
+                            class="h-3 rounded-full transition-all"
+
+                            :style="{
+
+                                width: diskPercent + '%',
+
+                                background: '#2563eb'
+
+                            }"
+
+                        ></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <SchedulerStatus/>
+
+    </div>
+
+    <!-- Ejecuciones -->
+
+    <div class="grid grid-cols-3 gap-6 mt-6">
+
+        <div class="col-span-2">
+
+            <LastExecutions/>
+
+        </div>
+
+        <QueueWidget/>
+
+    </div>
+
+    <!-- Gráfico -->
 
 <div class="grid grid-cols-2 gap-6 mt-6">
 
-<div class="bg-white rounded-xl border shadow-sm p-6">
+    <OperationsCenter/>
 
-<h2 class="text-xl font-semibold mb-4">
-
-Información del Servidor
-
-</h2>
-
-<div class="space-y-3">
-
-<div class="flex justify-between">
-<span>Servidor</span>
-<strong>{{system.hostname}}</strong>
-</div>
-
-<div class="flex justify-between">
-<span>Sistema</span>
-<strong>{{system.os}}</strong>
-</div>
-
-<div class="flex justify-between">
-<span>PHP</span>
-<strong>{{system.php_version}}</strong>
-</div>
-
-<div class="flex justify-between">
-<span>Hora</span>
-<strong>{{system.time}}</strong>
-</div>
-
-<div class="flex justify-between">
-<span>RAM usada</span>
-<strong>{{system.memory_usage}} MB</strong>
-</div>
-
-<div class="flex justify-between">
-<span>Pico RAM</span>
-<strong>{{system.memory_peak}} MB</strong>
-</div>
-
-<div class="flex justify-between">
-<span>Disco Libre</span>
-<strong>{{system.disk_free}} GB</strong>
-</div>
-
-<div class="flex justify-between">
-<span>Disco Total</span>
-<strong>{{system.disk_total}} GB</strong>
-</div>
-
-</div>
-
-</div>
-
-<div>
-
-<SchedulerStatus/>
-
-</div>
-
-</div>
-
-<!-- Últimas ejecuciones -->
-
-<div class="grid grid-cols-3 gap-6 mt-6">
-
-<div class="col-span-2">
-
-<LastExecutions/>
-
-</div>
-
-<div>
-
-<QueueWidget/>
-
-</div>
-
-</div>
-
-<div class="mt-6">
-
-<BackupChart/>
+    <BackupChart/>
 
 </div>
 
@@ -132,64 +222,110 @@ Información del Servidor
 
 <script setup>
 
-import { ref } from "vue";
+import { ref, computed } from "vue"
 
-import MainLayout from "../components/layout/MainLayout.vue";
-import StatCard from "../components/cards/StatCard.vue";
+import MainLayout from "../components/layout/MainLayout.vue"
+import StatCard from "../components/cards/StatCard.vue"
 
-import SchedulerStatus from "../components/dashboard/widgets/SchedulerStatus.vue";
-import LastExecutions from "../components/dashboard/LastExecutions.vue";
-import QueueWidget from "../components/dashboard/widgets/QueueWidget.vue";
-import BackupChart from "../components/dashboard/widgets/BackupChart.vue";
+import SchedulerStatus from "../components/dashboard/widgets/SchedulerStatus.vue"
+import LastExecutions from "../components/dashboard/LastExecutions.vue"
+import QueueWidget from "../components/dashboard/widgets/QueueWidget.vue"
+import BackupChart from "../components/dashboard/widgets/BackupChart.vue"
 
 import {
+
     getStatus,
     getStatistics,
     getVersion,
     getSystemInfo
-} from "../api/client";
 
-import { useAutoRefresh } from "../composables/useAutoRefresh";
+} from "../api/client"
 
-const status = ref({});
-const statistics = ref({});
-const version = ref({});
-const system = ref({});
+import { useAutoRefresh } from "../composables/useAutoRefresh"
 
-async function load() {
+import OperationsCenter from "../components/dashboard/widgets/OperationsCenter.vue"
 
-    try {
+const status = ref({})
+const statistics = ref({})
+const version = ref({})
+const system = ref({})
 
-        const [
-            statusResponse,
-            statisticsResponse,
-            versionResponse,
-            systemResponse
-        ] = await Promise.all([
+async function load(){
 
-            getStatus(),
-            getStatistics(),
-            getVersion(),
-            getSystemInfo()
+    const [
 
-        ]);
+        s,
+        st,
+        v,
+        si
 
-        status.value = statusResponse.data;
+    ] = await Promise.all([
 
-        statistics.value = statisticsResponse.data;
+        getStatus(),
+        getStatistics(),
+        getVersion(),
+        getSystemInfo()
 
-        version.value = versionResponse.data;
+    ])
 
-        system.value = systemResponse.data;
+    status.value = s.data
 
-    } catch (e) {
+    statistics.value = st.data
 
-        console.error(e);
+    version.value = v.data
 
-    }
+    system.value = si.data
 
 }
 
-useAutoRefresh(load,5000);
+useAutoRefresh(load,5000)
+
+const ramPercent = computed(()=>{
+
+    if(!system.value.memory_total) return 0
+
+    return Math.round(
+
+        system.value.memory_used /
+
+        system.value.memory_total *100
+
+    )
+
+})
+
+const diskPercent = computed(()=>{
+
+    if(!system.value.disk_total) return 0
+
+    return Math.round(
+
+        system.value.disk_free /
+
+        system.value.disk_total *100
+
+    )
+
+})
+
+const cpuColor = computed(()=>{
+
+    if(system.value.cpu<60) return "#22c55e"
+
+    if(system.value.cpu<85) return "#f59e0b"
+
+    return "#dc2626"
+
+})
+
+const ramColor = computed(()=>{
+
+    if(ramPercent.value<60) return "#22c55e"
+
+    if(ramPercent.value<85) return "#f59e0b"
+
+    return "#dc2626"
+
+})
 
 </script>

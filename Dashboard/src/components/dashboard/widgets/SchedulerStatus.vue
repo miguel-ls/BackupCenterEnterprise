@@ -7,15 +7,11 @@
         <div>
 
             <h2 class="text-xl font-bold">
-
                 Centro de Monitoreo
-
             </h2>
 
             <div class="text-sm text-neutral-500">
-
                 Actualización automática cada 5 segundos
-
             </div>
 
         </div>
@@ -31,133 +27,161 @@
                 class="font-semibold"
                 :class="online ? 'text-green-600' : 'text-red-600'"
             >
-
                 {{ online ? "ONLINE" : "OFFLINE" }}
-
             </span>
 
         </div>
 
     </div>
 
-    <div class="grid grid-cols-2 gap-4 p-6">
+    <div class="grid grid-cols-2 gap-5 p-6">
 
-        <div class="card">
+        <!-- Scheduler -->
 
-            <div class="label">
+        <div class="service">
 
-                Scheduler
+            <div class="title">
 
-            </div>
-
-            <div
-                class="value"
-                :class="badge(data.scheduler)"
-            >
-
-                {{ data.scheduler }}
+                🗓 Scheduler
 
             </div>
+
+            <table class="w-full text-sm">
+
+                <tr>
+                    <td>Estado</td>
+                    <td class="text-right font-semibold"
+                        :class="statusColor(data.scheduler.status)">
+                        {{ data.scheduler.status }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>PID</td>
+                    <td class="text-right">{{ data.scheduler.pid }}</td>
+                </tr>
+
+                <tr>
+                    <td>RAM</td>
+                    <td class="text-right">{{ data.scheduler.memory }}</td>
+                </tr>
+
+                <tr>
+                    <td>CPU</td>
+                    <td class="text-right">{{ data.scheduler.cpu }}</td>
+                </tr>
+
+                <tr>
+                    <td>Inicio</td>
+                    <td class="text-right text-xs">
+                        {{ data.scheduler.started_at }}
+                    </td>
+                </tr>
+
+            </table>
 
         </div>
 
-        <div class="card">
+        <!-- Worker -->
 
-            <div class="label">
+        <div class="service">
 
-                Worker
+            <div class="title">
 
-            </div>
-
-            <div
-                class="value"
-                :class="badge(data.worker)"
-            >
-
-                {{ data.worker }}
+                ⚙ Worker
 
             </div>
+
+            <table class="w-full text-sm">
+
+                <tr>
+                    <td>Estado</td>
+                    <td class="text-right font-semibold"
+                        :class="statusColor(data.worker.status)">
+                        {{ data.worker.status }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>PID</td>
+                    <td class="text-right">{{ data.worker.pid }}</td>
+                </tr>
+
+                <tr>
+                    <td>RAM</td>
+                    <td class="text-right">{{ data.worker.memory }}</td>
+                </tr>
+
+                <tr>
+                    <td>CPU</td>
+                    <td class="text-right">{{ data.worker.cpu }}</td>
+                </tr>
+
+                <tr>
+                    <td>Inicio</td>
+                    <td class="text-right text-xs">
+                        {{ data.worker.started_at }}
+                    </td>
+                </tr>
+
+            </table>
 
         </div>
 
-        <div class="card">
+    </div>
 
-            <div class="label">
+    <div class="grid grid-cols-4 gap-4 px-6 pb-6">
 
-                Pendientes
+        <div class="kpi">
 
-            </div>
+            <div class="kpiTitle">Pendientes</div>
 
-            <div class="number">
-
+            <div class="kpiValue">
                 {{ data.queue }}
-
             </div>
 
         </div>
 
-        <div class="card">
+        <div class="kpi">
 
-            <div class="label">
+            <div class="kpiTitle">Ejecutándose</div>
 
-                Ejecutándose
-
-            </div>
-
-            <div class="number text-blue-600">
-
+            <div class="kpiValue text-blue-600">
                 {{ data.running }}
-
             </div>
 
         </div>
 
-        <div class="card">
+        <div class="kpi">
 
-            <div class="label">
+            <div class="kpiTitle">Completados</div>
 
-                Completados
-
-            </div>
-
-            <div class="number text-green-600">
-
+            <div class="kpiValue text-green-600">
                 {{ data.completed }}
-
             </div>
 
         </div>
 
-        <div class="card">
+        <div class="kpi">
 
-            <div class="label">
-
-                Fallidos
-
-            </div>
+            <div class="kpiTitle">Fallidos</div>
 
             <div
-                class="number"
-                :class="data.failed>0 ? 'text-red-600' : 'text-green-600'"
+                class="kpiValue"
+                :class="data.failed>0 ? 'text-red-600':'text-green-600'"
             >
-
                 {{ data.failed }}
-
             </div>
 
         </div>
 
     </div>
 
-    <div class="border-t p-6">
+    <div class="border-t px-6 py-5">
 
-        <div class="flex justify-between mb-3">
+        <div class="flex justify-between">
 
-            <span class="text-neutral-500">
-
-                Total ejecuciones
-
-            </span>
+            <span>Total ejecuciones</span>
 
             <strong>
 
@@ -167,17 +191,13 @@
 
         </div>
 
-        <div class="flex justify-between">
+        <div class="flex justify-between mt-3">
 
-            <span class="text-neutral-500">
-
-                Última ejecución
-
-            </span>
+            <span>Última ejecución</span>
 
             <strong>
 
-                {{ data.last_execution || "-" }}
+                {{ data.last_execution }}
 
             </strong>
 
@@ -194,9 +214,9 @@
 import {
 
     ref,
+    computed,
     onMounted,
-    onUnmounted,
-    computed
+    onUnmounted
 
 } from "vue"
 
@@ -208,9 +228,9 @@ import {
 
 const data = ref({
 
-    scheduler:"-",
+    scheduler:{},
 
-    worker:"-",
+    worker:{},
 
     queue:0,
 
@@ -228,13 +248,13 @@ const data = ref({
 
 const online = computed(()=>{
 
-    return data.value.scheduler==="Activo"
+    return data.value.scheduler?.status==="Activo"
 
 })
 
-function badge(value){
+function statusColor(status){
 
-    return value==="Activo"
+    return status==="Activo"
 
         ? "text-green-600"
 
@@ -244,19 +264,9 @@ function badge(value){
 
 async function load(){
 
-    try{
+    const response = await getSystemStatus()
 
-        const response = await getSystemStatus()
-
-        data.value = response.data
-
-    }
-
-    catch(error){
-
-        console.error(error)
-
-    }
+    data.value = response.data
 
 }
 
@@ -280,7 +290,41 @@ onUnmounted(()=>{
 
 <style scoped>
 
-.card{
+.service{
+
+    border:1px solid #e5e7eb;
+
+    border-radius:12px;
+
+    padding:20px;
+
+    transition:.2s;
+
+}
+
+.service:hover{
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+.title{
+
+    font-size:18px;
+
+    font-weight:700;
+
+    margin-bottom:15px;
+
+}
+
+table td{
+
+    padding:6px 0;
+
+}
+
+.kpi{
 
     border:1px solid #e5e7eb;
 
@@ -288,41 +332,25 @@ onUnmounted(()=>{
 
     padding:18px;
 
-    transition:.2s;
+    text-align:center;
 
 }
 
-.card:hover{
-
-    box-shadow:0 10px 25px rgba(0,0,0,.08);
-
-    transform:translateY(-2px);
-
-}
-
-.label{
-
-    font-size:13px;
+.kpiTitle{
 
     color:#6b7280;
 
-    margin-bottom:10px;
+    font-size:13px;
 
 }
 
-.number{
+.kpiValue{
 
     font-size:30px;
 
     font-weight:700;
 
-}
-
-.value{
-
-    font-size:20px;
-
-    font-weight:700;
+    margin-top:8px;
 
 }
 
