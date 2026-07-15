@@ -1,0 +1,171 @@
+<?php
+
+header('Access-Control-Allow-Origin: http://localhost:5173');
+header('Access-Control-Allow-Methods: GET, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+use BackupCenter\Core\Application;
+use BackupCenter\Repositories\ReportRepository;
+use BackupCenter\Services\ExportExcelService;
+use BackupCenter\Services\ExportPdfService;
+
+$app = new Application();
+
+$repository = new ReportRepository(
+    $app->database()
+);
+
+$type = $_GET['type'] ?? 'excel';
+
+$action = $_GET['action'] ?? 'clients';
+
+switch ($action) {
+
+    case 'clients':
+
+        $rows = $repository->clients();
+
+        $headers = [
+
+            'Cliente',
+            'Ejecuciones',
+            'Archivos Subidos',
+            'Errores'
+
+        ];
+
+        $data = [];
+
+        foreach ($rows as $row) {
+
+            $data[] = [
+
+                $row['client'],
+                $row['executions'],
+                $row['uploaded'],
+                $row['errors']
+
+            ];
+
+        }
+
+        $title = 'Reporte de Clientes';
+
+        break;
+
+    case 'jobs':
+
+        $rows = $repository->jobs();
+
+        $headers = [
+
+            'Trabajo',
+            'Estado',
+            'Última ejecución'
+
+        ];
+
+        $data = [];
+
+        foreach ($rows as $row) {
+
+            $data[] = [
+
+                $row['name'],
+                $row['last_status'],
+                $row['last_run']
+
+            ];
+
+        }
+
+        $title = 'Reporte de Trabajos';
+
+        break;
+
+    case 'connections':
+
+        $rows = $repository->connections();
+
+        $headers = [
+
+            'Nombre',
+            'Protocolo',
+            'Host',
+            'Ruta Remota'
+
+        ];
+
+        $data = [];
+
+        foreach ($rows as $row) {
+
+            $data[] = [
+
+                $row['name'],
+                $row['protocol'],
+                $row['host'],
+                $row['remote_path']
+
+            ];
+
+        }
+
+        $title = 'Reporte de Conexiones';
+
+        break;
+
+    default:
+
+        http_response_code(404);
+
+        echo json_encode([
+
+            "success" => false,
+
+            "message" => "Acción no válida."
+
+        ]);
+
+        exit;
+
+}
+
+if ($type === 'pdf') {
+
+    $pdf = new ExportPdfService();
+
+    $pdf->download(
+
+        $title,
+
+        $headers,
+
+        $data,
+
+        str_replace(' ', '_', $title) . "_" . date("Ymd_His")
+
+    );
+
+}
+
+$excel = new ExportExcelService();
+
+$excel->download(
+
+    $title,
+
+    $headers,
+
+    $data,
+
+    str_replace(' ', '_', $title) . "_" . date("Ymd_His")
+
+);

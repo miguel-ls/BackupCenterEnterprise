@@ -163,3 +163,49 @@ export const clearNotifications = () =>
     request("notifications.php", {
         method: "DELETE"
     });
+
+/* ================= REPORTS ================= */
+
+export const getReportSummary = () =>
+    request("reports.php?action=summary");
+
+export const getReportDaily = (days = 30) =>
+    request(`reports.php?action=daily&days=${days}`);
+
+export const getReportClients = () =>
+    request("reports.php?action=clients");
+
+export const getReportJobs = () =>
+    request("reports.php?action=jobs");
+
+export const getReportConnections = () =>
+    request("reports.php?action=connections");
+
+/* ================= EXPORT ================= */
+
+export const exportClientsExcel = () => {
+
+    window.open(
+        `${API}/reports-export.php?action=clients`,
+        "_blank"
+    );
+
+};
+
+export const exportJobsExcel = () => {
+
+    window.open(
+        `${API}/reports-export.php?action=jobs`,
+        "_blank"
+    );
+
+};
+
+export const exportConnectionsExcel = () => {
+
+    window.open(
+        `${API}/reports-export.php?action=connections`,
+        "_blank"
+    );
+
+};
