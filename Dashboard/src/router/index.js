@@ -11,98 +11,103 @@ import AboutView from '../views/AboutView.vue'
 import QueueView from '../views/QueueView.vue'
 import UsersView from '../views/UsersView.vue'
 import AuditView from '../views/AuditView.vue'
+import ReportsView from '../views/ReportsView.vue'
 
 const router = createRouter({
 
-    history:createWebHistory(),
+    history: createWebHistory(),
 
-    routes:[
+    routes: [
 
         {
-            path:'/login',
-            component:LoginView
+            path: '/login',
+            component: LoginView
         },
 
         {
-            path:'/',
-            component:DashboardView,
-            meta:{requiresAuth:true}
+            path: '/',
+            component: DashboardView,
+            meta: { requiresAuth: true }
         },
 
         {
-            path:'/jobs',
-            component:JobsView,
-            meta:{requiresAuth:true}
+            path: '/jobs',
+            component: JobsView,
+            meta: { requiresAuth: true }
         },
 
         {
-            path:'/connections',
-            component:ConnectionsView,
-            meta:{requiresAuth:true}
+            path: '/connections',
+            component: ConnectionsView,
+            meta: { requiresAuth: true }
         },
 
         {
-            path:'/queue',
-            component:QueueView,
-            meta:{requiresAuth:true}
+            path: '/queue',
+            component: QueueView,
+            meta: { requiresAuth: true }
         },
 
         {
-            path:'/history',
-            component:HistoryView,
-            meta:{requiresAuth:true}
+            path: '/history',
+            component: HistoryView,
+            meta: { requiresAuth: true }
         },
 
         {
-            path:'/logs',
-            component:LogsView,
-            meta:{requiresAuth:true}
+            path: '/logs',
+            component: LogsView,
+            meta: { requiresAuth: true }
         },
 
         {
-            path:'/users',
-            component:UsersView,
-            meta:{requiresAuth:true}
+            path: '/users',
+            component: UsersView,
+            meta: { requiresAuth: true }
         },
 
         {
-            path:'/audit',
-            component:AuditView,
-            meta:{requiresAuth:true}
+            path: '/audit',
+            component: AuditView,
+            meta: { requiresAuth: true }
         },
 
         {
-            path:'/settings',
-            component:SettingsView,
-            meta:{requiresAuth:true}
+            path: '/reports',
+            component: ReportsView,
+            meta: { requiresAuth: true }
         },
 
         {
-            path:'/about',
-            component:AboutView,
-            meta:{requiresAuth:true}
+            path: '/settings',
+            component: SettingsView,
+            meta: { requiresAuth: true }
+        },
+
+        {
+            path: '/about',
+            component: AboutView,
+            meta: { requiresAuth: true }
         }
 
     ]
 
 })
 
-router.beforeEach((to,from,next)=>{
+router.beforeEach((to, from, next) => {
 
-    const user=localStorage.getItem("user")
+    const user = localStorage.getItem("user")
 
-    if(to.meta.requiresAuth && !user){
+    if (to.meta.requiresAuth && !user) {
 
         next("/login")
-
         return
 
     }
 
-    if(to.path==="/login" && user){
+    if (to.path === "/login" && user) {
 
         next("/")
-
         return
 
     }

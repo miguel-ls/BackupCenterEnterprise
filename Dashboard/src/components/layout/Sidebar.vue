@@ -6,25 +6,39 @@
 
     <div class="border-b border-slate-700 p-6">
 
-        <h1 class="text-2xl font-bold tracking-wide">
+        <div class="flex items-center gap-3">
 
-            Backup Center
+            <div class="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center text-2xl">
 
-        </h1>
+                🛡
 
-        <p class="text-sm text-slate-400 mt-1">
+            </div>
 
-            Enterprise Edition
+            <div>
 
-        </p>
+                <h1 class="text-xl font-bold">
+
+                    Backup Center
+
+                </h1>
+
+                <div class="text-xs text-slate-400">
+
+                    Enterprise Edition
+
+                </div>
+
+            </div>
+
+        </div>
 
     </div>
 
     <!-- Estado -->
 
-    <div class="px-5 py-4 border-b border-slate-700">
+    <div class="border-b border-slate-700 p-5">
 
-        <div class="flex items-center justify-between">
+        <div class="flex justify-between items-center">
 
             <span class="text-sm text-slate-300">
 
@@ -32,10 +46,10 @@
 
             </span>
 
-            <span
-                class="bg-green-600 px-2 py-1 rounded-full text-xs font-semibold"
-            >
+            <span class="bg-green-600 px-3 py-1 rounded-full text-xs font-semibold">
+
                 ONLINE
+
             </span>
 
         </div>
@@ -53,27 +67,65 @@
         </div>
 
         <RouterLink to="/" class="menu">
-            📊 Dashboard
+
+            <span>📊</span>
+
+            <span>Dashboard</span>
+
         </RouterLink>
 
         <RouterLink to="/jobs" class="menu">
-            💼 Trabajos
+
+            <span>💼</span>
+
+            <span>Trabajos</span>
+
         </RouterLink>
 
         <RouterLink to="/connections" class="menu">
-            🌐 Conexiones
+
+            <span>🌐</span>
+
+            <span>Conexiones</span>
+
         </RouterLink>
 
         <RouterLink to="/queue" class="menu">
-            📋 Cola
+
+            <span>📋</span>
+
+            <span>Cola</span>
+
         </RouterLink>
 
         <RouterLink to="/history" class="menu">
-            🕘 Historial
+
+            <span>🕘</span>
+
+            <span>Historial</span>
+
         </RouterLink>
 
         <RouterLink to="/logs" class="menu">
-            📄 Logs
+
+            <span>📄</span>
+
+            <span>Logs</span>
+
+        </RouterLink>
+
+        <RouterLink to="/reports" class="menu">
+
+            <span>📈</span>
+
+            <span>Reportes</span>
+
+            <span class="badge">
+
+                NEW
+
+            </span>
+
         </RouterLink>
 
         <div class="title mt-8">
@@ -83,11 +135,19 @@
         </div>
 
         <RouterLink to="/users" class="menu">
-            👤 Usuarios
+
+            <span>👤</span>
+
+            <span>Usuarios</span>
+
         </RouterLink>
 
         <RouterLink to="/audit" class="menu">
-            🛡 Auditoría
+
+            <span>🛡</span>
+
+            <span>Auditoría</span>
+
         </RouterLink>
 
         <div class="title mt-8">
@@ -97,36 +157,60 @@
         </div>
 
         <RouterLink to="/settings" class="menu">
-            ⚙️ Configuración
+
+            <span>⚙️</span>
+
+            <span>Configuración</span>
+
         </RouterLink>
 
         <RouterLink to="/about" class="menu">
-            ℹ️ Acerca de
+
+            <span>ℹ️</span>
+
+            <span>Acerca de</span>
+
         </RouterLink>
 
     </nav>
 
     <!-- Pie -->
 
-    <div
-        class="border-t border-slate-700 p-5 text-xs text-slate-400"
-    >
+    <div class="border-t border-slate-700 p-5">
 
-        <div class="font-semibold text-white">
+        <div class="font-semibold">
 
             Backup Center Enterprise
 
         </div>
 
-        <div class="mt-1">
+        <div class="text-xs text-slate-400 mt-1">
 
-            Versión 1.0.0
+            BCE-003
 
         </div>
 
-        <div class="mt-3 text-green-400">
+        <div class="mt-4">
 
-            ● Sistema operativo
+            <div class="flex justify-between text-xs">
+
+                <span>Versión</span>
+
+                <strong>1.0.0</strong>
+
+            </div>
+
+            <div class="flex justify-between text-xs mt-2">
+
+                <span>Estado</span>
+
+                <strong class="text-green-400">
+
+                    Operativo
+
+                </strong>
+
+            </div>
 
         </div>
 
@@ -162,7 +246,11 @@ import { RouterLink } from "vue-router"
 
 .menu{
 
-    display:block;
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
 
     padding:14px 16px;
 
@@ -170,7 +258,7 @@ import { RouterLink } from "vue-router"
 
     border-radius:12px;
 
-    transition:all .20s;
+    transition:.2s;
 
     color:#e5e7eb;
 
@@ -180,7 +268,7 @@ import { RouterLink } from "vue-router"
 
     background:#1e293b;
 
-    transform:translateX(4px);
+    transform:translateX(5px);
 
 }
 
@@ -193,6 +281,24 @@ import { RouterLink } from "vue-router"
     font-weight:700;
 
     box-shadow:0 0 15px rgba(37,99,235,.35);
+
+}
+
+.badge{
+
+    margin-left:auto;
+
+    background:#10b981;
+
+    color:white;
+
+    font-size:10px;
+
+    padding:2px 8px;
+
+    border-radius:9999px;
+
+    font-weight:bold;
 
 }
 
