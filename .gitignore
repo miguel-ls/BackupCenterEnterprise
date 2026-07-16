@@ -1,3 +1,23 @@
+# Dependencias
 /vendor/
-/resources/logs/
-/.env
+
+# Variables de entorno
+.env
+
+# Logs
+storage/logs/
+*.log
+
+# Archivos temporales
+*.tmp
+*.temp
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Configuración de VS Code (opcional)
+.vscode/
+
+# Configuración de JetBrains (opcional)
+.idea/
