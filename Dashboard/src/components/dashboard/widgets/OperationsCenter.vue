@@ -144,21 +144,43 @@ const events = ref([])
 
 const alerts = ref([])
 
+const loading = ref(false)
+
 async function load(){
 
-    const r = await fetch(
+    if(loading.value){
 
-        "http://localhost:8000/api/alerts.php"
+        return
 
-    )
+    }
 
-    const j = await r.json()
+    loading.value = true
 
-    status.value = j.data.status
+    try{
 
-    events.value = j.data.events
+        const r = await fetch(
 
-    alerts.value = j.data.alerts
+            "http://localhost:8000/api/alerts.php"
+
+        )
+
+        const j = await r.json()
+
+        status.value = j.data.status
+
+        events.value = j.data.events
+
+        alerts.value = j.data.alerts
+
+    }catch(e){
+
+        console.error(e)
+
+    }finally{
+
+        loading.value = false
+
+    }
 
 }
 
@@ -168,13 +190,17 @@ onMounted(()=>{
 
     load()
 
-    timer = setInterval(load,5000)
+    timer = setInterval(load,60000)
 
 })
 
 onUnmounted(()=>{
 
-    clearInterval(timer)
+    if(timer){
+
+        clearInterval(timer)
+
+    }
 
 })
 
