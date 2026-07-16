@@ -13,6 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 require_once __DIR__ . '/bootstrap.php';
 
 use BackupCenter\Core\Application;
+use BackupCenter\Services\CronService;
 
 $app = new Application();
 
@@ -33,13 +34,25 @@ $lastBackup = $db->query("
     LIMIT 1
 ")->fetchColumn();
 
-$nextBackup = $db->query("
-    SELECT next_run
+$cron = new CronService();
+
+$nextBackup = null;
+
+$schedules = $db->query("
+    SELECT schedule
     FROM jobs
     WHERE enabled=1
-    ORDER BY next_run
-    LIMIT 1
-")->fetchColumn();
+")->fetchAll(PDO::FETCH_COLUMN);
+
+foreach ($schedules as $schedule) {
+
+    $nextRun = $cron->nextRun($schedule);
+
+    if ($nextRun !== null && ($nextBackup === null || $nextRun < $nextBackup)) {
+        $nextBackup = $nextRun;
+    }
+
+}
 
 echo json_encode([
 

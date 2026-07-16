@@ -247,6 +247,6 @@ async function load(){
 
 }
 
-useAutoRefresh(load,5000)
+useAutoRefresh(load,20000)
 
 </script>

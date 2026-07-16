@@ -178,7 +178,7 @@ onMounted(()=>{
 
     load()
 
-    timer = setInterval(load,5000)
+    timer = setInterval(load,20000)
 
 })
 

@@ -25,7 +25,9 @@ class ServiceHost
 
             fn() => $this->app
                 ->agent()
-                ->run(),
+                ->run(
+                    $this->app->config()
+                ),
 
             $interval
         );

@@ -24,11 +24,11 @@ class ServiceRunner
             try {
 
                 $this->app
-                    ->scheduler()
+                    ->schedulerEngine()
                     ->execute();
 
                 $this->app
-                    ->worker()
+                    ->backupWorker()
                     ->process();
 
             } catch (\Throwable $e) {

@@ -61,7 +61,9 @@ public function executeJob(JobConfiguration $configuration): bool
 
                 $this->application
                     ->agent()
-                    ->run();
+                    ->run(
+                        $this->application->config()
+                    );
 
             },
 

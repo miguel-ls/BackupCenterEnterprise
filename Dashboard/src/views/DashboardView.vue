@@ -241,7 +241,7 @@ import {
 
 } from "../api/client"
 
-import { onMounted } from "vue"
+import { useAutoRefresh } from "../composables/useAutoRefresh"
 
 import OperationsCenter from "../components/dashboard/widgets/OperationsCenter.vue"
 
@@ -278,11 +278,7 @@ async function load(){
 
 }
 
-onMounted(async () => {
-
-    await load()
-
-})
+useAutoRefresh(load,20000)
 
 const ramPercent = computed(()=>{
 

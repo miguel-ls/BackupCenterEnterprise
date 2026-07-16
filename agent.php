@@ -6,7 +6,9 @@ use BackupCenter\Core\Application;
 
 $app = new Application();
 
-$summary = $app->agent()->run();
+$summary = $app->agent()->run(
+    $app->config()
+);
 
 if (
     in_array('--json', $argv)

@@ -92,7 +92,7 @@ onMounted(()=>{
 
     load();
 
-    timer = setInterval(load,2000);
+    timer = setInterval(load,8000);
 
 });
 

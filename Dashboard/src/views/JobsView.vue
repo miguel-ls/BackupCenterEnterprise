@@ -222,7 +222,7 @@ onMounted(()=>{
 
     loadJobs()
 
-    timer=setInterval(loadJobs,5000)
+    timer=setInterval(loadJobs,20000)
 
 })
 

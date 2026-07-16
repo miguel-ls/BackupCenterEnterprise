@@ -197,7 +197,7 @@ onMounted(() => {
 
     load();
 
-    timer = setInterval(load, 3000);
+    timer = setInterval(load, 10000);
 
 });
 

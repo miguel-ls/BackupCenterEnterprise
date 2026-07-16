@@ -3,7 +3,7 @@ import {
     onUnmounted
 } from "vue";
 
-export function useAutoRefresh(callback, interval = 5000) {
+export function useAutoRefresh(callback, interval = 20000) {
 
     let timer = null;
 
