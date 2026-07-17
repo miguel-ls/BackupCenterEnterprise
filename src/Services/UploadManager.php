@@ -45,7 +45,7 @@ class UploadManager
                     ->batchAbort()
                     ->confirmOff()
                     ->open($connection)
-->put($file->getPath())
+                    ->put($file->getPath())
                     ->exit()
                     ->build();
 
