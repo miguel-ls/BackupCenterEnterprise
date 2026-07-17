@@ -85,21 +85,27 @@
 
                         </td>
 
-<td class="p-3 text-center">
+<td class="p-3">
 
-    <button
-        class="text-blue-600 hover:underline mr-3"
-        @click="editClient(client)"
-    >
-        ✏ Editar
-    </button>
+    <div class="flex justify-center gap-2">
 
-    <button
-        class="text-red-600 hover:underline"
-        @click="removeClient(client)"
-    >
-        🗑 Eliminar
-    </button>
+        <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg bg-amber-100 text-amber-600 hover:bg-amber-200 transition"
+            title="Editar"
+            @click="editClient(client)"
+        >
+            <Pencil :size="17"/>
+        </button>
+
+        <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg bg-red-100 text-red-600 hover:bg-red-200 transition"
+            title="Eliminar"
+            @click="removeClient(client)"
+        >
+            <Trash2 :size="17"/>
+        </button>
+
+    </div>
 
 </td>
 
@@ -126,17 +132,59 @@
 
     </div>
 
-<ClientForm
+<!-- Modal -->
 
-    :show="showForm"
+<div
+    v-if="showForm"
+    class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+>
 
-    :client="selectedClient"
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-5xl">
 
-    @close="closeForm"
+        <div class="flex items-center justify-between px-6 py-4 border-b">
 
-    @save="saveClient"
+            <div>
 
-/>
+                <h2 class="text-xl font-bold">
+
+                    {{ selectedClient ? "Editar Cliente" : "Nuevo Cliente" }}
+
+                </h2>
+
+                <p class="text-sm text-neutral-500">
+
+                    Complete la información del cliente.
+
+                </p>
+
+            </div>
+
+            <button
+                class="text-2xl text-neutral-500 hover:text-red-600"
+                @click="closeForm"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <div class="p-6">
+
+            <ClientForm
+
+                :client="selectedClient"
+
+                @save="saveClient"
+
+                @close="closeForm"
+
+            />
+
+        </div>
+
+    </div>
+
+</div>
 
 
 </MainLayout>
@@ -144,6 +192,14 @@
 </template>
 
 <script setup>
+
+import {
+
+    Play,
+    Pencil,
+    Trash2
+
+} from "lucide-vue-next";
 
 import { ref, onMounted } from "vue"
 

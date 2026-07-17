@@ -107,7 +107,7 @@ Desactivado
 class="px-3 py-1 rounded bg-blue-600 text-white hover:bg-blue-700"
 >
 
-Editar
+<Pencil :size="17"/>
 
 </button>
 
@@ -125,7 +125,7 @@ class="px-3 py-1 rounded bg-amber-500 text-white hover:bg-amber-600"
 class="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700"
 >
 
-Eliminar
+<Trash2 :size="17"/>
 
 </button>
 
@@ -157,6 +157,14 @@ No existen usuarios.
 </template>
 
 <script setup>
+
+import {
+
+    Play,
+    Pencil,
+    Trash2
+
+} from "lucide-vue-next";
 
 defineProps({
 

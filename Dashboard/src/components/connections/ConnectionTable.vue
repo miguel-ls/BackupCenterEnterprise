@@ -50,14 +50,14 @@
                             @click="$emit('edit',connection)"
                             class="bg-amber-500 hover:bg-amber-600 text-white rounded p-2"
                         >
-                            Editar
+                            <Pencil :size="17"/>
                         </button>
 
                         <button
                             @click="$emit('delete',connection.id)"
                             class="bg-red-600 hover:bg-red-700 text-white rounded p-2"
                         >
-                            Eliminar
+                            <Trash2 :size="17"/>
                         </button>
 
                     </div>
@@ -88,6 +88,14 @@
 </template>
 
 <script setup>
+
+import {
+
+    Play,
+    Pencil,
+    Trash2
+
+} from "lucide-vue-next";
 
 defineProps({
 
