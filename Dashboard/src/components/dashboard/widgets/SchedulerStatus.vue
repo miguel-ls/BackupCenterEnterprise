@@ -47,7 +47,7 @@
             </div>
 
             <table class="w-full text-sm">
-
+ <tbody>
                 <tr>
                     <td>Estado</td>
                     <td class="text-right font-semibold"
@@ -77,7 +77,7 @@
                         {{ data.scheduler.started_at }}
                     </td>
                 </tr>
-
+</tbody>
             </table>
 
         </div>
@@ -93,7 +93,7 @@
             </div>
 
             <table class="w-full text-sm">
-
+<tbody>
                 <tr>
                     <td>Estado</td>
                     <td class="text-right font-semibold"
@@ -123,7 +123,7 @@
                         {{ data.worker.started_at }}
                     </td>
                 </tr>
-
+</tbody>
             </table>
 
         </div>

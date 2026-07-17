@@ -28,6 +28,8 @@ use BackupCenter\Repositories\NotificationRepository;
 use BackupCenter\Repositories\UserRepository;
 use BackupCenter\Repositories\AuditRepository;
 
+use BackupCenter\Repositories\ClientRepository;
+
 class Application
 {
     private ConfigurationManager $config;
@@ -45,9 +47,13 @@ class Application
 
     private JobRepository $jobRepository;
     private ConnectionRepository $connectionRepository;
-    private BackupService $backupService;    
 
-    private SchedulerLoop $schedulerLoop;
+    private ClientRepository $clientRepository;
+
+    private BackupService $backupService;
+    private SchedulerService $schedulerService;
+    private SchedulerLoop $schedulerLoop; 
+
     private SchedulerEngine $schedulerEngine;
 
     private JobQueueRepository $jobQueue;
@@ -114,6 +120,15 @@ $this->connectionRepository = new ConnectionRepository(
 );
 
 $this->connectionRepository->initialize();
+
+$this->clientRepository = new ClientRepository(
+    $this->database
+);
+
+$this->clientRepository->initialize();
+
+$this->jobRepository->initialize();
+
 
 $this->notificationRepository = new NotificationRepository(
     $this->database
@@ -275,6 +290,11 @@ public function jobRepository(): JobRepository
 public function connectionRepository(): ConnectionRepository
 {
     return $this->connectionRepository;
+}
+
+public function clientRepository(): ClientRepository
+{
+    return $this->clientRepository;
 }
 
 }

@@ -36,161 +36,7 @@
 
     <!-- Servidor + Monitor -->
 
-    <div class="grid grid-cols-2 gap-6 mt-6">
 
-        <div class="bg-white rounded-xl border shadow-sm p-6">
-
-            <h2 class="text-xl font-bold mb-6">
-
-                🖥 Infraestructura
-
-            </h2>
-
-            <div class="space-y-5">
-
-                <div class="flex justify-between">
-
-                    <span>Servidor</span>
-
-                    <strong>{{ system.hostname }}</strong>
-
-                </div>
-
-                <div class="flex justify-between">
-
-                    <span>Sistema</span>
-
-                    <strong>{{ system.os }}</strong>
-
-                </div>
-
-                <div class="flex justify-between">
-
-                    <span>PHP</span>
-
-                    <strong>{{ system.php_version }}</strong>
-
-                </div>
-
-                <div class="flex justify-between">
-
-                    <span>Uptime</span>
-
-                    <strong>{{ system.uptime }}</strong>
-
-                </div>
-
-                <!-- CPU -->
-
-                <div>
-
-                    <div class="flex justify-between mb-1">
-
-                        <span>CPU</span>
-
-                        <strong>{{ system.cpu }} %</strong>
-
-                    </div>
-
-                    <div class="w-full bg-neutral-200 rounded-full h-3">
-
-                        <div
-
-                            class="h-3 rounded-full transition-all"
-
-                            :style="{
-
-                                width: system.cpu + '%',
-
-                                background: cpuColor
-
-                            }"
-
-                        ></div>
-
-                    </div>
-
-                </div>
-
-                <!-- RAM -->
-
-                <div>
-
-                    <div class="flex justify-between mb-1">
-
-                        <span>RAM</span>
-
-                        <strong>
-
-                            {{ system.memory_used }} / {{ system.memory_total }} GB
-
-                        </strong>
-
-                    </div>
-
-                    <div class="w-full bg-neutral-200 rounded-full h-3">
-
-                        <div
-
-                            class="h-3 rounded-full transition-all"
-
-                            :style="{
-
-                                width: ramPercent + '%',
-
-                                background: ramColor
-
-                            }"
-
-                        ></div>
-
-                    </div>
-
-                </div>
-
-                <!-- Disco -->
-
-                <div>
-
-                    <div class="flex justify-between mb-1">
-
-                        <span>Disco</span>
-
-                        <strong>
-
-                            {{ system.disk_free }} / {{ system.disk_total }} GB
-
-                        </strong>
-
-                    </div>
-
-                    <div class="w-full bg-neutral-200 rounded-full h-3">
-
-                        <div
-
-                            class="h-3 rounded-full transition-all"
-
-                            :style="{
-
-                                width: diskPercent + '%',
-
-                                background: '#2563eb'
-
-                            }"
-
-                        ></div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <SchedulerStatus/>
-
-    </div>
 
     <!-- Ejecuciones -->
 
@@ -236,8 +82,7 @@ import {
 
     getStatus,
     getStatistics,
-    getVersion,
-    getSystemInfo
+    getVersion
 
 } from "../api/client"
 
@@ -263,8 +108,7 @@ async function load(){
 
         getStatus(),
         getStatistics(),
-        getVersion(),
-        getSystemInfo()
+        getVersion()
 
     ])
 
@@ -274,7 +118,7 @@ async function load(){
 
     version.value = v.data
 
-    system.value = si.data
+
 
 }
 

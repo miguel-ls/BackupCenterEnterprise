@@ -25,7 +25,7 @@ export const getChart = () => request("chart.php");
 
 export const getSystemStatus = () => request("system-status.php");
 
-export const getSystemInfo = () => request("system-info.php");
+//export const getSystemInfo = () => request("system-info.php");
 
 /* ================= SETTINGS ================= */
 
@@ -209,3 +209,30 @@ export const exportConnectionsExcel = () => {
     );
 
 };
+
+/*
+|--------------------------------------------------------------------------
+| CLIENTS
+|--------------------------------------------------------------------------
+*/
+
+export const getClients = () =>
+    request("clients.php");
+
+export const createClient = (client) =>
+    request("clients.php", {
+        method: "POST",
+        body: JSON.stringify(client)
+    });
+
+export const updateClient = (client) =>
+    request("clients.php", {
+        method: "PUT",
+        body: JSON.stringify(client)
+    });
+
+export const deleteClient = (id) =>
+    request("clients.php", {
+        method: "DELETE",
+        body: JSON.stringify({ id })
+    });

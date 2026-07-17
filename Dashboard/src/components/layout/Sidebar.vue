@@ -90,6 +90,14 @@
 
         </RouterLink>
 
+<RouterLink to="/clients" class="menu">
+
+    <span>🏢</span>
+
+    <span>Clientes</span>
+
+</RouterLink>
+        
         <RouterLink to="/queue" class="menu">
 
             <span>📋</span>
