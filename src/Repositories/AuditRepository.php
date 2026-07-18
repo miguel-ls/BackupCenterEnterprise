@@ -11,6 +11,8 @@ class AuditRepository
 
     public function __construct(Database $database)
     {
+        date_default_timezone_set('America/Lima');
+
         $this->db = $database->getConnection();
 
         $this->initialize();
@@ -82,6 +84,8 @@ class AuditRepository
             INSERT INTO audit_log
             (
 
+                created_at,
+
                 username,
 
                 module,
@@ -104,12 +108,14 @@ class AuditRepository
 
             VALUES
             (
-                ?,?,?,?,?,?,?,?,?
+                ?,?,?,?,?,?,?,?,?,?
             )
 
         ");
 
         $stmt->execute([
+
+            date('Y-m-d H:i:s'),
 
             $username,
 

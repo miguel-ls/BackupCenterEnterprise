@@ -8,6 +8,8 @@ class Logger
 
     public function __construct(string $logPath)
     {
+        date_default_timezone_set('America/Lima');
+
         $this->logPath = rtrim($logPath, DIRECTORY_SEPARATOR);
 
         if (!is_dir($this->logPath)) {
