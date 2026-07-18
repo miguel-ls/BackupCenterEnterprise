@@ -61,6 +61,7 @@ class BackupCenterAgent
             ?? $configuration->get('source');
 
         $extensions = $configuration->get('backup.extensions')
+            ?? $this->config->get('backup.extensions')
             ?? ['zip','bak','7z'];
 
         $files = $this->scanner->scan(
@@ -119,7 +120,7 @@ class BackupCenterAgent
 
             try{
 
-                $this->uploadManager->upload($file);
+                $this->uploadManager->upload($file, $configuration);
 
                 $sha256 = $this->repository->calculateSha256(
                     $file->getPath()

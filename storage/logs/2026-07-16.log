@@ -1,0 +1,84 @@
+[2026-07-16 21:00:08] [INFO] Ejecutando trabajo: ERP SQL
+[2026-07-16 21:00:08] [INFO] === Backup Center iniciado ===
+[2026-07-16 21:00:08] [SUCCESS] Proceso finalizado.
+[2026-07-16 23:28:46] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-16 23:28:46] [INFO] === Backup Center iniciado ===
+[2026-07-16 23:28:58] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+Conectando al servidor...
+Autentificando...
+Usando el nombre de usuario «unimarket».
+Autentificando con la contraseña guardada.
+Autentificado.
+Iniciando la sesión...
+Sesión iniciada.
+Sesión activa: [1] unimarket@38.253.171.145
+D:\BackupLimabanda\TEST_LIMABANDA_01.zip |          226 B |    0.0 KB/s | binary | 100%
+Archivo «TEST_LIMABANDA_01.zip» subido con éxito, pero se produjo un error al asignar permisos y/o fecha.
+Si el problema persiste, desactive las opciones «Establecer permisos» o «Mantener fecha». Otra alternativa sería activar la opción de «Ignorar errores de permisos».
+Permiso denegado
+Código de error: 3
+Mensaje de error desde el servidor: permission denied
+A(b)ortar, (R)eintentar, (I)gnorar, Sal(t)ar todos: Abortar
+[2026-07-16 23:29:09] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+Conectando al servidor...
+Autentificando...
+Usando el nombre de usuario «unimarket».
+Autentificando con la contraseña guardada.
+Autentificado.
+Iniciando la sesión...
+Sesión iniciada.
+Sesión activa: [1] unimarket@38.253.171.145
+D:\BackupLimabanda\TEST_LIMABANDA_02.zip |          226 B |    0.0 KB/s | binary | 100%
+Archivo «TEST_LIMABANDA_02.zip» subido con éxito, pero se produjo un error al asignar permisos y/o fecha.
+Si el problema persiste, desactive las opciones «Establecer permisos» o «Mantener fecha». Otra alternativa sería activar la opción de «Ignorar errores de permisos».
+Permiso denegado
+Código de error: 3
+Mensaje de error desde el servidor: permission denied
+A(b)ortar, (R)eintentar, (I)gnorar, Sal(t)ar todos: Abortar
+[2026-07-16 23:29:09] [SUCCESS] Proceso finalizado.
+[2026-07-16 23:32:30] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-16 23:32:30] [INFO] === Backup Center iniciado ===
+[2026-07-16 23:32:41] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+Conectando al servidor...
+Autentificando...
+Usando el nombre de usuario «unimarket».
+Autentificando con la contraseña guardada.
+Autentificado.
+Iniciando la sesión...
+Sesión iniciada.
+Sesión activa: [1] unimarket@38.253.171.145
+D:\BackupLimabanda\TEST_LIMABANDA_01.zip |          226 B |    0.0 KB/s | binary | 100%
+Archivo «TEST_LIMABANDA_01.zip» subido con éxito, pero se produjo un error al asignar permisos y/o fecha.
+Si el problema persiste, desactive las opciones «Establecer permisos» o «Mantener fecha». Otra alternativa sería activar la opción de «Ignorar errores de permisos».
+Permiso denegado
+Código de error: 3
+Mensaje de error desde el servidor: permission denied
+A(b)ortar, (R)eintentar, (I)gnorar, Sal(t)ar todos: Abortar
+[2026-07-16 23:32:52] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+Conectando al servidor...
+Autentificando...
+Usando el nombre de usuario «unimarket».
+Autentificando con la contraseña guardada.
+Autentificado.
+Iniciando la sesión...
+Sesión iniciada.
+Sesión activa: [1] unimarket@38.253.171.145
+D:\BackupLimabanda\TEST_LIMABANDA_02.zip |          226 B |    0.0 KB/s | binary | 100%
+Archivo «TEST_LIMABANDA_02.zip» subido con éxito, pero se produjo un error al asignar permisos y/o fecha.
+Si el problema persiste, desactive las opciones «Establecer permisos» o «Mantener fecha». Otra alternativa sería activar la opción de «Ignorar errores de permisos».
+Permiso denegado
+Código de error: 3
+Mensaje de error desde el servidor: permission denied
+A(b)ortar, (R)eintentar, (I)gnorar, Sal(t)ar todos: Abortar
+[2026-07-16 23:32:52] [SUCCESS] Proceso finalizado.
+[2026-07-16 23:42:09] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-16 23:42:09] [INFO] === Backup Center iniciado ===
+[2026-07-16 23:42:10] [SUCCESS] Proceso finalizado.

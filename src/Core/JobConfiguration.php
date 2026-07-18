@@ -31,7 +31,8 @@ class JobConfiguration implements IConfiguration
             (int)$this->get('port', 22),
             $this->get('username'),
             $this->get('password'),
-            $this->get('hostkey')
+            $this->get('hostkey'),
+            (string)$this->get('remote_path', '')
         );
     }
 }

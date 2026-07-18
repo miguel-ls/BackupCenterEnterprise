@@ -1,13 +1,12 @@
 {
     "client": {
-        "name": "Codesicorp",
-        "code": "CODESICORP"
+        "name": "",
+        "code": ""
     },
     "backup": {
-        "local_path": "D:\\Backup ERP",
+        "local_path": "",
         "extensions": [
             "zip",
-            "rar",
             "bak"
         ]
     },

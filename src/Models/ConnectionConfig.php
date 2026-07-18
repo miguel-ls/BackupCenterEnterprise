@@ -9,7 +9,8 @@ class ConnectionConfig
         private int $port,
         private string $username,
         private string $password,
-        private string $hostKey
+        private string $hostKey,
+        private string $remotePath = ''
     ) {
     }
 
@@ -36,5 +37,10 @@ class ConnectionConfig
     public function getHostKey(): string
     {
         return $this->hostKey;
+    }
+
+    public function getRemotePath(): string
+    {
+        return $this->remotePath;
     }
 }

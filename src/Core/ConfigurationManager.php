@@ -42,14 +42,20 @@ class ConfigurationManager implements IConfiguration
         return $value;
     }
 
+    /**
+     * @deprecated Las credenciales SFTP ya no viven en config.json.
+     * Los trabajos operativos usan la conexion de la tabla `connections`
+     * a traves de JobConfiguration::getConnectionConfig(). Este metodo
+     * solo existia para el agente directo legado (agent.php,
+     * ServiceHost) y ahora lanza una excepcion clara en vez de conectar
+     * con credenciales vacias si alguien lo llega a invocar.
+     */
     public function getConnectionConfig(): ConnectionConfig
     {
-        return new ConnectionConfig(
-            $this->get('sftp.host'),
-            (int)$this->get('sftp.port'),
-            $this->get('sftp.username'),
-            $this->get('sftp.password'),
-            $this->get('sftp.hostkey')
+        throw new \RuntimeException(
+            'config.json ya no contiene credenciales SFTP. '
+            . 'Este modo (agente directo) esta descontinuado; '
+            . 'los backups se ejecutan por trabajo desde la tabla connections.'
         );
     }
 

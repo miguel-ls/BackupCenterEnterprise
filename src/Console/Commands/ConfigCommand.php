@@ -18,15 +18,11 @@ class ConfigCommand
         echo "Ruta backups     : " . $config->get('backup.local_path') . PHP_EOL;
         echo "Extensiones      : " . implode(', ', $config->get('backup.extensions', [])) . PHP_EOL;
 
-        $connection = $config->getConnectionConfig();
-
         echo PHP_EOL;
         echo "SFTP" . PHP_EOL;
         echo "----------------------------------------" . PHP_EOL;
-
-        echo "Host             : " . $connection->getHost() . PHP_EOL;
-        echo "Puerto           : " . $connection->getPort() . PHP_EOL;
-        echo "Usuario          : " . $connection->getUsername() . PHP_EOL;
+        echo "Las credenciales SFTP ya no viven en config.json." . PHP_EOL;
+        echo "Se configuran por conexion en el Dashboard (tabla connections)." . PHP_EOL;
 
         echo PHP_EOL;
         echo "Retry" . PHP_EOL;

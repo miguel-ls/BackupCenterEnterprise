@@ -10,26 +10,37 @@ use BackupCenter\Core\RetryPolicy;
 
 class UploadManager
 {
-    private IConfiguration $config;
     private WinScpProvider $provider;
     private RetryPolicy $retryPolicy;
     private ScriptBuilder $builder;
 
     public function __construct(
-        IConfiguration $config,
         WinScpProvider $provider,
         ScriptBuilder $builder,
         RetryPolicy $retryPolicy
     ) {
-        $this->config = $config;
         $this->provider = $provider;
         $this->builder = $builder;
         $this->retryPolicy = $retryPolicy;
     }
 
-    public function upload(BackupFile $file): string
+    /**
+     * Sube un archivo usando la conexion del trabajo que se esta
+     * ejecutando en este momento.
+     *
+     * IMPORTANTE: $configuration debe ser la configuracion de ESE job
+     * (JobConfiguration, construida con los datos de la tabla
+     * `connections`), no la configuracion global de config.json. Antes
+     * UploadManager recibia su IConfiguration una sola vez en el
+     * constructor y la reutilizaba para todos los jobs, por lo que
+     * siempre terminaba usando la conexion de config.json sin importar
+     * que trabajo se estuviera ejecutando.
+     */
+    public function upload(BackupFile $file, IConfiguration $configuration): string
     {
-        $connection = $this->config->getConnectionConfig();
+        $connection = $configuration->getConnectionConfig();
+
+        $remotePath = $connection->getRemotePath();
 
         $lastException = null;
 
@@ -45,7 +56,7 @@ class UploadManager
                     ->batchAbort()
                     ->confirmOff()
                     ->open($connection)
-                    ->put($file->getPath())
+                    ->put($file->getPath(), $remotePath !== '' ? $remotePath : null)
                     ->exit()
                     ->build();
 

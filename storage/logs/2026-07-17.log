@@ -1,0 +1,368 @@
+[2026-07-17 00:14:23] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-17 00:14:23] [INFO] === Backup Center iniciado ===
+[2026-07-17 00:14:23] [SUCCESS] Proceso finalizado.
+[2026-07-17 00:15:14] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-17 00:15:14] [INFO] === Backup Center iniciado ===
+[2026-07-17 00:15:14] [SUCCESS] Proceso finalizado.
+[2026-07-17 00:20:19] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-17 00:20:19] [INFO] === Backup Center iniciado ===
+[2026-07-17 00:20:19] [SUCCESS] Proceso finalizado.
+[2026-07-17 00:22:58] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-17 00:22:58] [INFO] === Backup Center iniciado ===
+[2026-07-17 00:22:58] [SUCCESS] Proceso finalizado.
+[2026-07-17 00:38:49] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-17 00:38:49] [INFO] === Backup Center iniciado ===
+[2026-07-17 00:38:49] [SUCCESS] Proceso finalizado.
+[2026-07-17 00:40:01] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-17 00:40:01] [INFO] === Backup Center iniciado ===
+[2026-07-17 00:40:01] [SUCCESS] Proceso finalizado.
+[2026-07-17 00:42:52] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-17 00:42:52] [INFO] === Backup Center iniciado ===
+[2026-07-17 00:42:52] [SUCCESS] Proceso finalizado.
+[2026-07-17 00:44:49] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-17 00:44:49] [INFO] === Backup Center iniciado ===
+[2026-07-17 00:44:49] [SUCCESS] Proceso finalizado.
+[2026-07-17 21:51:35] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-17 21:51:35] [INFO] === Backup Center iniciado ===
+[2026-07-17 21:51:36] [SUCCESS] Proceso finalizado.
+[2026-07-17 21:52:00] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-17 21:52:00] [INFO] === Backup Center iniciado ===
+[2026-07-17 21:52:00] [SUCCESS] Proceso finalizado.
+[2026-07-17 21:54:23] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-17 21:54:23] [INFO] === Backup Center iniciado ===
+[2026-07-17 21:54:23] [SUCCESS] Proceso finalizado.
+[2026-07-17 21:55:29] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-17 21:55:29] [INFO] === Backup Center iniciado ===
+[2026-07-17 21:55:30] [SUCCESS] Proceso finalizado.
+[2026-07-17 21:56:22] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-17 21:56:22] [INFO] === Backup Center iniciado ===
+[2026-07-17 21:56:33] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+El equipo «38.253.171.145-----» no existe.
+[2026-07-17 21:56:33] [SUCCESS] Proceso finalizado.
+[2026-07-17 22:11:03] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-17 22:11:03] [INFO] === Backup Center iniciado ===
+[2026-07-17 22:11:14] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+El equipo «38.253.171.145-----» no existe.
+[2026-07-17 22:11:25] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+El equipo «38.253.171.145-----» no existe.
+[2026-07-17 22:11:25] [SUCCESS] Proceso finalizado.
+[2026-07-17 22:32:33] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-17 22:32:34] [INFO] === Backup Center iniciado ===
+[2026-07-17 22:32:45] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+Conectando al servidor...
+Autentificando...
+¡La clave del servidor no se corresponde a la clave configurada «"»!
+La huella de clave del servidor es
+ ssh-ed25519 255 RmInX2qqfJRntFznrgKm8LZtcQOiZUNqZ+amaNCObww.
+Autenticación fallida.
+[2026-07-17 22:32:56] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+Conectando al servidor...
+Autentificando...
+¡La clave del servidor no se corresponde a la clave configurada «"»!
+La huella de clave del servidor es
+ ssh-ed25519 255 RmInX2qqfJRntFznrgKm8LZtcQOiZUNqZ+amaNCObww.
+Autenticación fallida.
+[2026-07-17 22:32:56] [SUCCESS] Proceso finalizado.
+[2026-07-17 22:34:12] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-17 22:34:12] [INFO] === Backup Center iniciado ===
+[2026-07-17 22:34:24] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+Conectando al servidor...
+Autentificando...
+¡La clave del servidor no se corresponde a la clave configurada «"»!
+La huella de clave del servidor es
+ ssh-ed25519 255 RmInX2qqfJRntFznrgKm8LZtcQOiZUNqZ+amaNCObww.
+Autenticación fallida.
+[2026-07-17 22:34:35] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+Conectando al servidor...
+Autentificando...
+¡La clave del servidor no se corresponde a la clave configurada «"»!
+La huella de clave del servidor es
+ ssh-ed25519 255 RmInX2qqfJRntFznrgKm8LZtcQOiZUNqZ+amaNCObww.
+Autenticación fallida.
+[2026-07-17 22:34:35] [SUCCESS] Proceso finalizado.
+[2026-07-17 22:34:59] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-17 22:34:59] [INFO] === Backup Center iniciado ===
+[2026-07-17 22:35:11] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+Conectando al servidor...
+Autentificando...
+¡La clave del servidor no se corresponde a la clave configurada «"»!
+La huella de clave del servidor es
+ ssh-ed25519 255 RmInX2qqfJRntFznrgKm8LZtcQOiZUNqZ+amaNCObww.
+Autenticación fallida.
+[2026-07-17 22:35:22] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+Conectando al servidor...
+Autentificando...
+¡La clave del servidor no se corresponde a la clave configurada «"»!
+La huella de clave del servidor es
+ ssh-ed25519 255 RmInX2qqfJRntFznrgKm8LZtcQOiZUNqZ+amaNCObww.
+Autenticación fallida.
+[2026-07-17 22:35:22] [SUCCESS] Proceso finalizado.
+[2026-07-17 22:36:04] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-17 22:36:04] [INFO] === Backup Center iniciado ===
+[2026-07-17 22:36:15] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+Conectando al servidor...
+Autentificando...
+¡La clave del servidor no se corresponde a la clave configurada «"»!
+La huella de clave del servidor es
+ ssh-ed25519 255 RmInX2qqfJRntFznrgKm8LZtcQOiZUNqZ+amaNCObww.
+Autenticación fallida.
+[2026-07-17 22:36:26] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+Conectando al servidor...
+Autentificando...
+¡La clave del servidor no se corresponde a la clave configurada «"»!
+La huella de clave del servidor es
+ ssh-ed25519 255 RmInX2qqfJRntFznrgKm8LZtcQOiZUNqZ+amaNCObww.
+Autenticación fallida.
+[2026-07-17 22:36:26] [SUCCESS] Proceso finalizado.
+[2026-07-17 22:36:49] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-17 22:36:49] [INFO] === Backup Center iniciado ===
+[2026-07-17 22:37:00] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+Conectando al servidor...
+Autentificando...
+¡La clave del servidor no se corresponde a la clave configurada «"»!
+La huella de clave del servidor es
+ ssh-ed25519 255 RmInX2qqfJRntFznrgKm8LZtcQOiZUNqZ+amaNCObww.
+Autenticación fallida.
+[2026-07-17 22:39:07] [INFO] Ejecutando trabajo: SQL Unimarket
+[2026-07-17 22:39:07] [INFO] === Backup Center iniciado ===
+[2026-07-17 22:39:19] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+Conectando al servidor...
+Autentificando...
+Usando el nombre de usuario «unimarket».
+Autentificando con la contraseña guardada.
+Acceso denegado.
+Autenticación fallida.
+Registro de autenticación (véase registro de sesión para más detalles):
+Usando el nombre de usuario «unimarket».
+Acceso denegado.
+
+Autenticación fallida.
+[2026-07-17 22:39:30] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+Conectando al servidor...
+Autentificando...
+Usando el nombre de usuario «unimarket».
+Autentificando con la contraseña guardada.
+Acceso denegado.
+Autenticación fallida.
+Registro de autenticación (véase registro de sesión para más detalles):
+Usando el nombre de usuario «unimarket».
+Acceso denegado.
+
+Autenticación fallida.
+[2026-07-17 22:39:30] [SUCCESS] Proceso finalizado.
+[2026-07-17 22:48:24] [INFO] Ejecutando trabajo: SQL Unimarket
+[2026-07-17 22:48:24] [INFO] === Backup Center iniciado ===
+[2026-07-17 22:48:25] [SUCCESS] Proceso finalizado.
+[2026-07-17 22:54:37] [INFO] Ejecutando trabajo: SQL Unimarket
+[2026-07-17 22:54:37] [INFO] === Backup Center iniciado ===
+[2026-07-17 22:54:38] [SUCCESS] Proceso finalizado.
+[2026-07-17 23:06:18] [INFO] Ejecutando trabajo: SQL Unimarket
+[2026-07-17 23:06:18] [INFO] === Backup Center iniciado ===
+[2026-07-17 23:06:31] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+Conectando al servidor...
+Autentificando...
+Usando el nombre de usuario «unimarket».
+Autentificando con la contraseña guardada.
+Acceso denegado.
+Autenticación fallida.
+Registro de autenticación (véase registro de sesión para más detalles):
+Usando el nombre de usuario «unimarket».
+Acceso denegado.
+
+Autenticación fallida.
+[2026-07-17 23:06:31] [SUCCESS] Proceso finalizado.
+[2026-07-17 23:09:51] [INFO] Ejecutando trabajo: SQL Unimarket
+[2026-07-17 23:09:51] [INFO] === Backup Center iniciado ===
+[2026-07-17 23:10:04] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+Conectando al servidor...
+Autentificando...
+¡La clave del servidor no se corresponde a la clave configurada «"»!
+La huella de clave del servidor es
+ ssh-ed25519 255 RmInX2qqfJRntFznrgKm8LZtcQOiZUNqZ+amaNCObww.
+Autenticación fallida.
+[2026-07-17 23:10:04] [SUCCESS] Proceso finalizado.
+[2026-07-17 23:15:44] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-17 23:15:44] [INFO] === Backup Center iniciado ===
+[2026-07-17 23:15:56] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+Conectando al servidor...
+Autentificando...
+¡La clave del servidor no se corresponde a la clave configurada «"»!
+La huella de clave del servidor es
+ ssh-ed25519 255 RmInX2qqfJRntFznrgKm8LZtcQOiZUNqZ+amaNCObww.
+Autenticación fallida.
+[2026-07-17 23:16:09] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+Conectando al servidor...
+Autentificando...
+¡La clave del servidor no se corresponde a la clave configurada «"»!
+La huella de clave del servidor es
+ ssh-ed25519 255 RmInX2qqfJRntFznrgKm8LZtcQOiZUNqZ+amaNCObww.
+Autenticación fallida.
+[2026-07-17 23:16:22] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+Conectando al servidor...
+Autentificando...
+¡La clave del servidor no se corresponde a la clave configurada «"»!
+La huella de clave del servidor es
+ ssh-ed25519 255 RmInX2qqfJRntFznrgKm8LZtcQOiZUNqZ+amaNCObww.
+Autenticación fallida.
+[2026-07-17 23:16:35] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+Conectando al servidor...
+Autentificando...
+¡La clave del servidor no se corresponde a la clave configurada «"»!
+La huella de clave del servidor es
+ ssh-ed25519 255 RmInX2qqfJRntFznrgKm8LZtcQOiZUNqZ+amaNCObww.
+Autenticación fallida.
+[2026-07-17 23:16:35] [SUCCESS] Proceso finalizado.
+[2026-07-17 23:18:35] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-17 23:18:35] [INFO] === Backup Center iniciado ===
+[2026-07-17 23:18:47] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+Conectando al servidor...
+Autentificando...
+¡La clave del servidor no se corresponde a la clave configurada «"»!
+La huella de clave del servidor es
+ ssh-ed25519 255 RmInX2qqfJRntFznrgKm8LZtcQOiZUNqZ+amaNCObww.
+Autenticación fallida.
+[2026-07-17 23:18:58] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+Conectando al servidor...
+Autentificando...
+¡La clave del servidor no se corresponde a la clave configurada «"»!
+La huella de clave del servidor es
+ ssh-ed25519 255 RmInX2qqfJRntFznrgKm8LZtcQOiZUNqZ+amaNCObww.
+Autenticación fallida.
+[2026-07-17 23:19:09] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+Conectando al servidor...
+Autentificando...
+¡La clave del servidor no se corresponde a la clave configurada «"»!
+La huella de clave del servidor es
+ ssh-ed25519 255 RmInX2qqfJRntFznrgKm8LZtcQOiZUNqZ+amaNCObww.
+Autenticación fallida.
+[2026-07-17 23:19:21] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+Conectando al servidor...
+Autentificando...
+¡La clave del servidor no se corresponde a la clave configurada «"»!
+La huella de clave del servidor es
+ ssh-ed25519 255 RmInX2qqfJRntFznrgKm8LZtcQOiZUNqZ+amaNCObww.
+Autenticación fallida.
+[2026-07-17 23:19:21] [SUCCESS] Proceso finalizado.
+[2026-07-17 23:20:36] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-17 23:20:36] [INFO] === Backup Center iniciado ===
+[2026-07-17 23:20:47] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+Conectando al servidor...
+Autentificando...
+¡La clave del servidor no se corresponde a la clave configurada «"»!
+La huella de clave del servidor es
+ ssh-ed25519 255 RmInX2qqfJRntFznrgKm8LZtcQOiZUNqZ+amaNCObww.
+Autenticación fallida.
+[2026-07-17 23:20:58] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+Conectando al servidor...
+Autentificando...
+¡La clave del servidor no se corresponde a la clave configurada «"»!
+La huella de clave del servidor es
+ ssh-ed25519 255 RmInX2qqfJRntFznrgKm8LZtcQOiZUNqZ+amaNCObww.
+Autenticación fallida.
+[2026-07-17 23:21:10] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+Conectando al servidor...
+Autentificando...
+¡La clave del servidor no se corresponde a la clave configurada «"»!
+La huella de clave del servidor es
+ ssh-ed25519 255 RmInX2qqfJRntFznrgKm8LZtcQOiZUNqZ+amaNCObww.
+Autenticación fallida.
+[2026-07-17 23:21:21] [ERROR] WinSCP termino con error (codigo 1): batch           abort     
+confirm         off       
+Buscando servidor...
+Conectando al servidor...
+Autentificando...
+¡La clave del servidor no se corresponde a la clave configurada «"»!
+La huella de clave del servidor es
+ ssh-ed25519 255 RmInX2qqfJRntFznrgKm8LZtcQOiZUNqZ+amaNCObww.
+Autenticación fallida.
+[2026-07-17 23:21:21] [SUCCESS] Proceso finalizado.
+[2026-07-17 23:34:22] [INFO] Ejecutando trabajo: SQL Unimarket
+[2026-07-17 23:34:22] [INFO] === Backup Center iniciado ===
+[2026-07-17 23:34:23] [SUCCESS] Proceso finalizado.
+[2026-07-17 23:34:41] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-17 23:34:41] [INFO] === Backup Center iniciado ===
+[2026-07-17 23:34:43] [SUCCESS] Proceso finalizado.
+[2026-07-17 23:46:41] [INFO] Ejecutando trabajo: SQL Unimarket
+[2026-07-17 23:46:41] [INFO] === Backup Center iniciado ===
+[2026-07-17 23:46:41] [SUCCESS] Proceso finalizado.
+[2026-07-17 23:49:26] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-17 23:49:26] [INFO] === Backup Center iniciado ===
+[2026-07-17 23:49:26] [SUCCESS] Proceso finalizado.
+[2026-07-17 23:51:05] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-17 23:51:05] [INFO] === Backup Center iniciado ===
+[2026-07-17 23:51:05] [SUCCESS] Proceso finalizado.
+[2026-07-17 23:51:07] [INFO] Ejecutando trabajo: SQL Unimarket
+[2026-07-17 23:51:07] [INFO] === Backup Center iniciado ===
+[2026-07-17 23:51:08] [SUCCESS] Proceso finalizado.
+[2026-07-17 23:56:19] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-17 23:56:19] [INFO] === Backup Center iniciado ===
+[2026-07-17 23:56:19] [SUCCESS] Proceso finalizado.
+[2026-07-17 23:56:21] [INFO] Ejecutando trabajo: SQL Unimarket
+[2026-07-17 23:56:21] [INFO] === Backup Center iniciado ===
+[2026-07-17 23:56:21] [SUCCESS] Proceso finalizado.
+[2026-07-17 23:57:08] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-17 23:57:08] [INFO] === Backup Center iniciado ===
+[2026-07-17 23:57:08] [SUCCESS] Proceso finalizado.
+[2026-07-17 23:57:12] [INFO] Ejecutando trabajo: SQL Unimarket
+[2026-07-17 23:57:12] [INFO] === Backup Center iniciado ===
+[2026-07-17 23:57:12] [SUCCESS] Proceso finalizado.
+[2026-07-17 23:58:24] [INFO] Ejecutando trabajo: SQL Limabanda
+[2026-07-17 23:58:24] [INFO] === Backup Center iniciado ===
+[2026-07-17 23:58:25] [SUCCESS] Proceso finalizado.
+[2026-07-17 23:58:27] [INFO] Ejecutando trabajo: SQL Unimarket
+[2026-07-17 23:58:27] [INFO] === Backup Center iniciado ===
+[2026-07-17 23:58:27] [SUCCESS] Proceso finalizado.
