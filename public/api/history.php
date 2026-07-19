@@ -29,6 +29,8 @@ $page = max(
 
 $limit = (int)($_GET['limit'] ?? 10);
 
+$clientId = (int)($_GET['client_id'] ?? 0);
+
 /*
 |--------------------------------------------------------------------------
 | Solo permitimos estos tamaños
@@ -45,14 +47,46 @@ if (!in_array($limit, $allowedLimits, true)) {
 
 $offset = ($page - 1) * $limit;
 
-$total = (int)$pdo
-    ->query("
+$clientName = null;
+
+if ($clientId > 0) {
+
+    $stmtClient = $pdo->prepare("
+        SELECT business_name
+        FROM clients
+        WHERE id = ?
+    ");
+
+    $stmtClient->execute([$clientId]);
+
+    $clientName = $stmtClient->fetchColumn();
+
+}
+
+if ($clientName) {
+
+    $stmtTotal = $pdo->prepare("
         SELECT COUNT(*)
         FROM execution_history
-    ")
-    ->fetchColumn();
+        WHERE client = ?
+    ");
 
-$stmt = $pdo->prepare("
+    $stmtTotal->execute([$clientName]);
+
+    $total = (int)$stmtTotal->fetchColumn();
+
+} else {
+
+    $total = (int)$pdo
+        ->query("
+            SELECT COUNT(*)
+            FROM execution_history
+        ")
+        ->fetchColumn();
+
+}
+
+$sql = "
     SELECT
         id,
         executed_at,
@@ -64,22 +98,57 @@ $stmt = $pdo->prepare("
         duration,
         status
     FROM execution_history
+";
+
+if ($clientName) {
+
+    $sql .= " WHERE client = ? ";
+
+}
+
+$sql .= "
     ORDER BY id DESC
     LIMIT ?
     OFFSET ?
-");
+";
 
-$stmt->bindValue(
-    1,
-    $limit,
-    \PDO::PARAM_INT
-);
+$stmt = $pdo->prepare($sql);
 
-$stmt->bindValue(
-    2,
-    $offset,
-    \PDO::PARAM_INT
-);
+if ($clientName) {
+
+    $stmt->bindValue(
+        1,
+        $clientName,
+        \PDO::PARAM_STR
+    );
+
+    $stmt->bindValue(
+        2,
+        $limit,
+        \PDO::PARAM_INT
+    );
+
+    $stmt->bindValue(
+        3,
+        $offset,
+        \PDO::PARAM_INT
+    );
+
+} else {
+
+    $stmt->bindValue(
+        1,
+        $limit,
+        \PDO::PARAM_INT
+    );
+
+    $stmt->bindValue(
+        2,
+        $offset,
+        \PDO::PARAM_INT
+    );
+
+}
 
 $stmt->execute();
 

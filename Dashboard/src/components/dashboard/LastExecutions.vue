@@ -2,13 +2,35 @@
 
 <div class="bg-white rounded-xl border border-neutral-200 shadow-sm">
 
-    <div class="flex items-center justify-between p-5 border-b">
+<div class="flex items-center justify-between p-5 border-b">
 
-        <h2 class="text-lg font-semibold">
+    <h2 class="text-lg font-semibold">
 
-            Últimas ejecuciones
+        Últimas ejecuciones
 
-        </h2>
+    </h2>
+
+    <div class="flex items-center gap-3">
+
+        <select
+            v-model="selectedClient"
+            @change="load"
+            class="border rounded-md px-3 py-2 text-sm"
+        >
+
+            <option :value="0">
+                Todos los clientes
+            </option>
+
+            <option
+                v-for="client in clients"
+                :key="client.id"
+                :value="client.id"
+            >
+                {{ client.business_name }}
+            </option>
+
+        </select>
 
         <button
             @click="load"
@@ -18,6 +40,8 @@
         </button>
 
     </div>
+
+</div>
 
     <div class="overflow-x-auto">
 
@@ -110,16 +134,45 @@ import {
 } from "vue";
 
 import {
-    getHistory
+    getHistory,
+    getClients
 } from "@/api/client";
 
 const history = ref([]);
+const clients = ref([]);
+
+const selectedClient = ref(0);
+
+async function loadClients(){
+
+    try{
+
+        const response = await getClients();
+
+        clients.value = Array.isArray(response.data)
+            ? response.data
+            : [];
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        clients.value = [];
+
+    }
+
+}
 
 async function load(){
 
     try{
 
-        const response = await getHistory(1,5);
+        const response = await getHistory(
+            1,
+            5,
+            selectedClient.value
+        );
 
         history.value = Array.isArray(response.data)
             ? response.data
@@ -170,6 +223,12 @@ function badgeClass(status){
 
 }
 
-onMounted(load);
+onMounted(async () => {
+
+    await loadClients();
+
+    await load();
+
+});
 
 </script>

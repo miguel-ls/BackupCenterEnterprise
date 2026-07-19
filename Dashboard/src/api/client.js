@@ -45,10 +45,11 @@ export const getQueue = () => request("job-queue.php");
 
 export const getHistory = (
     page = 1,
-    limit = 5
+    limit = 5,
+    clientId = 0
 ) =>
     request(
-        `history.php?page=${page}&limit=${limit}`
+        `history.php?page=${page}&limit=${limit}&client_id=${clientId}`
     );
 
 /* ================= USERS ================= */
