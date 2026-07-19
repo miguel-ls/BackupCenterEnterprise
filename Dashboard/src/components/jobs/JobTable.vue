@@ -29,6 +29,10 @@
                 </th>
 
                 <th class="text-left px-4 py-3 font-semibold">
+                    Cliente
+                </th>
+
+                <th class="text-left px-4 py-3 font-semibold">
                     Conexión
                 </th>
 
@@ -66,6 +70,10 @@
                         {{ job.name }}
                     </div>
 
+                </td>
+
+                <td class="px-4 py-3 text-neutral-600">
+                    {{ job.client_name || '-' }}
                 </td>
 
                 <td class="px-4 py-3 text-neutral-600">
@@ -152,7 +160,7 @@
             <tr>
 
                 <td
-                    colspan="6"
+                    colspan="7"
                     class="text-center py-10 text-neutral-500"
                 >
 

@@ -27,6 +27,7 @@ class ConnectionRepository
                 password TEXT NOT NULL,
                 hostkey TEXT,
                 protocol TEXT NOT NULL DEFAULT 'SFTP',
+                client_id INTEGER,
                 remote_path TEXT NOT NULL,
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP
             );
@@ -36,9 +37,13 @@ class ConnectionRepository
     public function getAll(): array
     {
         $stmt = $this->db->query("
-            SELECT *
-            FROM connections
-            ORDER BY name
+SELECT
+    c.*,
+    cl.business_name AS client_name
+FROM connections c
+LEFT JOIN clients cl
+    ON cl.id = c.client_id
+ORDER BY c.name
         ");
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -60,35 +65,38 @@ class ConnectionRepository
     }
 
     public function create(
-        string $name,
-        string $host,
-        int $port,
-        string $username,
-        string $password,
-        string $hostkey,
-        string $protocol,
-        string $remotePath
+            int $clientId,
+            string $name,
+            string $host,
+            int $port,
+            string $username,
+            string $password,
+            string $hostkey,
+            string $protocol,
+            string $remotePath
     ): int
     {
         $stmt = $this->db->prepare("
             INSERT INTO connections
             (
-                name,
-                host,
-                port,
-                username,
-                password,
-                hostkey,
-                protocol,
-                remote_path
+            client_id,
+            name,
+            host,
+            port,
+            username,
+            password,
+            hostkey,
+            protocol,
+            remote_path
             )
             VALUES
             (
-                ?,?,?,?,?,?,?,?
+                ?,?,?,?,?,?,?,?,?
             )
         ");
 
         $stmt->execute([
+            $clientId,
             $name,
             $host,
             $port,
@@ -104,6 +112,7 @@ class ConnectionRepository
 
     public function update(
         int $id,
+        int $clientId,
         string $name,
         string $host,
         int $port,
@@ -117,6 +126,7 @@ class ConnectionRepository
         $stmt = $this->db->prepare("
             UPDATE connections
             SET
+                client_id=?,
                 name=?,
                 host=?,
                 port=?,
@@ -129,6 +139,7 @@ class ConnectionRepository
         ");
 
         return $stmt->execute([
+            $clientId,
             $name,
             $host,
             $port,

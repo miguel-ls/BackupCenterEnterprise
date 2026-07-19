@@ -45,6 +45,8 @@ case 'POST':
 
     $id = $repository->create(
 
+        (int)$data['client_id'],
+
         $data['name'],
 
         $data['host'],
@@ -95,6 +97,8 @@ case 'PUT':
     $repository->update(
 
         (int)$data['id'],
+
+        (int)$data['client_id'],
 
         $data['name'],
 

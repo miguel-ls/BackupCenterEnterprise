@@ -8,6 +8,7 @@
 
             <tr>
 
+                <th class="text-left p-4">Cliente</th>
                 <th class="text-left p-4">Host</th>
                 <th class="text-left p-4">Puerto</th>
                 <th class="text-left p-4">Usuario</th>
@@ -25,6 +26,10 @@
                 :key="connection.id"
                 class="border-t"
             >
+
+                <td class="p-4">
+                    {{ connection.client_name || '-' }}
+                </td>
 
                 <td class="p-4">
                     {{ connection.host }}
@@ -69,7 +74,7 @@
             <tr v-if="connections.length===0">
 
                 <td
-                    colspan="5"
+                    colspan="6"
                     class="text-center p-10 text-neutral-400"
                 >
 
@@ -91,7 +96,6 @@
 
 import {
 
-    Play,
     Pencil,
     Trash2
 

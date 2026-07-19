@@ -72,11 +72,15 @@ CREATE TABLE IF NOT EXISTS jobs
                     j.last_status,
                     'Pendiente'
                 ) AS status,
-                COALESCE(c.name,'Sin conexión') AS connection
+                COALESCE(c.name,'Sin conexión') AS connection,
+                COALESCE(cl.business_name,'-') AS client_name
             FROM jobs j
 
             LEFT JOIN connections c
                 ON c.id=j.connection_id
+
+            LEFT JOIN clients cl
+                ON cl.id = c.client_id
 
             ORDER BY j.id
         ");

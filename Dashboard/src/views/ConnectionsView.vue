@@ -11,7 +11,7 @@
         </h1>
 
         <button
-            @click="showDialog = true"
+            @click="newConnection"
             class="bg-blue-600 text-white px-5 py-3 rounded-lg"
         >
             + Nueva conexión
@@ -19,17 +19,17 @@
 
     </div>
 
-<ConnectionDialog
-    v-model="showDialog"
-    :connection="selectedConnection"
-    @saved="connectionSaved"
-/>
+    <ConnectionDialog
+        v-model="showDialog"
+        :connection="selectedConnection"
+        @saved="connectionSaved"
+    />
 
-<ConnectionTable
-    :connections="connections"
-    @edit="editConnection"
-    @delete="removeConnection"
-/>
+    <ConnectionTable
+        :connections="connections"
+        @edit="editConnection"
+        @delete="removeConnection"
+    />
 
 </MainLayout>
 
@@ -61,9 +61,19 @@ async function loadConnections(){
 
 }
 
+function newConnection(){
+
+    selectedConnection.value = null
+
+    showDialog.value = true
+
+}
+
 function connectionSaved(){
 
     showDialog.value = false
+
+    selectedConnection.value = null
 
     loadConnections()
 

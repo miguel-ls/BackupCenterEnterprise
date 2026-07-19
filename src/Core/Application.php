@@ -13,6 +13,9 @@ use BackupCenter\Repositories\ExecutionHistoryRepository;
 
 use BackupCenter\Repositories\JobRepository;
 use BackupCenter\Repositories\ConnectionRepository;
+
+use BackupCenter\Repositories\ClientRepository;
+
 use BackupCenter\Services\BackupService;
 use BackupCenter\Services\SchedulerService;
 
@@ -43,9 +46,10 @@ class Application
     private BackupCenterAgent $agent;
     private Database $database;
 
-    private JobRepository $jobRepository;
-    private ConnectionRepository $connectionRepository;
-    private BackupService $backupService;    
+private JobRepository $jobRepository;
+private ConnectionRepository $connectionRepository;
+private ClientRepository $clientRepository;
+private BackupService $backupService;
 
     private SchedulerLoop $schedulerLoop;
     private SchedulerEngine $schedulerEngine;
@@ -113,6 +117,12 @@ $this->connectionRepository = new ConnectionRepository(
 );
 
 $this->connectionRepository->initialize();
+
+$this->clientRepository = new ClientRepository(
+    $this->database
+);
+
+$this->clientRepository->initialize();
 
 $this->notificationRepository = new NotificationRepository(
     $this->database
@@ -274,6 +284,11 @@ public function jobRepository(): JobRepository
 public function connectionRepository(): ConnectionRepository
 {
     return $this->connectionRepository;
+}
+
+public function clientRepository(): ClientRepository
+{
+    return $this->clientRepository;
 }
 
 }

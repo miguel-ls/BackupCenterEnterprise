@@ -2,6 +2,23 @@
 
 <div class="space-y-4">
 
+    <select
+        v-model="connection.client_id"
+        class="w-full border rounded-lg p-3"
+    >
+        <option :value="null">
+            Seleccione un cliente
+        </option>
+
+        <option
+            v-for="client in clients"
+            :key="client.id"
+            :value="client.id"
+        >
+            {{ client.business_name }}
+        </option>
+    </select>
+
     <input
         v-model="connection.name"
         placeholder="Nombre de la conexión"
@@ -73,12 +90,15 @@
 
 import {
     reactive,
-    watch
+    watch,
+    ref,
+    onMounted
 } from 'vue'
 
 import {
     createConnection,
-    updateConnection
+    updateConnection,
+    getClients
 } from '../../api/client'
 
 const emit = defineEmits([
@@ -91,9 +111,12 @@ const props = defineProps({
 
 })
 
+const clients = ref([])
+
 const connection = reactive({
 
     id:null,
+    client_id:null,
     name:'',
     host:'',
     port:22,
@@ -119,6 +142,7 @@ watch(
 
             Object.assign(connection,{
                 id:null,
+                client_id:null,
                 name:'',
                 host:'',
                 port:22,
@@ -139,6 +163,18 @@ watch(
 
 )
 
+async function loadClients(){
+
+    const response = await getClients()
+
+    if(response.success){
+
+        clients.value = response.data
+
+    }
+
+}
+
 async function save(){
 
     if(connection.id){
@@ -154,5 +190,7 @@ async function save(){
     emit('saved')
 
 }
+
+onMounted(loadClients)
 
 </script>
