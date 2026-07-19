@@ -175,6 +175,9 @@ export const getReportDaily = (days = 30) =>
 export const getReportClients = () =>
     request("reports.php?action=clients");
 
+export const getReportErrors = () =>
+    request("reports.php?action=errors");
+
 export const getReportJobs = () =>
     request("reports.php?action=jobs");
 
@@ -205,6 +208,17 @@ export const exportConnectionsExcel = () => {
 
     window.open(
         `${API}/reports-export.php?action=connections`,
+        "_blank"
+    );
+
+};
+
+export const exportReport = (action, type = "excel") => {
+
+    const format = type === "pdf" ? "pdf" : "excel";
+
+    window.open(
+        `${API}/reports-export.php?action=${encodeURIComponent(action)}&type=${format}`,
         "_blank"
     );
 

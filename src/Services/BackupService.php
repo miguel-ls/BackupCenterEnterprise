@@ -50,6 +50,14 @@ class BackupService
             return false;
         }
 
+        // Esta informaciÃ³n alimenta las columnas Estado y Ãšltima ejecuciÃ³n
+        // de la grilla de Trabajos, independientemente de si se ejecuta
+        // desde la cola o mediante el programador.
+        $this->jobRepository->updateExecution(
+            $jobId,
+            'En ejecuciÃ³n'
+        );
+
         $connection = null;
 
         if (!empty($job['connection_id'])) {
@@ -62,6 +70,11 @@ class BackupService
 
         
         if (!$connection) {
+
+            $this->jobRepository->updateExecution(
+                $jobId,
+                'Error'
+            );
 
             Audit::error(
                 "BACKUP",
@@ -92,6 +105,11 @@ class BackupService
 
             if($ok){
 
+                $this->jobRepository->updateExecution(
+                    $jobId,
+                    'Correcto'
+                );
+
                 Audit::info(
                     "BACKUP",
                     "SUCCESS",
@@ -100,6 +118,11 @@ class BackupService
                 );
 
             }else{
+
+                $this->jobRepository->updateExecution(
+                    $jobId,
+                    'Error'
+                );
 
                 Audit::error(
                     "BACKUP",
@@ -113,6 +136,11 @@ class BackupService
             return $ok;
 
         } catch (\Throwable $e) {
+
+            $this->jobRepository->updateExecution(
+                $jobId,
+                'Error'
+            );
 
             Audit::error(
                 "BACKUP",

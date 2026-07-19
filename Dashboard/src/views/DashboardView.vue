@@ -1,3 +1,4 @@
+// ...existing code...
 <template>
 
 <MainLayout>
@@ -20,19 +21,7 @@
 
     </div>
 
-    <!-- Estadísticas -->
-
-    <div class="grid grid-cols-4 gap-6 mt-6">
-
-        <StatCard title="Subidos Hoy" :value="statistics.uploaded_today ?? 0"/>
-
-        <StatCard title="Ejecuciones Hoy" :value="statistics.executions_today ?? 0"/>
-
-        <StatCard title="Errores Hoy" :value="statistics.errors_today ?? 0"/>
-
-        <StatCard title="Total Archivos" :value="statistics.total_uploaded ?? 0"/>
-
-    </div>
+    <!-- Estadísticas (ELIMINADO) -->
 
     <!-- Servidor + Monitor -->
 
@@ -173,3 +162,4 @@ const ramColor = computed(()=>{
 })
 
 </script>
+// ...existing code...

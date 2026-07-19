@@ -71,6 +71,16 @@ class BackupCenterAgent
 
         $summary->found = count($files);
 
+        $connection = $configuration->getConnectionConfig();
+
+        $this->logger->info(sprintf(
+            'ConexiÃ³n SFTP configurada: servidor=%s:%d, usuario=%s, destino=%s, contraseÃ±a=guardada (oculta).',
+            $connection->getHost(),
+            $connection->getPort(),
+            $connection->getUsername(),
+            $connection->getRemotePath() !== '' ? $connection->getRemotePath() : '/'
+        ));
+
         echo "Ruta: {$path}" . PHP_EOL;
         echo "Archivos encontrados: {$summary->found}" . PHP_EOL;
 
@@ -197,7 +207,13 @@ class BackupCenterAgent
 
         );
 
-        $this->logger->success("Proceso finalizado.");
+        if ($summary->errors > 0) {
+            $this->logger->error(
+                "Proceso finalizado con {$summary->errors} error(es)."
+            );
+        } else {
+            $this->logger->success("Proceso finalizado.");
+        }
 
         echo PHP_EOL;
         echo "==========================================" . PHP_EOL;

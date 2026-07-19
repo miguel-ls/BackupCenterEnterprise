@@ -80,10 +80,12 @@
                         :class="{
 
                             'bg-yellow-100 text-yellow-700':
-                                job.status=='Pending',
+                                job.status=='Pending' ||
+                                job.status=='Pendiente',
 
                             'bg-blue-100 text-blue-700':
                                 job.status=='Running' ||
+                                job.status=='Ejecutando' ||
                                 job.status=='En ejecución',
 
                             'bg-green-100 text-green-700':

@@ -122,6 +122,114 @@ switch ($action) {
 
         break;
 
+    case 'daily':
+
+        $rows = $repository->daily(30);
+
+        $headers = [
+
+            'Fecha',
+            'Ejecuciones',
+            'Archivos Subidos',
+            'Errores'
+
+        ];
+
+        $data = [];
+
+        foreach ($rows as $row) {
+
+            $data[] = [
+
+                $row['day'],
+                $row['executions'],
+                $row['uploaded'],
+                $row['errors']
+
+            ];
+
+        }
+
+        $title = 'Reporte de Actividad Diaria';
+
+        break;
+
+    case 'errors':
+
+        $rows = $repository->errors();
+
+        $headers = [
+
+            'Fecha',
+            'Cliente',
+            'Archivos Encontrados',
+            'Archivos Subidos',
+            'Errores',
+            'DuraciÃ³n (s)',
+            'Estado'
+
+        ];
+
+        $data = [];
+
+        foreach ($rows as $row) {
+
+            $data[] = [
+
+                $row['executed_at'],
+                $row['client'],
+                $row['files_found'],
+                $row['files_uploaded'],
+                $row['errors'],
+                $row['duration'],
+                $row['status']
+
+            ];
+
+        }
+
+        $title = 'Reporte de Errores';
+
+        break;
+
+    case 'errors':
+
+        $rows = $repository->errors();
+
+        $headers = [
+
+            'Fecha',
+            'Cliente',
+            'Archivos Encontrados',
+            'Archivos Subidos',
+            'Errores',
+            'DuraciÃ³n (s)',
+            'Estado'
+
+        ];
+
+        $data = [];
+
+        foreach ($rows as $row) {
+
+            $data[] = [
+
+                $row['executed_at'],
+                $row['client'],
+                $row['files_found'],
+                $row['files_uploaded'],
+                $row['errors'],
+                $row['duration'],
+                $row['status']
+
+            ];
+
+        }
+
+        $title = 'Reporte de Errores';
+
+        break;
+
     default:
 
         http_response_code(404);

@@ -46,8 +46,32 @@ CREATE TABLE IF NOT EXISTS jobs
                 j.destination,
                 j.schedule,
                 j.enabled,
-                COALESCE(j.last_run,'-') AS time,
-                COALESCE(j.last_status,'Pendiente') AS status,
+                COALESCE(
+                    (
+                        SELECT e.executed_at
+                        FROM execution_history e
+                        WHERE e.client = j.name
+                        ORDER BY e.id DESC
+                        LIMIT 1
+                    ),
+                    j.last_run,
+                    '-'
+                ) AS time,
+                COALESCE(
+                    (
+                        SELECT CASE e.status
+                            WHEN 'OK' THEN 'Correcto'
+                            WHEN 'ERROR' THEN 'Error'
+                            ELSE e.status
+                        END
+                        FROM execution_history e
+                        WHERE e.client = j.name
+                        ORDER BY e.id DESC
+                        LIMIT 1
+                    ),
+                    j.last_status,
+                    'Pendiente'
+                ) AS status,
                 COALESCE(c.name,'Sin conexión') AS connection
             FROM jobs j
 
@@ -160,12 +184,13 @@ public function updateJob(
         $stmt = $this->db->prepare("
             UPDATE jobs
             SET
-                last_run=datetime('now'),
+                last_run=?,
                 last_status=?
             WHERE id=?
         ");
 
         $stmt->execute([
+            date('Y-m-d H:i:s'),
             $status,
             $id
         ]);

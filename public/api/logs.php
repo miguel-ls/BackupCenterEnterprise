@@ -14,6 +14,10 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 use BackupCenter\Core\Paths;
 
+// Los registros se escriben con la hora de Lima. Mantener la misma zona
+// horaria en esta respuesta evita que la fecha de respaldo aparezca en UTC.
+date_default_timezone_set('America/Lima');
+
 $page = max(1, (int)($_GET['page'] ?? 1));
 $limit = max(10, (int)($_GET['limit'] ?? 50));
 
@@ -29,45 +33,44 @@ if (is_dir($directory)) {
 
     foreach ($files as $file) {
 
-        $lines = @file($file);
+        $lines = @file($file, FILE_IGNORE_NEW_LINES);
 
         if (!$lines) {
             continue;
         }
 
-        foreach (array_reverse($lines) as $line) {
+        $entries = [];
+        $current = null;
 
-            $line = trim($line);
+        foreach ($lines as $line) {
 
-            if ($line === '') {
+            // Los mensajes de WinSCP pueden abarcar varias líneas. Solo la
+            // primera tiene fecha, por lo que se agrupan como un solo evento.
+            if (preg_match('/^\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\] \[([A-Z]+)\] (.*)$/', $line, $matches)) {
+
+                if ($current !== null) {
+                    $entries[] = $current;
+                }
+
+                $current = [
+                    'date' => $matches[1],
+                    'level' => $matches[2],
+                    'message' => $matches[0]
+                ];
+
                 continue;
             }
 
-            $level = 'INFO';
-
-            if (stripos($line, 'ERROR') !== false) {
-
-                $level = 'ERROR';
-
-            } elseif (stripos($line, 'WARNING') !== false) {
-
-                $level = 'WARNING';
-
+            if ($current !== null) {
+                $current['message'] .= PHP_EOL . $line;
             }
-
-            $rows[] = [
-
-                'date' => date(
-                    'Y-m-d H:i:s',
-                    filemtime($file)
-                ),
-
-                'level' => $level,
-
-                'message' => $line
-
-            ];
         }
+
+        if ($current !== null) {
+            $entries[] = $current;
+        }
+
+        $rows = array_merge($rows, array_reverse($entries));
     }
 }
 

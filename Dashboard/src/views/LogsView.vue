@@ -105,7 +105,7 @@
 
                     </td>
 
-                    <td class="p-4 font-mono text-sm">
+                    <td class="p-4 font-mono text-sm whitespace-pre-wrap break-words">
 
                         {{ item.message }}
 

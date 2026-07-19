@@ -120,15 +120,62 @@ class ReportRepository
         $stmt = $this->db->query("
             SELECT
 
-                name,
+                j.name,
 
-                last_status,
+                COALESCE(
+                    (
+                        SELECT CASE e.status
+                            WHEN 'OK' THEN 'Correcto'
+                            WHEN 'ERROR' THEN 'Error'
+                            ELSE e.status
+                        END
+                        FROM execution_history e
+                        WHERE e.client = j.name
+                        ORDER BY e.id DESC
+                        LIMIT 1
+                    ),
+                    j.last_status,
+                    'Pendiente'
+                ) AS last_status,
 
-                last_run
+                COALESCE(
+                    (
+                        SELECT e.executed_at
+                        FROM execution_history e
+                        WHERE e.client = j.name
+                        ORDER BY e.id DESC
+                        LIMIT 1
+                    ),
+                    j.last_run,
+                    '-'
+                ) AS last_run
 
-            FROM jobs
+            FROM jobs j
 
             ORDER BY id
+        ");
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Ejecuciones que registraron errores.
+     */
+    public function errors(): array
+    {
+        $stmt = $this->db->query("
+            SELECT
+                executed_at,
+                client,
+                files_found,
+                files_uploaded,
+                errors,
+                duration,
+                status
+            FROM execution_history
+            WHERE errors > 0
+               OR status = 'ERROR'
+            ORDER BY id DESC
         ");
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

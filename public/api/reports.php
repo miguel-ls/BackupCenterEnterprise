@@ -47,6 +47,18 @@ switch ($action) {
 
         break;
 
+    case 'errors':
+
+        $data = $repository->errors();
+
+        break;
+
+    case 'errors':
+
+        $data = $repository->errors();
+
+        break;
+
     case 'jobs':
 
         $data = $repository->jobs();
