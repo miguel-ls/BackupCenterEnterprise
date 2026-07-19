@@ -47,31 +47,26 @@ if (!in_array($limit, $allowedLimits, true)) {
 
 $offset = ($page - 1) * $limit;
 
-$clientName = null;
-
 if ($clientId > 0) {
-
-    $stmtClient = $pdo->prepare("
-        SELECT business_name
-        FROM clients
-        WHERE id = ?
-    ");
-
-    $stmtClient->execute([$clientId]);
-
-    $clientName = $stmtClient->fetchColumn();
-
-}
-
-if ($clientName) {
 
     $stmtTotal = $pdo->prepare("
         SELECT COUNT(*)
-        FROM execution_history
-        WHERE client = ?
+
+        FROM execution_history eh
+
+        INNER JOIN jobs j
+            ON j.id = eh.job_id
+
+        INNER JOIN connections cn
+            ON cn.id = j.connection_id
+
+        INNER JOIN clients c
+            ON c.id = cn.client_id
+
+        WHERE c.id = ?
     ");
 
-    $stmtTotal->execute([$clientName]);
+    $stmtTotal->execute([$clientId]);
 
     $total = (int)$stmtTotal->fetchColumn();
 
@@ -87,52 +82,69 @@ if ($clientName) {
 }
 
 $sql = "
-    SELECT
-        id,
-        executed_at,
-        client,
-        files_found,
-        files_uploaded,
-        files_skipped,
-        errors,
-        duration,
-        status
-    FROM execution_history
+SELECT
+
+    eh.id,
+    eh.executed_at,
+
+    j.name AS job_name,
+
+    c.business_name AS client_name,
+
+    eh.files_found,
+    eh.files_uploaded,
+    eh.files_skipped,
+    eh.errors,
+    eh.duration,
+    eh.status
+
+FROM execution_history eh
+
+INNER JOIN jobs j
+    ON j.id = eh.job_id
+
+INNER JOIN connections cn
+    ON cn.id = j.connection_id
+
+INNER JOIN clients c
+    ON c.id = cn.client_id
 ";
 
-if ($clientName) {
+if ($clientId > 0) {
 
-    $sql .= " WHERE client = ? ";
+    $sql .= "
+        WHERE c.id = ?
+    ";
 
 }
 
 $sql .= "
-    ORDER BY id DESC
-    LIMIT ?
-    OFFSET ?
+ORDER BY eh.id DESC
+LIMIT ?
+OFFSET ?
 ";
 
 $stmt = $pdo->prepare($sql);
 
-if ($clientName) {
+if ($clientId > 0) {
 
-    $stmt->bindValue(
-        1,
-        $clientName,
-        \PDO::PARAM_STR
-    );
+$stmt->bindValue(
+    1,
+    $clientId,
+    \PDO::PARAM_INT
+);
 
-    $stmt->bindValue(
-        2,
-        $limit,
-        \PDO::PARAM_INT
-    );
+$stmt->bindValue(
+    2,
+    $limit,
+    \PDO::PARAM_INT
+);
 
-    $stmt->bindValue(
-        3,
-        $offset,
-        \PDO::PARAM_INT
-    );
+$stmt->bindValue(
+    3,
+    $offset,
+    \PDO::PARAM_INT
+);
 
 } else {
 

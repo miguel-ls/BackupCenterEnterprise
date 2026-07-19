@@ -187,9 +187,12 @@ class BackupCenterAgent
 
         $summary->finish();
 
+        
         $this->executionHistoryRepository->save(
 
             $summary,
+
+            (int)$configuration->get('id'),
 
             $client
 

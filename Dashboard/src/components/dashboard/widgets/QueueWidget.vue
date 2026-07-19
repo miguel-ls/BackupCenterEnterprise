@@ -61,15 +61,7 @@
 
                 </div>
 
-                <div class="flex justify-between">
-                    <span>Worker</span>
-                    <strong>{{ last.worker || "-" }}</strong>
-                </div>
 
-                <div class="flex justify-between">
-                    <span>Intentos</span>
-                    <strong>{{ last.attempts }}</strong>
-                </div>
 
                 <div class="flex justify-between">
                     <span>Creado</span>

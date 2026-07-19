@@ -98,6 +98,7 @@ public function save(
             CREATE TABLE IF NOT EXISTS execution_history
             (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                job_id INTEGER NOT NULL,
                 executed_at TEXT NOT NULL,
                 client TEXT NOT NULL,
                 files_found INTEGER NOT NULL,

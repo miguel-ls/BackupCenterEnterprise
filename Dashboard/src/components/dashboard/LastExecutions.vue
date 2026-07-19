@@ -52,6 +52,7 @@
                 <tr>
 
                     <th class="text-left p-3 font-semibold">Fecha</th>
+                    <th class="text-left p-3 font-semibold">Trabajo</th>
                     <th class="text-left p-3 font-semibold">Cliente</th>
                     <th class="text-center p-3 font-semibold">Subidos</th>
                     <th class="text-center p-3 font-semibold">Errores</th>
@@ -75,7 +76,11 @@
                     </td>
 
                     <td class="p-3 font-medium">
-                        {{ item.client }}
+                        {{ item.job_name }}
+                    </td>
+
+                    <td class="p-3">
+                        {{ item.client_name }}
                     </td>
 
                     <td class="p-3 text-center">
@@ -106,7 +111,7 @@
                 <tr v-if="history.length===0">
 
                     <td
-                        colspan="6"
+                        colspan="7"
                         class="text-center p-10 text-neutral-500"
                     >
 
