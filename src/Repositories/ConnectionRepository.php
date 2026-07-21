@@ -29,24 +29,50 @@ class ConnectionRepository
                 protocol TEXT NOT NULL DEFAULT 'SFTP',
                 client_id INTEGER,
                 remote_path TEXT NOT NULL,
-                created_at TEXT DEFAULT CURRENT_TIMESTAMP
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                install_token TEXT
             );
         ");
+
+        $this->ensureInstallTokenColumn();
+        $this->populateMissingInstallTokens();
     }
 
-    public function getAll(): array
+    private function ensureInstallTokenColumn(): void
     {
-        $stmt = $this->db->query("
-SELECT
-    c.*,
-    cl.business_name AS client_name
-FROM connections c
-LEFT JOIN clients cl
-    ON cl.id = c.client_id
-ORDER BY c.name
-        ");
+        $stmt = $this->db->query('PRAGMA table_info(connections)');
+        $columns = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($columns as $column) {
+            if (($column['name'] ?? '') === 'install_token') {
+                return;
+            }
+        }
+
+        $this->db->exec('ALTER TABLE connections ADD COLUMN install_token TEXT');
+    }
+
+    private function populateMissingInstallTokens(): void
+    {
+        $stmt = $this->db->prepare(
+            'SELECT id FROM connections WHERE install_token IS NULL OR install_token = ""'
+        );
+        $stmt->execute();
+
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($rows as $row) {
+            $token = $this->generateInstallToken();
+            $update = $this->db->prepare(
+                'UPDATE connections SET install_token=? WHERE id=?'
+            );
+            $update->execute([$token, (int)$row['id']]);
+        }
+    }
+
+    private function generateInstallToken(): string
+    {
+        return bin2hex(random_bytes(16));
     }
 
     public function get(int $id): ?array
@@ -64,6 +90,17 @@ ORDER BY c.name
         return $connection ?: null;
     }
 
+    public function getAll(): array
+    {
+        $stmt = $this->db->query("
+            SELECT *
+            FROM connections
+            ORDER BY id DESC
+        ");
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function create(
             int $clientId,
             string $name,
@@ -76,7 +113,9 @@ ORDER BY c.name
             string $remotePath
     ): int
     {
-        $stmt = $this->db->prepare("
+$installToken = $this->generateInstallToken();
+
+        $stmt = $this->db->prepare(" 
             INSERT INTO connections
             (
             client_id,
@@ -87,11 +126,12 @@ ORDER BY c.name
             password,
             hostkey,
             protocol,
-            remote_path
+            remote_path,
+            install_token
             )
             VALUES
             (
-                ?,?,?,?,?,?,?,?,?
+                ?,?,?,?,?,?,?,?,?,?
             )
         ");
 
@@ -104,7 +144,8 @@ ORDER BY c.name
             $password,
             $hostkey,
             $protocol,
-            $remotePath
+            $remotePath,
+            $installToken
         ]);
 
         return (int)$this->db->lastInsertId();

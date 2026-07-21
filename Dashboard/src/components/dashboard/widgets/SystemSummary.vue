@@ -24,7 +24,7 @@
 
             <span>Versión</span>
 
-            <strong>{{ version.version }}</strong>
+            <strong>{{ version?.version ?? 'N/A' }}</strong>
 
         </div>
 
@@ -32,7 +32,7 @@
 
             <span>PHP</span>
 
-            <strong>{{ version.php }}</strong>
+            <strong>{{ version?.php ?? 'N/A' }}</strong>
 
         </div>
 
@@ -40,7 +40,7 @@
 
             <span>Trabajos</span>
 
-            <strong>{{ status.jobs }}</strong>
+            <strong>{{ status?.jobs ?? 0 }}</strong>
 
         </div>
 
@@ -48,7 +48,7 @@
 
             <span>Conexiones</span>
 
-            <strong>{{ status.connections }}</strong>
+            <strong>{{ status?.connections ?? 0 }}</strong>
 
         </div>
 
@@ -56,7 +56,7 @@
 
             <span>En Cola</span>
 
-            <strong>{{ status.queue }}</strong>
+            <strong>{{ status?.queue ?? 0 }}</strong>
 
         </div>
 
@@ -64,7 +64,7 @@
 
             <span>Ejecutando</span>
 
-            <strong>{{ status.running }}</strong>
+            <strong>{{ status?.running ?? 0 }}</strong>
 
         </div>
 
@@ -74,7 +74,7 @@
 
             <span>Subidos Hoy</span>
 
-            <strong>{{ statistics.uploaded_today }}</strong>
+            <strong>{{ statistics?.uploaded_today ?? 0 }}</strong>
 
         </div>
 
@@ -82,7 +82,7 @@
 
             <span>Ejecuciones Hoy</span>
 
-            <strong>{{ statistics.executions_today }}</strong>
+            <strong>{{ statistics?.executions_today ?? 0 }}</strong>
 
         </div>
 
@@ -90,7 +90,7 @@
 
             <span>Total Archivos</span>
 
-            <strong>{{ statistics.total_uploaded }}</strong>
+            <strong>{{ statistics?.total_uploaded ?? 0 }}</strong>
 
         </div>
 
@@ -98,7 +98,7 @@
 
             <span>Servidor</span>
 
-            <strong>{{ version.time }}</strong>
+            <strong>{{ version?.time ?? 'N/A' }}</strong>
 
         </div>
 

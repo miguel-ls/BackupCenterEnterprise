@@ -13,6 +13,8 @@
                 <th class="text-left p-4">Puerto</th>
                 <th class="text-left p-4">Usuario</th>
                 <th class="text-left p-4">Protocolo</th>
+                <th class="text-left p-4">Estado</th>
+                <th class="text-left p-4">Install Token</th>
                 <th class="text-center p-4">Acciones</th>
 
             </tr>
@@ -48,6 +50,21 @@
                 </td>
 
                 <td class="p-4">
+                    <span
+                        :class="connection.install_token ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'"
+                        class="px-2 py-1 rounded-full text-xs font-semibold"
+                    >
+                        {{ connection.install_token ? 'Listo' : 'Sin token' }}
+                    </span>
+                </td>
+
+                <td class="p-4">
+                    <span class="font-mono text-xs break-all">
+                        {{ connection.install_token || '-' }}
+                    </span>
+                </td>
+
+                <td class="p-4">
 
                     <div class="flex justify-center gap-2">
 
@@ -56,6 +73,14 @@
                             class="bg-amber-500 hover:bg-amber-600 text-white rounded p-2"
                         >
                             <Pencil :size="17"/>
+                        </button>
+
+                        <button
+                            @click="$emit('generate-install',connection)"
+                            class="bg-emerald-600 hover:bg-emerald-700 text-white rounded p-2"
+                            title="Generar instalación"
+                        >
+                            <Download :size="17"/>
                         </button>
 
                         <button
@@ -74,7 +99,7 @@
             <tr v-if="connections.length===0">
 
                 <td
-                    colspan="6"
+                    colspan="8"
                     class="text-center p-10 text-neutral-400"
                 >
 
@@ -97,7 +122,8 @@
 import {
 
     Pencil,
-    Trash2
+    Trash2,
+    Download
 
 } from "lucide-vue-next";
 
@@ -113,7 +139,8 @@ defineProps({
 defineEmits([
 
     'edit',
-    'delete'
+    'delete',
+    'generate-install'
 
 ])
 
