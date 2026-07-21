@@ -92,11 +92,15 @@ class ConnectionRepository
 
     public function getAll(): array
     {
-        $stmt = $this->db->query("
-            SELECT *
-            FROM connections
-            ORDER BY id DESC
-        ");
+    $stmt = $this->db->query("
+        SELECT
+            c.*,
+            cl.business_name AS client_name
+        FROM connections c
+        LEFT JOIN clients cl
+            ON cl.id = c.client_id
+        ORDER BY c.id DESC
+    ");
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

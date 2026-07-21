@@ -70,18 +70,29 @@ class ExecutionHistoryRepository
             ->getConnection()
             ->prepare("
                 SELECT
-                    id,
-                    job_id,
-                    executed_at,
-                    client,
-                    files_found,
-                    files_uploaded,
-                    files_skipped,
-                    errors,
-                    duration,
-                    status
-                FROM execution_history
-                ORDER BY id DESC
+                    eh.id,
+                    eh.job_id,
+                    eh.executed_at,
+                    c.business_name AS client_name,
+                    j.name AS job_name,
+                    eh.files_found,
+                    eh.files_uploaded,
+                    eh.files_skipped,
+                    eh.errors,
+                    eh.duration,
+                    eh.status
+                FROM execution_history eh
+
+                LEFT JOIN jobs j
+                    ON j.id = eh.job_id
+
+                LEFT JOIN connections cn
+                    ON cn.id = j.connection_id
+
+                LEFT JOIN clients c
+                    ON c.id = cn.client_id
+
+                ORDER BY eh.id DESC
                 LIMIT :limit
             ");
 

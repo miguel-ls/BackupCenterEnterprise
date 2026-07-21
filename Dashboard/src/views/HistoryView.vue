@@ -44,6 +44,7 @@
 
                     <th class="text-left p-3">Fecha</th>
                     <th class="text-left p-3">Cliente</th>
+                    <th class="text-left p-3">Trabajo</th>
                     <th class="text-left p-3">Encontrados</th>
                     <th class="text-left p-3">Subidos</th>
                     <th class="text-left p-3">Omitidos</th>
@@ -64,7 +65,8 @@
                 >
 
                     <td class="p-3">{{ item.executed_at }}</td>
-                    <td class="p-3">{{ item.client }}</td>
+                    <td class="p-3">{{ item.client_name  }}</td>
+                    <td class="p-3">{{ item.job_name }}</td>
                     <td class="p-3">{{ item.files_found }}</td>
                     <td class="p-3">{{ item.files_uploaded }}</td>
                     <td class="p-3">{{ item.files_skipped }}</td>
