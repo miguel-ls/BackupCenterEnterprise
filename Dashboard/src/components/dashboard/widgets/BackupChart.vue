@@ -20,14 +20,36 @@
 
         </div>
 
-        <button
-            @click="load"
-            class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
-        >
+        <div class="flex items-center gap-3">
 
-            Actualizar
+            <select
+                v-model="selectedClient"
+                @change="onUpdate"
+                class="border rounded-md px-3 py-2 text-sm"
+            >
 
-        </button>
+                <option :value="0">Todos los clientes</option>
+
+                <option
+                    v-for="client in clients"
+                    :key="client.id"
+                    :value="client.id"
+                >
+                    {{ client.business_name }}
+                </option>
+
+            </select>
+
+            <button
+                @click="onUpdate"
+                class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
+            >
+
+                Actualizar
+
+            </button>
+
+        </div>
 
     </div>
 
@@ -35,12 +57,11 @@
 
         <div style="height:360px">
 
-            <Bar
+            <Line
                 v-if="loaded"
                 :data="chartData"
                 :options="chartOptions"
             />
-
             <div
                 v-else
                 class="flex items-center justify-center h-full text-neutral-500"
@@ -70,7 +91,7 @@ import {
 
 import {
 
-    Bar
+    Line
 
 } from "vue-chartjs"
 
@@ -82,7 +103,8 @@ import {
     Tooltip,
     Legend,
 
-    BarElement,
+    LineElement,
+    PointElement,
 
     CategoryScale,
     LinearScale
@@ -91,7 +113,9 @@ import {
 
 import {
 
-    getChart
+    getChart,
+    getClients,
+    getHistory
 
 } from "@/api/client"
 
@@ -101,7 +125,8 @@ ChartJS.register(
     Tooltip,
     Legend,
 
-    BarElement,
+    LineElement,
+    PointElement,
 
     CategoryScale,
     LinearScale
@@ -109,6 +134,8 @@ ChartJS.register(
 )
 
 const loaded = ref(false)
+const clients = ref([])
+const selectedClient = ref(0)
 
 const chartData = ref({
 
@@ -192,33 +219,75 @@ const chartOptions = {
 
 let timer = null
 
-async function load(){
+async function __loadBackupChartData() {
 
     loaded.value = false
 
-    const response = await getChart()
+    if (selectedClient.value === 0) {
 
-    chartData.value = {
+        const response = await getChart()
 
-        labels: response.data.map(item => item.day),
+        chartData.value = {
 
-        datasets:[
+            labels: response.data.map(item => item.day),
 
-            {
+            datasets:[
 
-                label:"Archivos subidos",
+                {
 
-                data: response.data.map(item => item.uploaded),
+                    label:"Archivos subidos",
 
-                backgroundColor:"#2563EB",
+                    data: response.data.map(item => item.uploaded),
 
-                borderRadius:8,
+                    borderColor: "#2563EB",
+                    backgroundColor: "rgba(37,99,235,0.08)",
+                    fill: true,
+                    tension: 0.25,
+                    pointRadius: 3
 
-                borderSkipped:false
+                }
 
+            ]
+
+        }
+
+    } else {
+
+        // get history for client and aggregate per day for last 7 days
+        const resp = await getHistory(1,100,selectedClient.value)
+        const rows = Array.isArray(resp.data) ? resp.data : []
+
+        const labels = []
+        const map = {}
+        for (let i = 6; i >= 0; i--) {
+            const d = new Date()
+            d.setDate(d.getDate() - i)
+            const day = d.toISOString().slice(0,10)
+            labels.push(day)
+            map[day] = 0
+        }
+
+        rows.forEach(item => {
+            const day = (item.executed_at || '').slice(0,10)
+            if (day in map) {
+                map[day] += Number(item.files_uploaded) || 0
             }
+        })
 
-        ]
+        chartData.value = {
+            labels: labels,
+            datasets: [
+                {
+                    label: "Archivos subidos",
+                    data: labels.map(l => map[l] || 0),
+                    borderColor: "#2563EB",
+                    backgroundColor: "rgba(37,99,235,0.08)",
+                    fill: true,
+                    tension: 0.25,
+                    pointRadius: 3
+                }
+            ]
+        }
 
     }
 
@@ -226,11 +295,27 @@ async function load(){
 
 }
 
+function onUpdate() {
+    return __loadBackupChartData()
+}
+
 onMounted(()=>{
 
-    load()
+    onUpdate()
 
-    timer = setInterval(load,20000)
+    // load clients for selector
+    async function loadClients(){
+        try{
+            const r = await getClients()
+            clients.value = Array.isArray(r.data) ? r.data : []
+        } catch(e){
+            clients.value = []
+        }
+    }
+
+    loadClients()
+
+    timer = setInterval(onUpdate,20000)
 
 })
 
