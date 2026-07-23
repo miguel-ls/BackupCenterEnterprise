@@ -41,9 +41,19 @@ class AgentService
 
             'connection' => [
 
-                'id' => (int)$connection['id'],
-                'clientId' => (int)$connection['client_id'],
-                'name' => $connection['name']
+                'id'         => (int)$connection['id'],
+                'clientId'   => (int)$connection['client_id'],
+                'name'       => $connection['name'],
+
+                'host'       => $connection['host'],
+                'port'       => (int)$connection['port'],
+                'protocol'   => $connection['protocol'],
+
+                'username'   => $connection['username'],
+                'password'   => $connection['password'],
+                'hostKey'    => $connection['hostkey'],
+
+                'remotePath' => $connection['remote_path']
 
             ],
 

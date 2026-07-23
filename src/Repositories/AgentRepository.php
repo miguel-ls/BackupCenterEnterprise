@@ -16,7 +16,17 @@ class AgentRepository
     public function findByInstallToken(string $token): ?array
     {
         $stmt = $this->pdo->prepare("
-            SELECT *
+            SELECT
+                id,
+                client_id,
+                name,
+                host,
+                port,
+                username,
+                password,
+                hostkey,
+                protocol,
+                remote_path
             FROM connections
             WHERE install_token = ?
             LIMIT 1
@@ -27,7 +37,7 @@ class AgentRepository
         $connection = $stmt->fetch(PDO::FETCH_ASSOC);
 
         return $connection ?: null;
-    }    
+    }
 
     public function getEnabledJobs(int $connectionId): array
     {
@@ -37,9 +47,7 @@ class AgentRepository
                 name,
                 source,
                 destination,
-                remote_path,
-                schedule,
-                enabled
+                schedule
             FROM jobs
             WHERE connection_id = ?
             AND enabled = 1
