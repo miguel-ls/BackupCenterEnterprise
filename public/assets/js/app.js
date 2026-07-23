@@ -1,25 +1,35 @@
 fetch('api/status.php')
-.then(r=>r.json())
-.then(data=>{
+    .then(response => response.json())
+    .then(response => {
 
-    document.getElementById('status').innerHTML=`
+        const data = response.data;
 
-        <div class="card">
+        document.getElementById('status').innerHTML = `
+            <div class="card">
+                <h2>Estado</h2>
 
-            <h2>Estado</h2>
+                <p><b>Jobs:</b> ${data.jobs}</p>
 
-            <p><b>Versión:</b> ${data.version}</p>
+                <p><b>Conexiones:</b> ${data.connections}</p>
 
-            <p><b>Servicio:</b> ${data.service}</p>
+                <p><b>Archivos Subidos:</b> ${data.uploaded}</p>
 
-            <p><b>PHP:</b> ${data.php}</p>
+                <p><b>Ejecuciones:</b> ${data.executions}</p>
 
-            <p><b>Base de datos:</b> ${data.database}</p>
+                <p><b>En Cola:</b> ${data.queue}</p>
 
-            <p><b>Hora:</b> ${data.time}</p>
+                <p><b>En Ejecución:</b> ${data.running}</p>
+            </div>
+        `;
 
-        </div>
+    })
+    .catch(error => {
+        console.error(error);
 
-    `;
-
-});
+        document.getElementById('status').innerHTML = `
+            <div class="card">
+                <h2>Error</h2>
+                <p>No fue posible obtener el estado del sistema.</p>
+            </div>
+        `;
+    });
