@@ -28,4 +28,26 @@ class AgentRepository
 
         return $connection ?: null;
     }    
+
+    public function getEnabledJobs(int $connectionId): array
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT
+                id,
+                name,
+                source,
+                destination,
+                remote_path,
+                schedule,
+                enabled
+            FROM jobs
+            WHERE connection_id = ?
+            AND enabled = 1
+            ORDER BY id
+        ");
+
+        $stmt->execute([$connectionId]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }    
 }

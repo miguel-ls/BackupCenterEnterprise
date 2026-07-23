@@ -28,16 +28,33 @@ class AgentService
 
         $connection = $this->repository->findByInstallToken($input['installToken']);
 
+        $jobs = $this->repository->getEnabledJobs(
+            (int)$connection['id']
+        );        
+
         if ($connection === null) {
             ApiResponse::error('Invalid Install Token');
             return;
         }
 
         ApiResponse::success([
-            'connectionId' => $connection['id'],
-            'clientId'     => $connection['client_id'],
-            'name'         => $connection['name'],
-            'message'      => 'Agent registered successfully'
+
+            'connection' => [
+
+                'id' => (int)$connection['id'],
+                'clientId' => (int)$connection['client_id'],
+                'name' => $connection['name']
+
+            ],
+
+            'settings' => [
+
+                'pollInterval' => 60
+
+            ],
+
+            'jobs' => $jobs
+
         ]);
     }
 }
