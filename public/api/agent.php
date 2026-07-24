@@ -25,6 +25,10 @@ switch ($action) {
         $service->register();
         break;
 
+    case 'exists':
+        $service->exists();
+        break;
+
     default:
         ApiResponse::error('Invalid action');
 }

@@ -57,5 +57,25 @@ class AgentRepository
         $stmt->execute([$connectionId]);
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } 
+    
+    public function fileExists(
+        int $jobId,
+        string $sha256
+    ): bool
+    {
+        $stmt = $this->db->prepare("
+            SELECT COUNT(*)
+            FROM uploaded_files
+            WHERE job_id = ?
+            AND sha256 = ?
+        ");
+
+        $stmt->execute([
+            $jobId,
+            $sha256
+        ]);
+
+        return (int)$stmt->fetchColumn() > 0;
     }    
 }

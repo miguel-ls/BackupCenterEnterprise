@@ -17,6 +17,25 @@ class AgentService
         $this->repository = new AgentRepository($pdo);
     }
 
+    public function exists(): void
+    {
+        $data = json_decode(file_get_contents('php://input'), true);
+
+        if (!$data) {
+            ApiResponse::error('Invalid request');
+            return;
+        }
+
+        $exists = $this->repository->fileExists(
+            (int)$data['jobId'],
+            $data['sha256']
+        );
+
+        ApiResponse::success([
+            'exists' => $exists
+        ]);
+    }
+
     public function register(): void
     {
         $input = json_decode(file_get_contents('php://input'), true);
