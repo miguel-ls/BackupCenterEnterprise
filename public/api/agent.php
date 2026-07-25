@@ -29,6 +29,10 @@ switch ($action) {
         $service->exists();
         break;
 
+    case 'register-file':
+        $service->registerFile();
+        break;
+                
     default:
         ApiResponse::error('Invalid action');
 }

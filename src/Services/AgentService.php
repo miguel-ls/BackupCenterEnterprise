@@ -45,6 +45,36 @@ public function exists(): void
     }
 }
 
+public function registerFile(): void
+{
+    try
+    {
+        $data = json_decode(file_get_contents('php://input'), true);
+
+        $this->repository->saveFile(
+            (int)$data['jobId'],
+            $data['filename'],
+            (int)$data['filesize'],
+            $data['sha256']
+        );
+
+        ApiResponse::success([
+            'registered' => true
+        ]);
+    }
+    catch (\Throwable $e)
+    {
+        http_response_code(500);
+
+        echo json_encode([
+            'message' => $e->getMessage(),
+            'file'    => $e->getFile(),
+            'line'    => $e->getLine(),
+            'trace'   => $e->getTraceAsString()
+        ]);
+    }
+}
+
     public function register(): void
     {
         $input = json_decode(file_get_contents('php://input'), true);

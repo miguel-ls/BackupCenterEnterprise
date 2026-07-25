@@ -77,5 +77,40 @@ class AgentRepository
         ]);
 
         return (int)$stmt->fetchColumn() > 0;
-    }    
+    }  
+    
+public function saveFile(
+    int $jobId,
+    string $filename,
+    int $filesize,
+    string $sha256
+): void
+{
+    $stmt = $this->pdo->prepare("
+        INSERT INTO uploaded_files
+        (
+            job_id,
+            filename,
+            filesize,
+            sha256,
+            uploaded_at
+        )
+        VALUES
+        (
+            ?,
+            ?,
+            ?,
+            ?,
+            ?
+        )
+    ");
+
+    $stmt->execute([
+        $jobId,
+        $filename,
+        $filesize,
+        $sha256,
+        date('Y-m-d H:i:s')
+    ]);
+}    
 }
