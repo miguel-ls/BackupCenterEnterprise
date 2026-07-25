@@ -64,7 +64,7 @@ class AgentRepository
         string $sha256
     ): bool
     {
-        $stmt = $this->db->prepare("
+        $stmt = $this->pdo->prepare("
             SELECT COUNT(*)
             FROM uploaded_files
             WHERE job_id = ?
