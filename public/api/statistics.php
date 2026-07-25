@@ -32,14 +32,14 @@ $data = [
     'executions_today' => (int)$pdo->query("
         SELECT COUNT(*)
         FROM execution_history
-        WHERE date(executed_at)=date('now')
+        WHERE date(started_at)=date('now')
     ")->fetchColumn(),
 
     'errors_today' => (int)$pdo->query("
         SELECT COUNT(*)
         FROM execution_history
-        WHERE errors>0
-        AND date(executed_at)=date('now')
+        WHERE files_failed > 0
+        AND date(started_at) = date('now')
     ")->fetchColumn(),
 
     'total_uploaded' => (int)$pdo->query("

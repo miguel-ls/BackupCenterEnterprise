@@ -72,7 +72,7 @@
                 >
 
                     <td class="p-3 whitespace-nowrap">
-                        {{ formatDate(item.executed_at) }}
+                        {{ formatDate(item.started_at) }}
                     </td>
 
                     <td class="p-3 font-medium">
@@ -88,11 +88,11 @@
                     </td>
 
                     <td class="p-3 text-center">
-                        {{ item.errors }}
+                        {{ item.files_failed }}
                     </td>
 
                     <td class="p-3 text-center">
-                        {{ Number(item.duration).toFixed(2) }} s
+                        {{ Number(item.duration_seconds).toFixed(2) }} s
                     </td>
 
                     <td class="p-3 text-center">
@@ -212,18 +212,14 @@ function badgeClass(status){
 
     switch(status){
 
-        case "OK":
+        case "Correcto":
             return "bg-green-100 text-green-700";
 
-        case "ERROR":
+        case "Con errores":
             return "bg-red-100 text-red-700";
-
-        case "WARNING":
-            return "bg-yellow-100 text-yellow-700";
 
         default:
             return "bg-gray-100 text-gray-700";
-
     }
 
 }

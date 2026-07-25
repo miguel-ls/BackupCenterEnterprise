@@ -102,6 +102,7 @@ import {
     Title,
     Tooltip,
     Legend,
+    Filler,
 
     LineElement,
     PointElement,
@@ -124,6 +125,7 @@ ChartJS.register(
     Title,
     Tooltip,
     Legend,
+    Filler,
 
     LineElement,
     PointElement,
@@ -268,7 +270,7 @@ async function __loadBackupChartData() {
         }
 
         rows.forEach(item => {
-            const day = (item.executed_at || '').slice(0,10)
+            const day = (item.started_at  || '').slice(0,10)
             if (day in map) {
                 map[day] += Number(item.files_uploaded) || 0
             }

@@ -79,15 +79,15 @@ if($internet){
 
 $last=$history->latest(5);
 
-foreach($last as $row){
+foreach ($last as $row) {
 
-    $data["events"][]=[
+    $data["events"][] = [
 
-        "title"=>"Backup ".$row["client"],
+        "title"  => "Backup " . $row["client_name"],
 
-        "status"=>$row["status"],
+        "status" => $row["status"],
 
-        "date"=>$row["executed_at"]
+        "date"   => $row["started_at"]
 
     ];
 

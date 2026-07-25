@@ -23,12 +23,12 @@ $pdo = $db->getConnection();
 
 $stmt = $pdo->query("
 SELECT
-    date(executed_at) AS day,
+    date(started_at) AS day,
     COUNT(*) AS executions,
-    SUM(files_uploaded) AS uploaded
+    COALESCE(SUM(files_uploaded),0) AS uploaded
 FROM execution_history
-WHERE executed_at >= date('now','-6 day')
-GROUP BY date(executed_at)
+WHERE started_at >= date('now','-6 day')
+GROUP BY date(started_at)
 ORDER BY day
 ");
 

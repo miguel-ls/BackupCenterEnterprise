@@ -85,7 +85,8 @@ $sql = "
 SELECT
 
     eh.id,
-    eh.executed_at,
+    eh.started_at,
+    eh.finished_at,
 
     j.name AS job_name,
 
@@ -94,8 +95,8 @@ SELECT
     eh.files_found,
     eh.files_uploaded,
     eh.files_skipped,
-    eh.errors,
-    eh.duration,
+    eh.files_failed,
+    eh.duration_seconds,
     eh.status
 
 FROM execution_history eh

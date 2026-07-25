@@ -64,21 +64,21 @@
                     class="border-t hover:bg-neutral-50"
                 >
 
-                    <td class="p-3">{{ item.executed_at }}</td>
+                    <td class="p-3">{{ item.started_at  }}</td>
                     <td class="p-3">{{ item.client_name  }}</td>
                     <td class="p-3">{{ item.job_name }}</td>
                     <td class="p-3">{{ item.files_found }}</td>
                     <td class="p-3">{{ item.files_uploaded }}</td>
                     <td class="p-3">{{ item.files_skipped }}</td>
-                    <td class="p-3">{{ item.errors }}</td>
-                    <td class="p-3">{{ Number(item.duration).toFixed(2) }} s</td>
+                    <td class="p-3">{{ item.files_failed  }}</td>
+                    <td class="p-3">{{ Number(item.duration_seconds ?? 0).toFixed(2) }} s</td>
 
                     <td class="p-3">
 
                         <span
-                            :class="item.status==='OK'
-                                ? 'text-green-600 font-semibold'
-                                : 'text-red-600 font-semibold'"
+                            :class="['Correcto','Completed','OK'].includes(item.status)
+    ? 'text-green-600 font-semibold'
+    : 'text-red-600 font-semibold'"
                         >
                             {{ item.status }}
                         </span>

@@ -69,18 +69,19 @@ class ExecutionHistoryRepository
         $stmt = $this->database
             ->getConnection()
             ->prepare("
-                SELECT
-                    eh.id,
-                    eh.job_id,
-                    eh.executed_at,
-                    c.business_name AS client_name,
-                    j.name AS job_name,
-                    eh.files_found,
-                    eh.files_uploaded,
-                    eh.files_skipped,
-                    eh.errors,
-                    eh.duration,
-                    eh.status
+            SELECT
+                eh.id,
+                eh.job_id,
+                eh.started_at,
+                eh.finished_at,
+                c.business_name AS client_name,
+                j.name AS job_name,
+                eh.files_found,
+                eh.files_uploaded,
+                eh.files_skipped,
+                eh.files_failed,
+                eh.duration_seconds,
+                eh.status
                 FROM execution_history eh
 
                 LEFT JOIN jobs j
@@ -112,7 +113,7 @@ class ExecutionHistoryRepository
 
                 SUM(
                     CASE
-                        WHEN status='OK'
+                        WHEN status='Correcto'
                         THEN 1
                         ELSE 0
                     END
@@ -120,7 +121,7 @@ class ExecutionHistoryRepository
 
                 SUM(
                     CASE
-                        WHEN status='ERROR'
+                        WHEN status='Con errores'
                         THEN 1
                         ELSE 0
                     END
@@ -130,7 +131,7 @@ class ExecutionHistoryRepository
 
                 SUM(files_skipped) skipped,
 
-                ROUND(AVG(duration),2) average_duration
+                ROUND(AVG(duration_seconds),2) average_duration
 
             FROM execution_history
         ";

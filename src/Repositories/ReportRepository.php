@@ -41,11 +41,11 @@ class ReportRepository
                 FROM execution_history
             ")->fetchColumn(),
 
-            "errors" => (int)$this->db->query("
-                SELECT COUNT(*)
-                FROM execution_history
-                WHERE errors>0
-            ")->fetchColumn()
+"errors" => (int)$this->db->query("
+    SELECT COUNT(*)
+    FROM execution_history
+    WHERE files_failed > 0
+")->fetchColumn()
 
         ];
     }
@@ -56,23 +56,23 @@ class ReportRepository
     public function daily(int $days = 30): array
     {
         $stmt = $this->db->prepare("
-            SELECT
+SELECT
 
-                DATE(executed_at) day,
+    DATE(started_at) AS day,
 
-                COUNT(*) executions,
+    COUNT(*) AS executions,
 
-                SUM(files_uploaded) uploaded,
+    SUM(files_uploaded) AS uploaded,
 
-                SUM(errors) errors
+    SUM(files_failed) AS errors
 
-            FROM execution_history
+FROM execution_history
 
-            GROUP BY DATE(executed_at)
+GROUP BY DATE(started_at)
 
-            ORDER BY DATE(executed_at) DESC
+ORDER BY DATE(started_at) DESC
 
-            LIMIT :days
+LIMIT :days
         ");
 
         $stmt->bindValue(
@@ -92,21 +92,30 @@ class ReportRepository
     public function clients(): array
     {
         $stmt = $this->db->query("
-            SELECT
+SELECT
 
-                client,
+    c.business_name AS client,
 
-                COUNT(*) executions,
+    COUNT(*) AS executions,
 
-                SUM(files_uploaded) uploaded,
+    SUM(e.files_uploaded) AS uploaded,
 
-                SUM(errors) errors
+    SUM(e.files_failed) AS errors
 
-            FROM execution_history
+FROM execution_history e
 
-            GROUP BY client
+INNER JOIN jobs j
+    ON j.id = e.job_id
 
-            ORDER BY executions DESC
+INNER JOIN connections cn
+    ON cn.id = j.connection_id
+
+INNER JOIN clients c
+    ON c.id = cn.client_id
+
+GROUP BY c.id, c.business_name
+
+ORDER BY executions DESC
         ");
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -122,33 +131,29 @@ class ReportRepository
 
                 j.name,
 
-                COALESCE(
-                    (
-                        SELECT CASE e.status
-                            WHEN 'OK' THEN 'Correcto'
-                            WHEN 'ERROR' THEN 'Error'
-                            ELSE e.status
-                        END
-                        FROM execution_history e
-                        WHERE e.client = j.name
-                        ORDER BY e.id DESC
-                        LIMIT 1
-                    ),
-                    j.last_status,
-                    'Pendiente'
-                ) AS last_status,
+COALESCE(
+(
+    SELECT e.status
+    FROM execution_history e
+    WHERE e.job_id = j.id
+    ORDER BY e.id DESC
+    LIMIT 1
+),
+j.last_status,
+'Pendiente'
+) AS last_status,
 
-                COALESCE(
-                    (
-                        SELECT e.executed_at
-                        FROM execution_history e
-                        WHERE e.client = j.name
-                        ORDER BY e.id DESC
-                        LIMIT 1
-                    ),
-                    j.last_run,
-                    '-'
-                ) AS last_run
+COALESCE(
+(
+    SELECT e.started_at
+    FROM execution_history e
+    WHERE e.job_id = j.id
+    ORDER BY e.id DESC
+    LIMIT 1
+),
+j.last_run,
+'-'
+) AS last_run
 
             FROM jobs j
 
@@ -164,18 +169,37 @@ class ReportRepository
     public function errors(): array
     {
         $stmt = $this->db->query("
-            SELECT
-                executed_at,
-                client,
-                files_found,
-                files_uploaded,
-                errors,
-                duration,
-                status
-            FROM execution_history
-            WHERE errors > 0
-               OR status = 'ERROR'
-            ORDER BY id DESC
+SELECT
+
+    e.started_at,
+
+    c.business_name AS client,
+
+    e.files_found,
+
+    e.files_uploaded,
+
+    e.files_failed,
+
+    e.duration_seconds,
+
+    e.status
+
+FROM execution_history e
+
+INNER JOIN jobs j
+    ON j.id = e.job_id
+
+INNER JOIN connections cn
+    ON cn.id = j.connection_id
+
+INNER JOIN clients c
+    ON c.id = cn.client_id
+
+WHERE e.files_failed > 0
+   OR e.status = 'Con errores'
+
+ORDER BY e.id DESC
         ");
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
