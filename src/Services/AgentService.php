@@ -52,10 +52,10 @@ public function registerFile(): void
         $data = json_decode(file_get_contents('php://input'), true);
 
         $this->repository->saveFile(
-            (int)$data['jobId'],
-            $data['filename'],
-            (int)$data['filesize'],
-            $data['sha256']
+            (int)$data['JobId'],
+            $data['FileName'],
+            (int)$data['FileSize'],
+            $data['Sha256']
         );
 
         ApiResponse::success([
@@ -72,11 +72,6 @@ public function registerFile(): void
             'line'    => $e->getLine(),
             'trace'   => $e->getTraceAsString()
         ]);
-
-$data = json_decode(file_get_contents('php://input'), true);
-
-var_dump($data);
-exit;
         
     }
 }
