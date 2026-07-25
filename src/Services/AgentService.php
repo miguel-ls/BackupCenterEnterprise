@@ -52,10 +52,10 @@ public function registerFile(): void
         $data = json_decode(file_get_contents('php://input'), true);
 
         $this->repository->saveFile(
-            (int)$data['JobId'],
-            $data['FileName'],
-            (int)$data['FileSize'],
-            $data['Sha256']
+            (int)$data['jobId'],
+            $data['fileName'],
+            (int)$data['fileSize'],
+            $data['sha256']
         );
 
         ApiResponse::success([
