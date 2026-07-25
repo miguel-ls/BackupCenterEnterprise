@@ -72,6 +72,12 @@ public function registerFile(): void
             'line'    => $e->getLine(),
             'trace'   => $e->getTraceAsString()
         ]);
+
+$data = json_decode(file_get_contents('php://input'), true);
+
+var_dump($data);
+exit;
+        
     }
 }
 
