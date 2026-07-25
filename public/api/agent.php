@@ -33,6 +33,10 @@ switch ($action) {
         $service->registerFile();
         break;
                 
+    case 'execution-history':
+        $service->executionHistory();
+        break;
+
     default:
         ApiResponse::error('Invalid action');
 }

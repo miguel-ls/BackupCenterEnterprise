@@ -112,5 +112,78 @@ public function saveFile(
         $sha256,
         date('Y-m-d H:i:s')
     ]);
-}    
+}
+
+public function saveExecutionHistory(array $data): void
+{
+    $this->pdo->beginTransaction();
+
+    try
+    {
+        $stmt = $this->pdo->prepare("
+            INSERT INTO execution_history
+            (
+                job_id,
+                started_at,
+                finished_at,
+                files_found,
+                files_uploaded,
+                files_skipped,
+                files_failed,
+                duration_seconds,
+                status,
+                created_at
+            )
+            VALUES
+            (
+                :job_id,
+                :started_at,
+                :finished_at,
+                :files_found,
+                :files_uploaded,
+                :files_skipped,
+                :files_failed,
+                :duration_seconds,
+                :status,
+                :created_at
+            )
+        ");
+
+        $stmt->execute([
+            ':job_id' => $data['jobId'],
+            ':started_at' => $data['startedAt'],
+            ':finished_at' => $data['finishedAt'],
+            ':files_found' => $data['filesFound'],
+            ':files_uploaded' => $data['filesUploaded'],
+            ':files_skipped' => $data['filesSkipped'],
+            ':files_failed' => $data['filesFailed'],
+            ':duration_seconds' => $data['durationSeconds'],
+            ':status' => $data['status'],
+            ':created_at' => date('Y-m-d H:i:s')
+        ]);
+
+        $stmt = $this->pdo->prepare("
+            UPDATE jobs
+            SET
+                last_run = :last_run,
+                last_status = :last_status,
+                running = 0
+            WHERE id = :job_id
+        ");
+
+        $stmt->execute([
+            ':last_run' => $data['finishedAt'],
+            ':last_status' => $data['status'],
+            ':job_id' => $data['jobId']
+        ]);
+
+        $this->pdo->commit();
+    }
+    catch (\Throwable $e)
+    {
+        $this->pdo->rollBack();
+        throw $e;
+    }
+}
+
 }
