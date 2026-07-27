@@ -117,6 +117,8 @@ import { useRouter } from "vue-router"
 
 const router = useRouter()
 
+const API = import.meta.env.VITE_API_URL;
+
 const username = ref("")
 const password = ref("")
 const code = ref("")
@@ -133,7 +135,7 @@ async function login(){
 
         const response = await fetch(
 
-            "http://localhost:8000/api/login.php",
+            `${API}/login.php`,
 
             {
 
@@ -203,7 +205,7 @@ async function login(){
 
     const response = await fetch(
 
-        "http://localhost:8000/api/2fa-verify.php",
+        `${API}/2fa-verify.php`,
 
         {
 

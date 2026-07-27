@@ -57,6 +57,8 @@ import UserFormModal from "../components/users/UserFormModal.vue"
 
 import TwoFactorModal from "../components/users/TwoFactorModal.vue"
 
+const API = import.meta.env.VITE_API_URL;
+
 const users=ref([])
 
 const showForm=ref(false)
@@ -95,7 +97,7 @@ async function load(){
 
 const r=await fetch(
 
-"http://localhost:8000/api/users.php"
+`${API}/users.php`
 
 )
 
@@ -137,7 +139,7 @@ const method=editing.value?"PUT":"POST"
 
 const r=await fetch(
 
-"http://localhost:8000/api/users.php",
+`${API}/users.php`,
 
 {
 
@@ -187,7 +189,7 @@ return
 
 const r=await fetch(
 
-"http://localhost:8000/api/users.php",
+`${API}/users.php`,
 
 {
 

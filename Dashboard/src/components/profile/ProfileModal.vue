@@ -249,9 +249,11 @@ false
 
 async function save(){
 
+const API = import.meta.env.VITE_API_URL;
+
 const r=await fetch(
 
-"http://localhost:8000/api/profile.php",
+`${API}/profile.php`,
 
 {
 
