@@ -96,7 +96,7 @@ public function save(
             (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 job_id INTEGER NOT NULL,
-                executed_at TEXT NOT NULL,
+                started_at TEXT NOT NULL,
                 client TEXT NOT NULL,
                 files_found INTEGER NOT NULL,
                 files_uploaded INTEGER NOT NULL,

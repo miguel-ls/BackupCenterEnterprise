@@ -1,45 +1,85 @@
 param(
     [string]$InstallDir = "$env:ProgramFiles\BackupCenter",
-    [string]$ServiceName = 'BackupCenterWorker'
+    [string]$ServiceName = "BackupCenterWorker"
 )
 
-$ErrorActionPreference = 'Stop'
+$ErrorActionPreference = "Stop"
 
-New-Item -ItemType Directory -Force -Path $InstallDir | Out-Null
+#------------------------------------------------------------
+# Crear directorio de instalación
+#------------------------------------------------------------
 
-$configPath = Join-Path $InstallDir 'config.json'
-$logPath = Join-Path $InstallDir 'install.log'
-$serviceScript = Join-Path $InstallDir 'start-service.cmd'
-$workerLog = Join-Path $InstallDir 'worker.log'
-$checkConfigScript = Join-Path $InstallDir 'check-config.php'
-$packageConfigPath = Join-Path $InstallDir 'package-config.json'
+if (-not (Test-Path $InstallDir)) {
+    New-Item -ItemType Directory -Path $InstallDir | Out-Null
+}
 
-if (Test-Path $packageConfigPath) {
-    Copy-Item $packageConfigPath $configPath -Force
-} elseif (-not (Test-Path $configPath)) {
-    @'
+$configPath = Join-Path $InstallDir "config.json"
+$logPath = Join-Path $InstallDir "install.log"
+
+$installerFolder = Split-Path -Parent $MyInvocation.MyCommand.Path
+$agentSource = Join-Path $installerFolder "..\agent"
+$packageConfigPath = Join-Path $installerFolder "..\config.json"
+
+#------------------------------------------------------------
+# Validar agente
+#------------------------------------------------------------
+
+if (-not (Test-Path $agentSource)) {
+    throw "No se encontro la carpeta agent."
+}
+
+$agentExe = Join-Path $agentSource "BackupCenterAgent.exe"
+
+if (-not (Test-Path $agentExe)) {
+    throw "No se encontro BackupCenterAgent.exe en la carpeta agent."
+}
+
+#------------------------------------------------------------
+# Detener servicio si existe
+#------------------------------------------------------------
+
+$service = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
+
+if ($service -and $service.Status -eq "Running") {
+    Stop-Service $ServiceName -Force
+}
+
+#------------------------------------------------------------
+# Copiar archivos del agente
+#------------------------------------------------------------
+
+Copy-Item "$agentSource\*" $InstallDir -Recurse -Force
+
+#------------------------------------------------------------
+# Copiar configuración
+#------------------------------------------------------------
+
+if (-not (Test-Path $configPath)) {
+
+    if (Test-Path $packageConfigPath) {
+
+        Copy-Item $packageConfigPath $configPath
+
+    }
+    else {
+
+@'
 {
-  "server": "http://localhost:8000",
+  "server": "https://api.codesicorp.net",
   "clientId": 0,
   "connectionId": 0,
-  "connectionName": "Nueva conexión",
+  "connectionName": "Nueva conexion",
   "installToken": ""
 }
 '@ | Set-Content -Path $configPath -Encoding utf8
+
+    }
+
 }
 
-@"
-@echo off
-setlocal
-set LOGFILE=%~dp0worker.log
-if not exist "%~dp0..\..\public\worker.php" (
-    echo [%DATE% %TIME%] worker.php no encontrado >> "%LOGFILE%"
-    exit /b 1
-)
-
-echo [%DATE% %TIME%] iniciando worker >> "%LOGFILE%"
-php "%~dp0..\..\public\worker.php" >> "%LOGFILE%" 2>&1
-"@ | Set-Content -Path $serviceScript -Encoding ascii
+#------------------------------------------------------------
+# Log instalación
+#------------------------------------------------------------
 
 $installLog = @"
 [install]
@@ -51,20 +91,55 @@ Timestamp=$(Get-Date -Format o)
 
 Set-Content -Path $logPath -Value $installLog -Encoding utf8
 
+#------------------------------------------------------------
+# Registrar/Iniciar servicio
+#------------------------------------------------------------
+
 try {
-    $service = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
-    if (-not $service) {
-        New-Service -Name $ServiceName -BinaryPathName "cmd.exe /c `"$serviceScript`"" -DisplayName 'BackupCenter Worker' -StartupType Automatic | Out-Null
+
+    $exePath = Join-Path $InstallDir "BackupCenterAgent.exe"
+
+    if (-not (Test-Path $exePath)) {
+        throw "No se encontro BackupCenterAgent.exe"
     }
-} catch {
-    Write-Warning "No se pudo registrar el servicio automáticamente: $($_.Exception.Message)"
+
+    $service = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
+
+    if (-not $service) {
+
+        New-Service `
+            -Name $ServiceName `
+            -BinaryPathName "`"$exePath`"" `
+            -DisplayName "BackupCenter Agent" `
+            -StartupType Automatic | Out-Null
+
+    }
+
+    $service = Get-Service -Name $ServiceName
+
+    if ($service.Status -ne "Running") {
+        Start-Service $ServiceName
+    }
+
+    $service = Get-Service -Name $ServiceName
+
+}
+catch {
+    Write-Warning $_.Exception.Message
 }
 
-if (Test-Path $checkConfigScript) {
-    & php $checkConfigScript | Out-File -FilePath $workerLog -Encoding utf8
-}
+#------------------------------------------------------------
+# Resultado
+#------------------------------------------------------------
 
-Write-Host "Instalación preparada en $InstallDir"
-Write-Host "Archivo de configuración: $configPath"
-Write-Host "Log de instalación: $logPath"
-Write-Host "Prueba de configuración guardada en $workerLog"
+Write-Host ""
+Write-Host "=============================================="
+Write-Host " Instalacion completada"
+Write-Host "=============================================="
+Write-Host ""
+Write-Host "Directorio : $InstallDir"
+Write-Host "Configuracion : $configPath"
+Write-Host "Log : $logPath"
+Write-Host "Servicio : $ServiceName"
+Write-Host "Estado : $($service.Status)"
+Write-Host ""

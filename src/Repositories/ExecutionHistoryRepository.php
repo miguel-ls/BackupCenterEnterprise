@@ -24,7 +24,7 @@ class ExecutionHistoryRepository
         INSERT INTO execution_history
         (
             job_id,
-            executed_at,
+            started_at,
             client,
             files_found,
             files_uploaded,
@@ -36,7 +36,7 @@ class ExecutionHistoryRepository
         VALUES
         (
             :job_id,
-            :executed_at,
+            :started_at,
             :client,
             :files_found,
             :files_uploaded,
@@ -53,7 +53,7 @@ class ExecutionHistoryRepository
 
         $stmt->execute([
             ':job_id'         => $jobId,
-            ':executed_at'    => date('Y-m-d H:i:s'),
+            ':started_at'    => date('Y-m-d H:i:s'),
             ':client'         => $client,
             ':files_found'    => $summary->found,
             ':files_uploaded' => $summary->uploaded,

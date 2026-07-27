@@ -1,15 +1,6 @@
 <?php
 
-header('Access-Control-Allow-Origin: http://localhost:5173');
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
-header('Content-Type: application/json');
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit;
-}
-
+require_once __DIR__ . '/cors.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 use BackupCenter\Core\Database;
@@ -59,7 +50,7 @@ case 'POST':
         }
 
         $payload = [
-            'server' => 'http://localhost:8000',
+            'server' => 'https://api.codesicorp.net',
             'installToken' => $connection['install_token']
         ];
 
@@ -74,6 +65,7 @@ case 'POST':
 
         $projectRoot = dirname(__DIR__, 2);
         $scriptPath = $projectRoot . '/resources/windows/install.ps1';
+        $installerCmdPath = $projectRoot . '/resources/windows/Instalar BackupCenter.cmd';
         $workerScriptPath = $projectRoot . '/resources/windows/worker-test.cmd';
         $serviceScriptPath = $projectRoot . '/resources/windows/service-install.cmd';
         $serviceRemoveScriptPath = $projectRoot . '/resources/windows/service-remove.cmd';
@@ -90,6 +82,7 @@ case 'POST':
 
         $zip->addFile($configPath, 'config.json');
         $zip->addFile($scriptPath, 'windows/install.ps1');
+        $zip->addFile($installerCmdPath, 'Instalar BackupCenter.cmd');
         $zip->addFile($workerScriptPath, 'windows/worker-test.cmd');
         $zip->addFile($serviceScriptPath, 'windows/service-install.cmd');
         $zip->addFile($serviceRemoveScriptPath, 'windows/service-remove.cmd');
@@ -97,6 +90,21 @@ case 'POST':
         $zip->addFile($authGuidePath, 'windows/AUTH.md');
         $zip->addFile($notificationsGuidePath, 'windows/NOTIFICATIONS.md');
         $zip->addFile($readmePath, 'windows/README.md');
+
+        $agentPublishPath = 'D:/miguel.lopez/MyCloud/FUENTES/BackupCenterAgent/BackupCenterService/bin/Release/net8.0/publish/win-x64';
+
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($agentPublishPath, RecursiveDirectoryIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::SELF_FIRST
+        );
+
+        foreach ($iterator as $file) {
+            if ($file->isFile()) {
+                $localName = 'agent/' . substr($file->getPathname(), strlen($agentPublishPath) + 1);
+                $zip->addFile($file->getPathname(), str_replace('\\', '/', $localName));
+            }
+        }
+
         $zip->close();
 
         $notifications->add(

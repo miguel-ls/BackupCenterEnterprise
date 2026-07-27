@@ -5,6 +5,7 @@ use BackupCenter\Core\ApiResponse;
 use BackupCenter\Core\Audit;
 use PragmaRX\Google2FA\Google2FA;
 
+require_once __DIR__ . '/cors.php';
 require_once __DIR__.'/bootstrap.php';
 
 ApiController::boot();

@@ -27,6 +27,13 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# Instalar Node.js 22
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get update \
+    && apt-get install -y nodejs \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 # Instalar Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
@@ -45,6 +52,18 @@ RUN composer install \
     --prefer-dist \
     --optimize-autoloader \
     --no-interaction
+
+# Compilar Dashboard Vue
+WORKDIR /var/www/html/Dashboard
+
+RUN npm install
+RUN npm run build
+
+# Copiar Dashboard compilado a public
+RUN cp -R dist/* /var/www/html/public/
+
+# Volver al proyecto
+WORKDIR /var/www/html
 
 # Configuración de PHP
 COPY docker/php/php.ini /usr/local/etc/php/conf.d/custom.ini

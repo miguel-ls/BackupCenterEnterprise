@@ -4,6 +4,7 @@ use BackupCenter\Core\ApiController;
 use BackupCenter\Core\ApiResponse;
 use BackupCenter\Repositories\SessionRepository;
 
+require_once __DIR__ . '/cors.php';
 require_once __DIR__.'/bootstrap.php';
 
 ApiController::boot();

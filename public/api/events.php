@@ -1,18 +1,10 @@
 <?php
 
+require_once __DIR__ . '/cors.php';
 require_once __DIR__ . "/bootstrap.php";
 
 use BackupCenter\Repositories\JobQueueRepository;
 
-/*
-|--------------------------------------------------------------------------
-| CORS
-|--------------------------------------------------------------------------
-*/
-
-header("Access-Control-Allow-Origin: http://localhost:5173");
-header("Access-Control-Allow-Credentials: true");
-header("Access-Control-Allow-Headers: *");
 
 /*
 |--------------------------------------------------------------------------
