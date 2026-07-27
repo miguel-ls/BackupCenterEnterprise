@@ -84,7 +84,10 @@ RUN mkdir -p \
     /var/log/supervisor
 
 # Permisos
-RUN chown -R www-data:www-data /var/www/html
+RUN chown -R www-data:www-data \
+    /var/www/html/storage \
+    /var/www/html/database \
+    /var/log/supervisor
 
 # Puerto HTTP
 EXPOSE 80
