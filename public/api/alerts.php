@@ -7,11 +7,11 @@ require_once __DIR__ . '/bootstrap.php';
 use BackupCenter\Core\Application;
 use BackupCenter\Core\Paths;
 use BackupCenter\Repositories\ExecutionHistoryRepository;
-use BackupCenter\Services\WindowsServiceMonitor;
+
 
 $app = new Application();
 
-$monitor = new WindowsServiceMonitor();
+
 
 $history = new ExecutionHistoryRepository(
     $app->database()
@@ -26,35 +26,18 @@ $data=[
     "status"=>[
 
         [
-
-            "name"=>"Scheduler",
-
-            "ok"=>$monitor->getStatus("BackupCenterScheduler")=="Activo"
-
+            "name"=>"API",
+            "ok"=>true
         ],
 
         [
-
-            "name"=>"Worker",
-
-            "ok"=>$monitor->getStatus("BackupCenterWorker")=="Activo"
-
-        ],
-
-        [
-
             "name"=>"SQLite",
-
             "ok"=>file_exists($db)
-
         ],
 
         [
-
             "name"=>"Internet",
-
             "ok"=>$internet!==false
-
         ]
 
     ],
@@ -85,16 +68,12 @@ foreach ($last as $row) {
 
 }
 
-if($monitor->getStatus("BackupCenterScheduler")!="Activo"){
-
-    $data["alerts"][]="Scheduler detenido";
-
+if(!file_exists($db)){
+    $data["alerts"][] = "Base de datos SQLite no encontrada";
 }
 
-if($monitor->getStatus("BackupCenterWorker")!="Activo"){
-
-    $data["alerts"][]="Worker detenido";
-
+if($internet === false){
+    $data["alerts"][] = "Sin conexión a Internet";
 }
 
 echo json_encode([
