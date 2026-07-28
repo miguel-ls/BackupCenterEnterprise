@@ -50,7 +50,7 @@ case 'POST':
         }
 
         $payload = [
-            'server' => 'https://api.codesicorp.net',
+            'server' => 'https://backup.codesicorp.net',
             'installToken' => $connection['install_token']
         ];
 

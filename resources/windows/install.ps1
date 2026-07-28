@@ -65,7 +65,7 @@ if (-not (Test-Path $configPath)) {
 
 @'
 {
-  "server": "https://api.codesicorp.net",
+  "server": "https://backup.codesicorp.net",
   "clientId": 0,
   "connectionId": 0,
   "connectionName": "Nueva conexion",

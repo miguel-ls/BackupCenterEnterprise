@@ -4,7 +4,7 @@ $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
 $allowedOrigins = [
     'http://localhost:5173',
-    'https://api.codesicorp.net'
+    'https://backup.codesicorp.net'
 ];
 
 if (in_array($origin, $allowedOrigins, true)) {
