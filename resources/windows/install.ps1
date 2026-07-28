@@ -5,85 +5,104 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+Write-Host ""
+Write-Host "========================================="
+Write-Host " Backup Center Enterprise Agent Installer"
+Write-Host "========================================="
+Write-Host ""
+
 #------------------------------------------------------------
 # Rutas
 #------------------------------------------------------------
 
-$AgentDir    = Join-Path $InstallDir "agent"
-$AgentExe    = Join-Path $AgentDir "BackupCenterAgent.exe"
-$ConfigPath  = Join-Path $AgentDir "config.json"
-$LogPath     = Join-Path $InstallDir "install.log"
+$SourceDir    = Split-Path -Parent $PSScriptRoot
+$SourceAgent  = Join-Path $SourceDir "agent"
+
+$AgentDir     = Join-Path $InstallDir "agent"
+$AgentExe     = Join-Path $AgentDir "BackupCenterAgent.exe"
+
+$SourceConfig = Join-Path $SourceDir "config.json"
+$ConfigPath   = Join-Path $AgentDir "config.json"
+
+$LogPath      = Join-Path $InstallDir "install.log"
 
 #------------------------------------------------------------
 # Validaciones
 #------------------------------------------------------------
 
-if (-not (Test-Path $InstallDir)) {
-    throw "No existe el directorio de instalación: $InstallDir"
+if (-not (Test-Path $SourceAgent)) {
+    throw "No se encontró la carpeta 'agent'."
 }
 
-if (-not (Test-Path $AgentDir)) {
-    throw "No existe la carpeta del Agent: $AgentDir"
-}
-
-if (-not (Test-Path $AgentExe)) {
-    throw "No se encontró BackupCenterAgent.exe"
+if (-not (Test-Path (Join-Path $SourceAgent "BackupCenterAgent.exe"))) {
+    throw "No se encontró BackupCenterAgent.exe."
 }
 
 #------------------------------------------------------------
-# Crear config.json si no existe
+# Crear directorios
 #------------------------------------------------------------
 
-if (-not (Test-Path $ConfigPath)) {
+Write-Host "Creando directorios..."
 
-@'
-{
-  "Server": "https://backup.codesicorp.net",
-  "InstallToken": "",
-
-  "Backup": {
-    "Extensions": [
-      "zip",
-      "rar",
-      "bak"
-    ]
-  }
-}
-'@ | Set-Content -Encoding UTF8 $ConfigPath
-
-}
+New-Item -ItemType Directory -Force -Path $InstallDir | Out-Null
+New-Item -ItemType Directory -Force -Path $AgentDir | Out-Null
 
 #------------------------------------------------------------
-# Detener servicio existente
+# ¿Existe el servicio?
 #------------------------------------------------------------
 
 $service = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
 
 if ($service) {
 
+    Write-Host "Actualizando instalación existente..."
+
     if ($service.Status -eq "Running") {
         Stop-Service $ServiceName -Force
     }
-
-    sc.exe delete $ServiceName | Out-Null
-
-    Start-Sleep -Seconds 2
 }
 
 #------------------------------------------------------------
-# Registrar servicio
+# Copiar archivos
 #------------------------------------------------------------
 
-New-Service `
-    -Name $ServiceName `
-    -BinaryPathName "`"$AgentExe`"" `
-    -DisplayName "Backup Center Agent" `
-    -Description "Backup Center Agent Service" `
-    -StartupType Automatic
+Write-Host "Copiando archivos..."
+
+Copy-Item `
+    -Path (Join-Path $SourceAgent "*") `
+    -Destination $AgentDir `
+    -Recurse `
+    -Force
+
+if (Test-Path $SourceConfig) {
+
+    Copy-Item `
+        $SourceConfig `
+        $ConfigPath `
+        -Force
+}
+
+#------------------------------------------------------------
+# Crear servicio si no existe
+#------------------------------------------------------------
+
+if (-not $service) {
+
+    Write-Host "Creando servicio..."
+
+    New-Service `
+        -Name $ServiceName `
+        -BinaryPathName "`"$AgentExe`"" `
+        -DisplayName "Backup Center Agent" `
+        -Description "Backup Center Agent Service" `
+        -StartupType Automatic
+}
 
 #------------------------------------------------------------
 # Iniciar servicio
 #------------------------------------------------------------
+
+Write-Host "Iniciando servicio..."
 
 Start-Service $ServiceName
 
@@ -92,7 +111,7 @@ Start-Sleep -Seconds 2
 $service = Get-Service $ServiceName
 
 #------------------------------------------------------------
-# Log
+# Crear log
 #------------------------------------------------------------
 
 @"
@@ -121,9 +140,10 @@ Config.......: $ConfigPath
 
 Write-Host ""
 Write-Host "========================================="
-Write-Host " Backup Center Agent instalado"
+Write-Host " Instalación completada"
 Write-Host "========================================="
 Write-Host ""
+
 Write-Host "Servicio : $ServiceName"
 Write-Host "Estado   : $($service.Status)"
 Write-Host "Ruta     : $AgentExe"
