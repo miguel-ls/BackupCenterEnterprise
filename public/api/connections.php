@@ -91,7 +91,7 @@ case 'POST':
         $zip->addFile($notificationsGuidePath, 'windows/NOTIFICATIONS.md');
         $zip->addFile($readmePath, 'windows/README.md');
 
-        $agentPublishPath = 'D:/miguel.lopez/MyCloud/FUENTES/BackupCenterAgent/BackupCenterService/bin/Release/net8.0/publish/win-x64';
+        $agentPublishPath = $projectRoot . '/resources/windows/agent';
 
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($agentPublishPath, RecursiveDirectoryIterator::SKIP_DOTS),
