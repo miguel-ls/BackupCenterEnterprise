@@ -177,6 +177,25 @@ public function saveExecutionHistory(array $data): void
             ':job_id' => $data['jobId']
         ]);
 
+        /*
+        |--------------------------------------------------------------------------
+        | Si este Job estaba en la cola, finalizar el último registro Running
+        |--------------------------------------------------------------------------
+        */
+
+        $stmt = $this->pdo->prepare("
+            UPDATE job_queue
+            SET
+                status = 'Completed',
+                finished_at = :finished_at
+            WHERE id = :queue_id
+        ");
+
+        $stmt->execute([
+            ':finished_at' => $data['finishedAt'],
+            ':queue_id' => $data['queueId']
+        ]);
+
         $this->pdo->commit();
     }
     catch (\Throwable $e)
@@ -184,6 +203,30 @@ public function saveExecutionHistory(array $data): void
         $this->pdo->rollBack();
         throw $e;
     }
+}
+
+public function getQueuedJobs(int $connectionId): array
+{
+    $stmt = $this->pdo->prepare("
+        SELECT
+            q.id AS queueId,
+            j.id,
+            j.name,
+            j.source,
+            j.destination,
+            j.schedule
+        FROM job_queue q
+        INNER JOIN jobs j
+            ON j.id = q.job_id
+        WHERE q.status = 'Pending'
+          AND j.connection_id = ?
+          AND j.enabled = 1
+        ORDER BY q.id
+    ");
+
+    $stmt->execute([$connectionId]);
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 }

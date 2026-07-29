@@ -76,56 +76,64 @@ public function registerFile(): void
     }
 }
 
-    public function register(): void
-    {
-        $input = json_decode(file_get_contents('php://input'), true);
+public function register(): void
+{
+    $input = json_decode(file_get_contents('php://input'), true);
 
-        if (empty($input['installToken'])) {
-            ApiResponse::error('Install Token is required');
-            return;
-        }
-
-        $connection = $this->repository->findByInstallToken($input['installToken']);
-
-        $jobs = $this->repository->getEnabledJobs(
-            (int)$connection['id']
-        );        
-
-        if ($connection === null) {
-            ApiResponse::error('Invalid Install Token');
-            return;
-        }
-
-        ApiResponse::success([
-
-            'connection' => [
-
-                'id'         => (int)$connection['id'],
-                'clientId'   => (int)$connection['client_id'],
-                'name'       => $connection['name'],
-
-                'host'       => $connection['host'],
-                'port'       => (int)$connection['port'],
-                'protocol'   => $connection['protocol'],
-
-                'username'   => $connection['username'],
-                'password'   => $connection['password'],
-                'hostKey'    => $connection['hostkey'],
-
-                'remotePath' => $connection['remote_path']
-
-            ],
-
-            'settings' => [
-
-                'pollInterval' => 60
-
-            ],
-
-            'jobs' => $jobs
-
-        ]);
+    if (empty($input['installToken'])) {
+        ApiResponse::error('Install Token is required');
+        return;
     }
+
+    $connection = $this->repository->findByInstallToken(
+        $input['installToken']
+    );
+
+    if ($connection === null) {
+        ApiResponse::error('Invalid Install Token');
+        return;
+    }
+
+    $jobs = $this->repository->getEnabledJobs(
+        (int)$connection['id']
+    );
+
+    $queue = $this->repository->getQueuedJobs(
+        (int)$connection['id']
+    );
+
+    ApiResponse::success([
+
+        'connection' => [
+
+            'id'         => (int)$connection['id'],
+            'clientId'   => (int)$connection['client_id'],
+            'name'       => $connection['name'],
+
+            'host'       => $connection['host'],
+            'port'       => (int)$connection['port'],
+            'protocol'   => $connection['protocol'],
+
+            'username'   => $connection['username'],
+            'password'   => $connection['password'],
+            'hostKey'    => $connection['hostkey'],
+
+            'remotePath' => $connection['remote_path']
+
+        ],
+
+        'settings' => [
+
+            'pollInterval' => 60
+
+        ],
+
+        'jobs' => $jobs,
+
+        'queue' => $queue
+
+    ]);
+}
 
 public function executionHistory(): void
 {
