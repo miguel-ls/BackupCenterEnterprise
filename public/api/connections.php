@@ -65,7 +65,10 @@ case 'POST':
 
         $projectRoot = dirname(__DIR__, 2);
         $scriptPath = $projectRoot . '/resources/windows/install.ps1';
+        $uninstallScriptPath = $projectRoot . '/resources/windows/uninstall.ps1';
+
         $installerCmdPath = $projectRoot . '/resources/windows/Instalar BackupCenter.cmd';
+        $uninstallerCmdPath = $projectRoot . '/resources/windows/Desinstalar BackupCenter.cmd';
         $workerScriptPath = $projectRoot . '/resources/windows/worker-test.cmd';
         $serviceScriptPath = $projectRoot . '/resources/windows/service-install.cmd';
         $serviceRemoveScriptPath = $projectRoot . '/resources/windows/service-remove.cmd';
@@ -82,7 +85,10 @@ case 'POST':
 
         $zip->addFile($configPath, 'config.json');
         $zip->addFile($scriptPath, 'windows/install.ps1');
+        $zip->addFile($uninstallScriptPath, 'windows/uninstall.ps1');
         $zip->addFile($installerCmdPath, 'Instalar BackupCenter.cmd');
+        $zip->addFile($uninstallerCmdPath, 'Desinstalar BackupCenter.cmd');
+        
         $zip->addFile($workerScriptPath, 'windows/worker-test.cmd');
         $zip->addFile($serviceScriptPath, 'windows/service-install.cmd');
         $zip->addFile($serviceRemoveScriptPath, 'windows/service-remove.cmd');
