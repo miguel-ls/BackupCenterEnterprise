@@ -31,22 +31,19 @@ class UploadedFileRepository
 
 public function exists(
     int $jobId,
-    string $filename,
-    int $filesize
+    string $sha256
 ): bool
 {
     $stmt = $this->db->prepare("
         SELECT COUNT(*)
         FROM uploaded_files
         WHERE job_id = ?
-        AND filename = ?
-        AND filesize = ?
+        AND sha256 = ?
     ");
 
     $stmt->execute([
         $jobId,
-        $filename,
-        $filesize
+        $sha256
     ]);
 
     return (int)$stmt->fetchColumn() > 0;
@@ -99,7 +96,7 @@ public function save(
             (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 job_id INTEGER NOT NULL,
-                executed_at TEXT NOT NULL,
+                started_at TEXT NOT NULL,
                 client TEXT NOT NULL,
                 files_found INTEGER NOT NULL,
                 files_uploaded INTEGER NOT NULL,

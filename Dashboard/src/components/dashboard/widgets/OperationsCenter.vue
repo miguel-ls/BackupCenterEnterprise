@@ -144,11 +144,13 @@ const events = ref([])
 
 const alerts = ref([])
 
+const API = import.meta.env.VITE_API_URL;
+
 async function load(){
 
     const r = await fetch(
 
-        "http://localhost:8000/api/alerts.php"
+        `${API}/alerts.php`
 
     )
 

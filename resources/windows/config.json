@@ -1,0 +1,12 @@
+{
+  "Server": "https://backup.codesicorp.net",
+  "InstallToken": "",
+
+  "Backup": {
+    "Extensions": [
+      "zip",
+      "rar",
+      "bak"
+    ]
+  }
+}

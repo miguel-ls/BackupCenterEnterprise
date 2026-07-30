@@ -4,10 +4,13 @@ export default function QueueMonitor() {
 
     const [rows, setRows] = useState([]);
 
+    const API = import.meta.env.VITE_API_URL;
+
+
     async function load() {
 
         const response = await fetch(
-            "http://localhost:8000/api/job-queue.php"
+             `${API}/job-queue.php`
         );
 
         const data = await response.json();

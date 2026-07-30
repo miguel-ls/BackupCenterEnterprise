@@ -90,7 +90,7 @@ async function load(){
 
     const r = await fetch(
 
-        "http://localhost:8000/api/alerts.php"
+         `${API}/alerts.php`
 
     )
 

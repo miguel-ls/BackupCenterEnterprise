@@ -24,7 +24,7 @@ class HistoryCommand
         foreach ($rows as $row) {
 
             echo "ID          : {$row['id']}" . PHP_EOL;
-            echo "Fecha       : {$row['executed_at']}" . PHP_EOL;
+            echo "Fecha       : {$row['started_at']}" . PHP_EOL;
             echo "Cliente     : {$row['client']}" . PHP_EOL;
             echo "Encontrados : {$row['files_found']}" . PHP_EOL;
             echo "Subidos     : {$row['files_uploaded']}" . PHP_EOL;

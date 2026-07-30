@@ -1,15 +1,6 @@
 <?php
 
-header('Access-Control-Allow-Origin: http://localhost:5173');
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
-header('Content-Type: application/json');
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit;
-}
-
+require_once __DIR__ . '/cors.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 use BackupCenter\Core\Database;
@@ -32,14 +23,14 @@ $data = [
     'executions_today' => (int)$pdo->query("
         SELECT COUNT(*)
         FROM execution_history
-        WHERE date(executed_at)=date('now')
+        WHERE date(started_at)=date('now')
     ")->fetchColumn(),
 
     'errors_today' => (int)$pdo->query("
         SELECT COUNT(*)
         FROM execution_history
-        WHERE errors>0
-        AND date(executed_at)=date('now')
+        WHERE files_failed > 0
+        AND date(started_at) = date('now')
     ")->fetchColumn(),
 
     'total_uploaded' => (int)$pdo->query("

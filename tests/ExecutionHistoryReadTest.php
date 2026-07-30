@@ -11,7 +11,7 @@ $db = $app->database()->getConnection();
 $sql = "
 SELECT
     id,
-    executed_at,
+    started_at,
     client,
     files_found,
     files_uploaded,
@@ -30,7 +30,7 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
 
     echo "--------------------------------" . PHP_EOL;
     echo "ID        : {$row['id']}" . PHP_EOL;
-    echo "Fecha     : {$row['executed_at']}" . PHP_EOL;
+    echo "Fecha     : {$row['started_at']}" . PHP_EOL;
     echo "Cliente   : {$row['client']}" . PHP_EOL;
     echo "Encontró  : {$row['files_found']}" . PHP_EOL;
     echo "Subidos   : {$row['files_uploaded']}" . PHP_EOL;

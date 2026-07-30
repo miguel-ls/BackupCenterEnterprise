@@ -217,9 +217,12 @@ localStorage.getItem("user")??"{}"
 
 )
 
+
+const API = import.meta.env.VITE_API_URL;
+
 const r=await fetch(
 
-"http://localhost:8000/api/change-password.php",
+`${API}/change-password.php`,
 
 {
 

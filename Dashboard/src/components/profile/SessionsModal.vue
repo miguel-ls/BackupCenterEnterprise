@@ -162,6 +162,8 @@ watch
 
 } from "vue"
 
+const API = import.meta.env.VITE_API_URL;
+
 const props=defineProps({
 
 modelValue:Boolean,
@@ -196,9 +198,11 @@ load()
 
 async function load(){
 
+    
+
 const r=await fetch(
 
-`http://localhost:8000/api/sessions.php?user_id=${props.user.id}`
+`${API}/sessions.php?user_id=${props.user.id}`
 
 )
 
@@ -218,7 +222,7 @@ return
 
 await fetch(
 
-"http://localhost:8000/api/sessions.php",
+ `${API}/sessions.php`,
 
 {
 

@@ -46,32 +46,29 @@ CREATE TABLE IF NOT EXISTS jobs
                 j.destination,
                 j.schedule,
                 j.enabled,
-                COALESCE(
-                    (
-                        SELECT e.executed_at
-                        FROM execution_history e
-                        WHERE e.client = j.name
-                        ORDER BY e.id DESC
-                        LIMIT 1
-                    ),
-                    j.last_run,
-                    '-'
-                ) AS time,
-                COALESCE(
-                    (
-                        SELECT CASE e.status
-                            WHEN 'OK' THEN 'Correcto'
-                            WHEN 'ERROR' THEN 'Error'
-                            ELSE e.status
-                        END
-                        FROM execution_history e
-                        WHERE e.client = j.name
-                        ORDER BY e.id DESC
-                        LIMIT 1
-                    ),
-                    j.last_status,
-                    'Pendiente'
-                ) AS status,
+COALESCE(
+    (
+        SELECT e.started_at
+        FROM execution_history e
+        WHERE e.job_id = j.id
+        ORDER BY e.id DESC
+        LIMIT 1
+    ),
+    j.last_run,
+    '-'
+) AS time,
+
+COALESCE(
+    (
+        SELECT e.status
+        FROM execution_history e
+        WHERE e.job_id = j.id
+        ORDER BY e.id DESC
+        LIMIT 1
+    ),
+    j.last_status,
+    'Pendiente'
+) AS status,
                 COALESCE(c.name,'Sin conexión') AS connection,
                 COALESCE(cl.business_name,'-') AS client_name
             FROM jobs j

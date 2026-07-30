@@ -1,25 +1,17 @@
 <?php
 
-header('Access-Control-Allow-Origin: http://localhost:5173');
-header('Access-Control-Allow-Methods: GET, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
-header('Content-Type: application/json');
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit;
-}
+require_once __DIR__ . '/cors.php';
 
 require_once __DIR__ . '/bootstrap.php';
 
 use BackupCenter\Core\Application;
 use BackupCenter\Core\Paths;
 use BackupCenter\Repositories\ExecutionHistoryRepository;
-use BackupCenter\Services\WindowsServiceMonitor;
+
 
 $app = new Application();
 
-$monitor = new WindowsServiceMonitor();
+
 
 $history = new ExecutionHistoryRepository(
     $app->database()
@@ -34,35 +26,18 @@ $data=[
     "status"=>[
 
         [
-
-            "name"=>"Scheduler",
-
-            "ok"=>$monitor->getStatus("BackupCenterScheduler")=="Activo"
-
+            "name"=>"API",
+            "ok"=>true
         ],
 
         [
-
-            "name"=>"Worker",
-
-            "ok"=>$monitor->getStatus("BackupCenterWorker")=="Activo"
-
-        ],
-
-        [
-
             "name"=>"SQLite",
-
             "ok"=>file_exists($db)
-
         ],
 
         [
-
             "name"=>"Internet",
-
             "ok"=>$internet!==false
-
         ]
 
     ],
@@ -79,30 +54,26 @@ if($internet){
 
 $last=$history->latest(5);
 
-foreach($last as $row){
+foreach ($last as $row) {
 
-    $data["events"][]=[
+    $data["events"][] = [
 
-        "title"=>"Backup ".$row["client"],
+        "title"  => "Backup " . $row["client_name"],
 
-        "status"=>$row["status"],
+        "status" => $row["status"],
 
-        "date"=>$row["executed_at"]
+        "date"   => $row["started_at"]
 
     ];
 
 }
 
-if($monitor->getStatus("BackupCenterScheduler")!="Activo"){
-
-    $data["alerts"][]="Scheduler detenido";
-
+if(!file_exists($db)){
+    $data["alerts"][] = "Base de datos SQLite no encontrada";
 }
 
-if($monitor->getStatus("BackupCenterWorker")!="Activo"){
-
-    $data["alerts"][]="Worker detenido";
-
+if($internet === false){
+    $data["alerts"][] = "Sin conexión a Internet";
 }
 
 echo json_encode([

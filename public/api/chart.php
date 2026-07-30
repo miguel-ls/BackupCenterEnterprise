@@ -1,15 +1,6 @@
 <?php
 
-header('Access-Control-Allow-Origin: http://localhost:5173');
-header('Access-Control-Allow-Methods: GET, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
-header('Content-Type: application/json');
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit;
-}
-
+require_once __DIR__ . '/cors.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 use BackupCenter\Core\Database;
@@ -23,12 +14,12 @@ $pdo = $db->getConnection();
 
 $stmt = $pdo->query("
 SELECT
-    date(executed_at) AS day,
+    date(started_at) AS day,
     COUNT(*) AS executions,
-    SUM(files_uploaded) AS uploaded
+    COALESCE(SUM(files_uploaded),0) AS uploaded
 FROM execution_history
-WHERE executed_at >= date('now','-6 day')
-GROUP BY date(executed_at)
+WHERE started_at >= date('now','-6 day')
+GROUP BY date(started_at)
 ORDER BY day
 ");
 

@@ -1,0 +1,19 @@
+services:
+  backupcenter:
+    container_name: backupcenter
+
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+
+    image: backupcenter:dev
+
+    ports:
+      - "8085:80"
+
+    volumes:
+      - ./storage:/var/www/html/storage
+      - ./updates:/var/www/html/updates
+      - ./logs:/var/log/supervisor
+
+    restart: unless-stopped

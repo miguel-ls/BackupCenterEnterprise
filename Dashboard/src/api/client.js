@@ -1,16 +1,40 @@
-const API = "http://localhost:8000/api";
+const API =  import.meta.env.VITE_API_URL;
+
 
 async function request(endpoint, options = {}) {
-
     const response = await fetch(`${API}/${endpoint}`, {
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            ...(options.headers || {})
         },
         ...options
     });
 
-    return await response.json();
+    const content = await response.text();
+    let json = null;
 
+    try {
+        json = content ? JSON.parse(content) : null;
+    } catch (error) {
+        console.error(`Invalid JSON response from ${endpoint}:`, content);
+        return {
+            success: false,
+            status: response.status,
+            message: `Invalid JSON response from ${endpoint}`,
+            raw: content
+        };
+    }
+
+    if (!response.ok) {
+        return {
+            success: false,
+            status: response.status,
+            ...(json || {}),
+            raw: content
+        };
+    }
+
+    return json;
 }
 
 /* ================= DASHBOARD ================= */
@@ -102,6 +126,21 @@ export const deleteConnection = (id) =>
         body: JSON.stringify({ id })
     });
 
+export const downloadInstallPackage = async (id) => {
+    const response = await fetch(`${API}/connections.php`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            action: "install-package",
+            id
+        })
+    });
+
+    return response;
+};
+
 export const testConnection = (id) =>
     request("connections.php", {
         method: "POST",
@@ -154,6 +193,9 @@ export const getLogs = (
 
 export const getNotifications = () =>
     request("notifications.php");
+
+export const getUpdates = () =>
+    request("updates.php");
 
 export const markNotificationsAsRead = () =>
     request("notifications.php", {

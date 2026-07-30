@@ -179,6 +179,8 @@ import {ref,computed,onMounted} from "vue"
 
 import MainLayout from "../components/layout/MainLayout.vue"
 
+const API = import.meta.env.VITE_API_URL;
+
 const audit=ref([])
 
 const page=ref(1)
@@ -189,7 +191,7 @@ async function load(){
 
 const r=await fetch(
 
-`http://localhost:8000/api/audit.php?page=${page.value}&limit=50`
+`${API}/audit.php?page=${page.value}&limit=50`
 
 )
 
@@ -251,7 +253,8 @@ return
 
 await fetch(
 
-"http://localhost:8000/api/audit.php",
+`${API}/audit.php`,
+
 
 {
 

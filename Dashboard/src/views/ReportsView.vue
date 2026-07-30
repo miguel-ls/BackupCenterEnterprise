@@ -313,11 +313,11 @@
 
                 <tr
                     v-for="item in errors"
-                    :key="`${item.executed_at}-${item.client}`"
+                    :key="`${item.started_at}-${item.client}`"
                     class="border-t hover:bg-red-50 transition"
                 >
 
-                    <td class="p-3">{{ item.executed_at }}</td>
+                    <td class="p-3">{{ item.started_at }}</td>
 
                     <td class="p-3 font-medium">{{ item.client }}</td>
 

@@ -1,4 +1,3 @@
-// ...existing code...
 <template>
 
 <MainLayout>
@@ -21,20 +20,29 @@
 
     </div>
 
-    <!-- Estadísticas (ELIMINADO) -->
+    <div class="mt-6 bg-white border rounded-xl p-4 shadow-sm">
+        <div class="flex justify-between items-center mb-2">
+            <h2 class="font-semibold text-lg">Actualizaciones</h2>
+            <span class="text-sm text-neutral-500">Versión actual: {{ currentVersion }}</span>
+        </div>
 
-    <!-- Servidor + Monitor -->
+        <div v-if="updateInfo" class="text-sm text-neutral-700">
+            <div><strong>Versión remota:</strong> {{ updateInfo.version ?? 'N/A' }}</div>
+            <div><strong>Fecha:</strong> {{ updateInfo.releaseDate ?? 'N/A' }}</div>
+            <div><strong>Notas:</strong> {{ updateInfo.notes ?? 'N/A' }}</div>
+        </div>
 
-
+        <div v-else class="text-sm text-neutral-500">
+            No hay información de actualizaciones disponible.
+        </div>
+    </div>
 
     <!-- Ejecuciones -->
 
     <div class="grid grid-cols-3 gap-6 mt-6">
 
         <div class="col-span-2">
-
             <LastExecutions/>
-
         </div>
 
         <QueueWidget/>
@@ -43,13 +51,10 @@
 
     <!-- Gráfico -->
 
-<div class="grid grid-cols-2 gap-6 mt-6">
-
-    <OperationsCenter/>
-
-    <BackupChart/>
-
-</div>
+    <div class="grid grid-cols-2 gap-6 mt-6">
+        <OperationsCenter/>
+        <BackupChart/>
+    </div>
 
 </MainLayout>
 
@@ -57,109 +62,77 @@
 
 <script setup>
 
-import { ref, computed } from "vue"
-
+import { ref, computed, onMounted } from "vue"
 import MainLayout from "../components/layout/MainLayout.vue"
 import StatCard from "../components/cards/StatCard.vue"
-
-import SchedulerStatus from "../components/dashboard/widgets/SchedulerStatus.vue"
 import LastExecutions from "../components/dashboard/LastExecutions.vue"
 import QueueWidget from "../components/dashboard/widgets/QueueWidget.vue"
 import BackupChart from "../components/dashboard/widgets/BackupChart.vue"
+import OperationsCenter from "../components/dashboard/widgets/OperationsCenter.vue"
 
 import {
-
     getStatus,
     getStatistics,
-    getVersion
-
+    getVersion,
+    getUpdates
 } from "../api/client"
 
 import { useAutoRefresh } from "../composables/useAutoRefresh"
 
-import OperationsCenter from "../components/dashboard/widgets/OperationsCenter.vue"
-
 const status = ref({})
 const statistics = ref({})
 const version = ref({})
-const system = ref({})
+const updateInfo = ref(null)
 
-async function load(){
+async function load() {
+    try {
+        const [s, st, v] = await Promise.all([
+            getStatus(),
+            getStatistics(),
+            getVersion()
+        ])
 
-    const [
-
-        s,
-        st,
-        v,
-        si
-
-    ] = await Promise.all([
-
-        getStatus(),
-        getStatistics(),
-        getVersion()
-
-    ])
-
-    status.value = s.data
-
-    statistics.value = st.data
-
-    version.value = v.data
-
-
-
+        status.value = s?.data ?? {}
+        statistics.value = st?.data ?? {}
+        version.value = v?.data ?? v ?? {}
+    } catch (error) {
+        console.error("Failed loading dashboard data", error)
+        status.value = {}
+        statistics.value = {}
+        version.value = {}
+    }
 }
 
-useAutoRefresh(load,20000)
+async function loadUpdates() {
+    try {
+        const response = await getUpdates()
+        updateInfo.value = response?.success ? response.data ?? response : null
+    } catch (error) {
+        console.error("Failed loading updates", error)
+        updateInfo.value = null
+    }
+}
 
-const ramPercent = computed(()=>{
-
-    if(!system.value.memory_total) return 0
-
-    return Math.round(
-
-        system.value.memory_used /
-
-        system.value.memory_total *100
-
-    )
-
+onMounted(() => {
+    load()
+    loadUpdates()
 })
 
-const diskPercent = computed(()=>{
+useAutoRefresh(load, 20000)
 
-    if(!system.value.disk_total) return 0
+const currentVersion = computed(() => version.value?.version ?? "N/A")
 
-    return Math.round(
-
-        system.value.disk_free /
-
-        system.value.disk_total *100
-
-    )
-
+const ramPercent = computed(() => {
+    if (!version.value) return 0
+    return 0
 })
 
-const cpuColor = computed(()=>{
-
-    if(system.value.cpu<60) return "#22c55e"
-
-    if(system.value.cpu<85) return "#f59e0b"
-
-    return "#dc2626"
-
+const diskPercent = computed(() => {
+    if (!version.value) return 0
+    return 0
 })
 
-const ramColor = computed(()=>{
-
-    if(ramPercent.value<60) return "#22c55e"
-
-    if(ramPercent.value<85) return "#f59e0b"
-
-    return "#dc2626"
-
-})
+const cpuColor = computed(() => "#22c55e")
+const ramColor = computed(() => "#22c55e")
 
 </script>
-// ...existing code...

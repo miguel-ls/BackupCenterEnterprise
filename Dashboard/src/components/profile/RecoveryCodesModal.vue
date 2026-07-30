@@ -127,9 +127,12 @@ generate()
 
 async function generate(){
 
+const API = import.meta.env.VITE_API_URL;
+
 const r=await fetch(
 
-"http://localhost:8000/api/recovery-codes.php",
+
+`${API}/recovery-codes.php`,
 
 {
 
@@ -159,9 +162,13 @@ codes.value=j.data??[]
 
 async function download(){
 
+const API = import.meta.env.VITE_API_URL;
+
 const r=await fetch(
 
-"http://localhost:8000/api/recovery-codes-download.php",
+
+
+`${API}/recovery-codes-download.php`,
 
 {
 

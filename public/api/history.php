@@ -1,15 +1,6 @@
 <?php
 
-header('Access-Control-Allow-Origin: http://localhost:5173');
-header('Access-Control-Allow-Methods: GET, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
-header('Content-Type: application/json');
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit;
-}
-
+require_once __DIR__ . '/cors.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 use BackupCenter\Core\Database;
@@ -85,7 +76,8 @@ $sql = "
 SELECT
 
     eh.id,
-    eh.executed_at,
+    eh.started_at,
+    eh.finished_at,
 
     j.name AS job_name,
 
@@ -94,8 +86,8 @@ SELECT
     eh.files_found,
     eh.files_uploaded,
     eh.files_skipped,
-    eh.errors,
-    eh.duration,
+    eh.files_failed,
+    eh.duration_seconds,
     eh.status
 
 FROM execution_history eh

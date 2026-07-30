@@ -24,7 +24,7 @@ class ExecutionHistoryRepository
         INSERT INTO execution_history
         (
             job_id,
-            executed_at,
+            started_at,
             client,
             files_found,
             files_uploaded,
@@ -36,7 +36,7 @@ class ExecutionHistoryRepository
         VALUES
         (
             :job_id,
-            :executed_at,
+            :started_at,
             :client,
             :files_found,
             :files_uploaded,
@@ -53,7 +53,7 @@ class ExecutionHistoryRepository
 
         $stmt->execute([
             ':job_id'         => $jobId,
-            ':executed_at'    => date('Y-m-d H:i:s'),
+            ':started_at'    => date('Y-m-d H:i:s'),
             ':client'         => $client,
             ':files_found'    => $summary->found,
             ':files_uploaded' => $summary->uploaded,
@@ -69,19 +69,31 @@ class ExecutionHistoryRepository
         $stmt = $this->database
             ->getConnection()
             ->prepare("
-                SELECT
-                    id,
-                    job_id,
-                    executed_at,
-                    client,
-                    files_found,
-                    files_uploaded,
-                    files_skipped,
-                    errors,
-                    duration,
-                    status
-                FROM execution_history
-                ORDER BY id DESC
+            SELECT
+                eh.id,
+                eh.job_id,
+                eh.started_at,
+                eh.finished_at,
+                c.business_name AS client_name,
+                j.name AS job_name,
+                eh.files_found,
+                eh.files_uploaded,
+                eh.files_skipped,
+                eh.files_failed,
+                eh.duration_seconds,
+                eh.status
+                FROM execution_history eh
+
+                LEFT JOIN jobs j
+                    ON j.id = eh.job_id
+
+                LEFT JOIN connections cn
+                    ON cn.id = j.connection_id
+
+                LEFT JOIN clients c
+                    ON c.id = cn.client_id
+
+                ORDER BY eh.id DESC
                 LIMIT :limit
             ");
 
@@ -101,7 +113,7 @@ class ExecutionHistoryRepository
 
                 SUM(
                     CASE
-                        WHEN status='OK'
+                        WHEN status='Correcto'
                         THEN 1
                         ELSE 0
                     END
@@ -109,7 +121,7 @@ class ExecutionHistoryRepository
 
                 SUM(
                     CASE
-                        WHEN status='ERROR'
+                        WHEN status='Con errores'
                         THEN 1
                         ELSE 0
                     END
@@ -119,7 +131,7 @@ class ExecutionHistoryRepository
 
                 SUM(files_skipped) skipped,
 
-                ROUND(AVG(duration),2) average_duration
+                ROUND(AVG(duration_seconds),2) average_duration
 
             FROM execution_history
         ";

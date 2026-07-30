@@ -179,6 +179,8 @@ watch
 
 } from "vue"
 
+const API = import.meta.env.VITE_API_URL;
+
 const props=defineProps({
 
 modelValue:Boolean,
@@ -217,7 +219,7 @@ loading.value=true
 
 const r=await fetch(
 
-"http://localhost:8000/api/2fa-qr.php",
+ `${API}/2fa-qr.php`,
 
 {
 
@@ -259,11 +261,13 @@ secret.value=j.data.secret
 
 )
 
+
+
 async function activate(){
 
 const r=await fetch(
 
-"http://localhost:8000/api/2fa-enable.php",
+    `${API}/2fa-enable.php`,
 
 {
 

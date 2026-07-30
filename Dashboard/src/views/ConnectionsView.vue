@@ -19,6 +19,29 @@
 
     </div>
 
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+
+        <div class="bg-white border rounded-xl p-4 shadow-sm">
+            <div class="text-sm text-neutral-500">Total</div>
+            <div class="text-2xl font-bold">{{ connections.length }}</div>
+        </div>
+
+        <div class="bg-white border rounded-xl p-4 shadow-sm">
+            <div class="text-sm text-neutral-500">Con token</div>
+            <div class="text-2xl font-bold">{{ withTokenCount }}</div>
+        </div>
+
+        <div class="bg-white border rounded-xl p-4 shadow-sm">
+            <div class="text-sm text-neutral-500">Listas para instalar</div>
+            <div class="text-2xl font-bold">{{ readyToInstallCount }}</div>
+        </div>
+
+    </div>
+
+    <div class="bg-blue-50 border border-blue-200 text-blue-700 rounded-xl p-4 mb-6 text-sm">
+        Genera paquetes de instalación desde cada conexión y revisa rápidamente si ya cuentan con token de instalación.
+    </div>
+
     <ConnectionDialog
         v-model="showDialog"
         :connection="selectedConnection"
@@ -29,6 +52,7 @@
         :connections="connections"
         @edit="editConnection"
         @delete="removeConnection"
+        @generate-install="generateInstallPackage"
     />
 
 </MainLayout>
@@ -37,7 +61,7 @@
 
 <script setup>
 
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 
 import MainLayout from '../components/layout/MainLayout.vue'
 import ConnectionDialog from '../components/dialogs/ConnectionDialog.vue'
@@ -45,7 +69,8 @@ import ConnectionTable from '../components/connections/ConnectionTable.vue'
 
 import {
     getConnections,
-    deleteConnection
+    deleteConnection,
+    downloadInstallPackage
 } from '../api/client'
 
 const connections = ref([])
@@ -53,9 +78,23 @@ const connections = ref([])
 const showDialog = ref(false)
 const selectedConnection = ref(null)
 
+const withTokenCount = computed(() =>
+    connections.value.filter((connection) => connection.install_token).length
+)
+
+const readyToInstallCount = computed(() =>
+    connections.value.filter((connection) => connection.install_token && connection.client_id).length
+)
+
 async function loadConnections(){
 
     const response = await getConnections()
+
+    if (!response?.success || !Array.isArray(response.data)) {
+        console.error('Failed loading connections', response)
+        connections.value = []
+        return
+    }
 
     connections.value = response.data
 
@@ -98,6 +137,27 @@ async function removeConnection(id){
     await deleteConnection(id)
 
     await loadConnections()
+
+}
+
+async function generateInstallPackage(connection){
+
+    const response = await downloadInstallPackage(connection.id)
+
+    if(!response.ok){
+        alert('No se pudo generar el paquete de instalación')
+        return
+    }
+
+    const blob = await response.blob()
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+
+    link.href = url
+    link.download = `backupcenter-install-${connection.id}.zip`
+    link.click()
+
+    URL.revokeObjectURL(url)
 
 }
 

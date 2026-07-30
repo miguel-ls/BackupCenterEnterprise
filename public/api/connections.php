@@ -1,31 +1,25 @@
 <?php
 
-header('Access-Control-Allow-Origin: http://localhost:5173');
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
-header('Content-Type: application/json');
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit;
-}
-
+require_once __DIR__ . '/cors.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 use BackupCenter\Core\Database;
 use BackupCenter\Core\Paths;
 use BackupCenter\Core\Audit;
 use BackupCenter\Repositories\ConnectionRepository;
+use BackupCenter\Repositories\NotificationRepository;
 
-$db = new Database(
-    Paths::database() . '/backupcenter.db'
-);
+try {
+    $db = new Database(
+        Paths::database() . '/backupcenter.db'
+    );
 
-$repository = new ConnectionRepository($db);
+    $repository = new ConnectionRepository($db);
+    $notifications = new NotificationRepository($db);
 
-$method = $_SERVER['REQUEST_METHOD'];
+    $method = $_SERVER['REQUEST_METHOD'];
 
-switch ($method) {
+    switch ($method) {
 
 case 'GET':
 
@@ -42,6 +36,100 @@ case 'POST':
         file_get_contents('php://input'),
         true
     );
+
+    if (($data['action'] ?? '') === 'install-package') {
+        $connection = $repository->get((int)$data['id']);
+
+        if (!$connection) {
+            http_response_code(404);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Conexión no encontrada'
+            ]);
+            break;
+        }
+
+        $payload = [
+            'server' => 'https://backup.codesicorp.net',
+            'installToken' => $connection['install_token']
+        ];
+
+        $tempDir = sys_get_temp_dir() . '/backupcenter-install-' . uniqid('', true);
+        $packageDir = $tempDir . '/package';
+        if (!is_dir($packageDir) && !mkdir($packageDir, 0777, true) && !is_dir($packageDir)) {
+            throw new RuntimeException('No se pudo crear el directorio temporal del paquete');
+        }
+
+        $configPath = $packageDir . '/config.json';
+        file_put_contents($configPath, json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+        $projectRoot = dirname(__DIR__, 2);
+        $scriptPath = $projectRoot . '/resources/windows/install.ps1';
+        $uninstallScriptPath = $projectRoot . '/resources/windows/uninstall.ps1';
+
+        $installerCmdPath = $projectRoot . '/resources/windows/Instalar BackupCenter.cmd';
+        $uninstallerCmdPath = $projectRoot . '/resources/windows/Desinstalar BackupCenter.cmd';
+        $workerScriptPath = $projectRoot . '/resources/windows/worker-test.cmd';
+        $serviceScriptPath = $projectRoot . '/resources/windows/service-install.cmd';
+        $serviceRemoveScriptPath = $projectRoot . '/resources/windows/service-remove.cmd';
+        $checkConfigPath = $projectRoot . '/resources/windows/check-config.php';
+        $authGuidePath = $projectRoot . '/resources/windows/AUTH.md';
+        $notificationsGuidePath = $projectRoot . '/resources/windows/NOTIFICATIONS.md';
+        $readmePath = $projectRoot . '/resources/windows/README.md';
+
+        $zipPath = $tempDir . '/backupcenter-install-' . (int)$connection['id'] . '.zip';
+        $zip = new ZipArchive();
+        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+            throw new RuntimeException('No se pudo crear el archivo ZIP');
+        }
+
+        $zip->addFile($configPath, 'config.json');
+        $zip->addFile($scriptPath, 'windows/install.ps1');
+        $zip->addFile($uninstallScriptPath, 'windows/uninstall.ps1');
+        $zip->addFile($installerCmdPath, 'Instalar BackupCenter.cmd');
+        $zip->addFile($uninstallerCmdPath, 'Desinstalar BackupCenter.cmd');
+        
+        $zip->addFile($workerScriptPath, 'windows/worker-test.cmd');
+        $zip->addFile($serviceScriptPath, 'windows/service-install.cmd');
+        $zip->addFile($serviceRemoveScriptPath, 'windows/service-remove.cmd');
+        $zip->addFile($checkConfigPath, 'windows/check-config.php');
+        $zip->addFile($authGuidePath, 'windows/AUTH.md');
+        $zip->addFile($notificationsGuidePath, 'windows/NOTIFICATIONS.md');
+        $zip->addFile($readmePath, 'windows/README.md');
+
+        $agentPublishPath = $projectRoot . '/resources/windows/agent';
+
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($agentPublishPath, RecursiveDirectoryIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::SELF_FIRST
+        );
+
+        foreach ($iterator as $file) {
+            if ($file->isFile()) {
+                $localName = 'agent/' . substr($file->getPathname(), strlen($agentPublishPath) + 1);
+                $zip->addFile($file->getPathname(), str_replace('\\', '/', $localName));
+            }
+        }
+
+        $zip->close();
+
+        $notifications->add(
+            'info',
+            'Instalación generada',
+            'Se generó un paquete de instalación para la conexión "' . $connection['name'] . '".'
+        );
+
+        header('Content-Type: application/zip');
+        header('Content-Disposition: attachment; filename="backupcenter-install-' . (int)$connection['id'] . '.zip"');
+        header('Content-Length: ' . filesize($zipPath));
+        readfile($zipPath);
+
+        @unlink($configPath);
+        @unlink($zipPath);
+        @rmdir($packageDir);
+        @rmdir($tempDir);
+        exit;
+    }
 
     $id = $repository->create(
 
@@ -182,5 +270,12 @@ default:
         'message'=>'Método no permitido'
 
     ]);
-
+}
+} catch (Throwable $ex) {
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => $ex->getMessage(),
+        'trace' => $ex->getTraceAsString()
+    ]);
 }
