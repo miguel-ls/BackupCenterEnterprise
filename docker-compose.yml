@@ -16,6 +16,9 @@ services:
       - ./updates:/var/www/html/updates
       - ./logs:/var/log/supervisor
 
+      # Dataset de clientes
+      - /mnt/Interno1TB/BackupsSQL:/backup-storage      
+
     restart: unless-stopped
 
   sqliteweb:
