@@ -49,23 +49,198 @@
 
             </div>
 
-            <div>
+<div>
 
-                <label class="block text-sm font-semibold mb-2">
-                    Programación
-                </label>
+    <label class="block text-sm font-semibold mb-2">
+        Programación
+    </label>
 
-                <input
-                    v-model="props.job.schedule"
-                    placeholder="0 */6 * * *"
-                    class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                >
+    <select
+        v-model="scheduleType"
+        class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+    >
+        <option value="daily">Cada día</option>
+        <option value="weekly">Cada semana</option>
+        <option value="monthly">Cada mes</option>
+        <option value="hourly">Cada hora</option>
+        <option value="minutes">Cada X minutos</option>
+        <option value="custom">Personalizado (CRON)</option>
+    </select>
 
-                <p class="text-xs text-neutral-500 mt-2">
-                    Expresión CRON.
-                </p>
+    <!-- Diario -->
 
-            </div>
+    <div
+        v-if="scheduleType==='daily'"
+        class="mt-4"
+    >
+
+        <label class="block text-sm mb-2">
+            Hora
+        </label>
+
+        <input
+            type="time"
+            v-model="dailyTime"
+            class="w-full border rounded-lg p-3"
+        >
+
+    </div>
+
+    <!-- Semanal -->
+
+    <div
+        v-if="scheduleType==='weekly'"
+        class="mt-4 space-y-3"
+    >
+
+        <div>
+
+            <label class="block text-sm mb-2">
+                Día
+            </label>
+
+            <select
+                v-model="weekDay"
+                class="w-full border rounded-lg p-3"
+            >
+                <option value="0">Domingo</option>
+                <option value="1">Lunes</option>
+                <option value="2">Martes</option>
+                <option value="3">Miércoles</option>
+                <option value="4">Jueves</option>
+                <option value="5">Viernes</option>
+                <option value="6">Sábado</option>
+            </select>
+
+        </div>
+
+        <div>
+
+            <label class="block text-sm mb-2">
+                Hora
+            </label>
+
+            <input
+                type="time"
+                v-model="weeklyTime"
+                class="w-full border rounded-lg p-3"
+            >
+
+        </div>
+
+    </div>
+
+    <!-- Mensual -->
+
+    <div
+        v-if="scheduleType==='monthly'"
+        class="mt-4 space-y-3"
+    >
+
+        <div>
+
+            <label class="block text-sm mb-2">
+                Día del mes
+            </label>
+
+            <input
+                type="number"
+                min="1"
+                max="31"
+                v-model="monthDay"
+                class="w-full border rounded-lg p-3"
+            >
+
+        </div>
+
+        <div>
+
+            <label class="block text-sm mb-2">
+                Hora
+            </label>
+
+            <input
+                type="time"
+                v-model="monthlyTime"
+                class="w-full border rounded-lg p-3"
+            >
+
+        </div>
+
+    </div>
+
+    <!-- Cada hora -->
+
+    <div
+        v-if="scheduleType==='hourly'"
+        class="mt-4"
+    >
+
+        <label class="block text-sm mb-2">
+            Minuto
+        </label>
+
+        <input
+            type="number"
+            min="0"
+            max="59"
+            v-model="hourMinute"
+            class="w-full border rounded-lg p-3"
+        >
+
+    </div>
+
+    <!-- Cada X minutos -->
+
+    <div
+        v-if="scheduleType==='minutes'"
+        class="mt-4"
+    >
+
+        <label class="block text-sm mb-2">
+            Intervalo
+        </label>
+
+        <select
+            v-model="minuteInterval"
+            class="w-full border rounded-lg p-3"
+        >
+            <option value="5">5 minutos</option>
+            <option value="10">10 minutos</option>
+            <option value="15">15 minutos</option>
+            <option value="30">30 minutos</option>
+        </select>
+
+    </div>
+
+    <!-- Personalizado -->
+
+    <div
+        v-if="scheduleType==='custom'"
+        class="mt-4"
+    >
+
+        <input
+            v-model="props.job.schedule"
+            placeholder="0 */6 * * *"
+            class="w-full border rounded-lg p-3"
+        >
+
+    </div>
+
+    <div class="mt-4 p-3 rounded-lg bg-blue-50 border border-blue-200">
+
+        <div class="text-sm font-semibold text-blue-700">
+            Expresión CRON
+        </div>
+
+        <div class="font-mono text-blue-800 mt-1">
+            {{ props.job.schedule }}
+        </div>
+
+    </div>
+
+</div>
 
         </div>
 
@@ -150,7 +325,8 @@
 
 import {
     onMounted,
-    ref
+    ref,
+    watch
 } from 'vue'
 
 import {
@@ -164,10 +340,28 @@ const emit = defineEmits([
 ])
 
 const props = defineProps({
-    job:Object
+
+    job: Object
+
 })
 
 const connections = ref([])
+
+const scheduleType = ref("daily")
+
+const dailyTime = ref("22:00")
+
+const weeklyTime = ref("22:00")
+
+const monthlyTime = ref("22:00")
+
+const weekDay = ref("1")
+
+const monthDay = ref(1)
+
+const hourMinute = ref(0)
+
+const minuteInterval = ref(15)
 
 async function loadConnections(){
 
@@ -176,6 +370,215 @@ async function loadConnections(){
     connections.value = response.data
 
 }
+
+const loadingCron = ref(false)
+
+function buildCron(){
+
+    if(loadingCron.value){
+
+        return
+
+    }
+
+    switch(scheduleType.value){
+
+        case "daily":
+
+            {
+
+                const [hour, minute] = dailyTime.value.split(":")
+
+                props.job.schedule =
+                    `${minute} ${hour} * * *`
+
+            }
+
+            break
+
+        case "weekly":
+
+            {
+
+                const [hour, minute] = weeklyTime.value.split(":")
+
+                props.job.schedule =
+                    `${minute} ${hour} * * ${weekDay.value}`
+
+            }
+
+            break
+
+        case "monthly":
+
+            {
+
+                const [hour, minute] = monthlyTime.value.split(":")
+
+                props.job.schedule =
+                    `${minute} ${hour} ${monthDay.value} * *`
+
+            }
+
+            break
+
+        case "hourly":
+
+            props.job.schedule =
+                `${hourMinute.value} * * * *`
+
+            break
+
+        case "minutes":
+
+            props.job.schedule =
+                `*/${minuteInterval.value} * * * *`
+
+            break
+
+        case "custom":
+
+            break
+
+    }
+
+}
+
+function parseCron(){
+
+    loadingCron.value = true
+
+    if(!props.job.schedule){
+
+        loadingCron.value = false
+
+        buildCron()
+
+        return
+
+    }
+
+    const cron = props.job.schedule.trim().split(" ")
+
+    if(cron.length!==5){
+
+        scheduleType.value="custom"
+
+        loadingCron.value = false
+
+        return
+
+    }
+
+    const minute = cron[0]
+
+    const hour = cron[1]
+
+    const day = cron[2]
+
+    const month = cron[3]
+
+    const week = cron[4]
+
+    if(minute.startsWith("*/")){
+
+        scheduleType.value = "minutes"
+
+        minuteInterval.value = parseInt(minute.replace("*/",""))
+
+        loadingCron.value = false
+
+        return
+
+    }
+
+    if(hour==="*" && day==="*" && month==="*" && week==="*"){
+
+        scheduleType.value="hourly"
+
+        hourMinute.value=parseInt(minute)
+
+        loadingCron.value = false
+
+        return
+
+    }
+
+    if(day==="*" && month==="*" && week==="*"){
+
+        scheduleType.value="daily"
+
+        dailyTime.value=
+            `${hour.padStart(2,"0")}:${minute.padStart(2,"0")}`
+
+        loadingCron.value = false
+
+        return
+
+    }
+
+    if(day==="*" && month==="*" && week!=="*"){
+
+        scheduleType.value="weekly"
+
+        weekDay.value=week
+
+        weeklyTime.value=
+            `${hour.padStart(2,"0")}:${minute.padStart(2,"0")}`
+
+        loadingCron.value = false
+        
+        return
+
+    }
+
+    if(day!=="*" && month==="*" && week==="*"){
+
+        scheduleType.value="monthly"
+
+        monthDay.value=parseInt(day)
+
+        monthlyTime.value=
+            `${hour.padStart(2,"0")}:${minute.padStart(2,"0")}`
+
+        loadingCron.value = false
+        
+        return
+
+    }
+
+    scheduleType.value="custom"
+
+    loadingCron.value = false
+
+}
+
+watch(
+
+    [
+
+        scheduleType,
+
+        dailyTime,
+
+        weeklyTime,
+
+        monthlyTime,
+
+        weekDay,
+
+        monthDay,
+
+        hourMinute,
+
+        minuteInterval
+
+    ],
+
+    buildCron
+
+)
+
 
 async function save(){
 
@@ -209,6 +612,12 @@ async function save(){
 
 }
 
-onMounted(loadConnections)
+onMounted(async()=>{
+
+    await loadConnections()
+
+    parseCron()
+
+})
 
 </script>

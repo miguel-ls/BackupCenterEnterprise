@@ -51,10 +51,29 @@
 
             <input
                 v-model="form.trade_name"
+                @input="form.sftp_alias = form.trade_name
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g,'')
+                    .replace(/\s+/g,'')
+                    .replace(/[^a-z0-9_-]/g,'')"
                 class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             >
 
         </div>
+
+<div class="col-span-2">
+
+    <label class="block text-sm font-semibold mb-2">
+        Alias SFTP
+    </label>
+
+    <input
+        v-model="form.sftp_alias"
+        class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+    >
+
+</div>        
 
         <div>
 
@@ -199,6 +218,8 @@ const emptyForm = {
     business_name: "",
 
     trade_name: "",
+
+    sftp_alias: "",
 
     ruc: "",
 

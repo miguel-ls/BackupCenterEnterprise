@@ -5,6 +5,7 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 use BackupCenter\Core\Application;
 use BackupCenter\Core\Audit;
+use BackupCenter\Services\SftpGoService;
 
 $app = new Application();
 
@@ -34,92 +35,165 @@ switch ($method) {
 
     case 'POST':
 
-        $id = $repository->create(
+        $pdo = $app->database()->getConnection();
 
-            $body['code'] ?? '',
+        try {
 
-            $body['business_name'] ?? '',
+            $pdo->beginTransaction();
 
-            $body['trade_name'] ?? null,
+            $id = $repository->create(
 
-            $body['ruc'] ?? null,
+                $body['code'] ?? '',
 
-            $body['contact_name'] ?? null,
+                $body['business_name'] ?? '',
 
-            $body['email'] ?? null,
+                $body['trade_name'] ?? null,
 
-            $body['phone'] ?? null,
+                $body['sftp_alias'] ?? null,
 
-            $body['address'] ?? null,
+                $body['ruc'] ?? null,
 
-            (int)($body['status'] ?? 1),
+                $body['contact_name'] ?? null,
 
-            $body['notes'] ?? null
+                $body['email'] ?? null,
 
-        );
+                $body['phone'] ?? null,
 
-        Audit::info(
+                $body['address'] ?? null,
 
-            'CLIENTS',
+                (int)($body['status'] ?? 1),
 
-            'CREATE',
+                $body['notes'] ?? null
 
-            'Cliente ' . ($body['business_name'] ?? '') . ' creado',
+            );
 
-            'admin'
 
-        );
+            $sftp = null;
 
-        echo json_encode([
-            'success' => true,
-            'id' => $id
-        ]);
+            $service = new SftpGoService();
+
+            if ($service->isEnabled()) {
+
+                if (empty($body['sftp_alias'])) {
+
+                    throw new Exception(
+                        'Debe ingresar el Alias SFTP.'
+                    );
+
+                }
+
+                $sftp = $service->provisionClient(
+                    $body['sftp_alias']
+                );
+
+}
+
+            Audit::info(
+
+                'CLIENTS',
+
+                'CREATE',
+
+                'Cliente ' . ($body['business_name'] ?? '') . ' creado',
+
+                'admin'
+
+            );
+
+            $pdo->commit();
+
+            echo json_encode([
+
+                'success' => true,
+
+                'id' => $id,
+
+                'sftp' => $sftp
+
+            ]);
+
+        } catch (Throwable $e) {
+
+            if ($pdo->inTransaction()) {
+
+                $pdo->rollBack();
+
+            }
+
+            http_response_code(400);
+
+            echo json_encode([
+
+                'success' => false,
+
+                'message' => $e->getMessage()
+
+            ]);
+
+        }
 
         break;
 
     case 'PUT':
 
-        $ok = $repository->update(
+        try {
 
-            (int)$body['id'],
+            $ok = $repository->update(
 
-            $body['code'] ?? '',
+                (int)$body['id'],
 
-            $body['business_name'] ?? '',
+                $body['code'] ?? '',
 
-            $body['trade_name'] ?? null,
+                $body['business_name'] ?? '',
 
-            $body['ruc'] ?? null,
+                $body['trade_name'] ?? null,
 
-            $body['contact_name'] ?? null,
+                $body['sftp_alias'] ?? null,
 
-            $body['email'] ?? null,
+                $body['ruc'] ?? null,
 
-            $body['phone'] ?? null,
+                $body['contact_name'] ?? null,
 
-            $body['address'] ?? null,
+                $body['email'] ?? null,
 
-            (int)($body['status'] ?? 1),
+                $body['phone'] ?? null,
 
-            $body['notes'] ?? null
+                $body['address'] ?? null,
 
-        );
+                (int)($body['status'] ?? 1),
 
-        Audit::info(
+                $body['notes'] ?? null
 
-            'CLIENTS',
+            );
 
-            'UPDATE',
+            Audit::info(
 
-            'Cliente ' . ($body['business_name'] ?? '') . ' actualizado',
+                'CLIENTS',
 
-            'admin'
+                'UPDATE',
 
-        );
+                'Cliente ' . ($body['business_name'] ?? '') . ' actualizado',
 
-        echo json_encode([
-            'success' => $ok
-        ]);
+                'admin'
+
+            );
+
+            echo json_encode([
+                'success' => $ok
+            ]);
+
+        } catch (PDOException $e) {
+
+            http_response_code(400);
+
+            echo json_encode([
+                'success' => false,
+                'message' => str_contains($e->getMessage(), 'clients.sftp_alias')
+                    ? 'El Alias SFTP ya existe.'
+                    : 'Error al actualizar el cliente.'
+            ]);
+
+        }
 
         break;
 

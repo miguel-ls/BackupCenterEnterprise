@@ -23,6 +23,7 @@ class ClientRepository
                 code TEXT NOT NULL UNIQUE,
                 business_name TEXT NOT NULL,
                 trade_name TEXT,
+                sftp_alias TEXT,
                 ruc TEXT,
                 contact_name TEXT,
                 email TEXT,
@@ -65,6 +66,7 @@ class ClientRepository
         string $code,
         string $businessName,
         ?string $tradeName,
+        ?string $sftpAlias,     
         ?string $ruc,
         ?string $contactName,
         ?string $email,
@@ -80,6 +82,7 @@ class ClientRepository
                 code,
                 business_name,
                 trade_name,
+                sftp_alias,
                 ruc,
                 contact_name,
                 email,
@@ -90,7 +93,7 @@ class ClientRepository
             )
             VALUES
             (
-                ?,?,?,?,?,?,?,?,?,?
+                ?,?,?,?,?,?,?,?,?,?,?
             )
         ");
 
@@ -98,6 +101,7 @@ class ClientRepository
             $code,
             $businessName,
             $tradeName,
+            $sftpAlias,
             $ruc,
             $contactName,
             $email,
@@ -115,6 +119,7 @@ class ClientRepository
         string $code,
         string $businessName,
         ?string $tradeName,
+        ?string $sftpAlias,
         ?string $ruc,
         ?string $contactName,
         ?string $email,
@@ -130,6 +135,7 @@ class ClientRepository
                 code=?,
                 business_name=?,
                 trade_name=?,
+                sftp_alias=?,
                 ruc=?,
                 contact_name=?,
                 email=?,
@@ -144,6 +150,7 @@ class ClientRepository
             $code,
             $businessName,
             $tradeName,
+            $sftpAlias,
             $ruc,
             $contactName,
             $email,

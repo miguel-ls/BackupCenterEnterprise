@@ -61,6 +61,9 @@ export const updateSettings = (settings) =>
         body: JSON.stringify(settings)
     });
 
+export const testSftpGo = () =>
+    request("sftpgo/test.php");
+    
 /* ================= QUEUE ================= */
 
 export const getQueue = () => request("job-queue.php");

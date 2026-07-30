@@ -291,31 +291,29 @@ function closeForm() {
 
 async function saveClient(client) {
 
-    try {
+    let response;
 
-        if (client.id) {
+    if (client.id) {
 
-            await updateClient(client)
+        response = await updateClient(client);
 
-        }
-        else {
+    } else {
 
-            await createClient(client)
-
-        }
-
-        await loadClients()
-
-        closeForm()
+        response = await createClient(client);
 
     }
-    catch (error) {
 
-        console.error(error)
+    if (!response.success) {
 
-        alert("No fue posible guardar el cliente.")
+        alert(response.message);
+
+        return;
 
     }
+
+    await loadClients();
+
+    closeForm();
 
 }
 
