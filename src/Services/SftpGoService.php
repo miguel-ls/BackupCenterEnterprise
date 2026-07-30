@@ -230,6 +230,57 @@ class SftpGoService
         rmdir($directory);
     }
 
+    public function deleteUser(string $username): bool
+    {
+        $token = $this->getToken();
+
+        $url =
+            "http://{$this->settings['sftpgo_host']}:{$this->settings['sftpgo_port']}/api/v2/users/" .
+            urlencode($username);
+
+        $ch = curl_init($url);
+
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_CUSTOMREQUEST => "DELETE",
+            CURLOPT_HTTPHEADER => [
+                "Authorization: Bearer {$token}"
+            ]
+        ]);
+
+        curl_exec($ch);
+
+        if (curl_errno($ch)) {
+            throw new \Exception(curl_error($ch));
+        }
+
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        curl_close($ch);
+
+        return $status === 204;
+    }
+
+    public function deleteClientFolder(string $alias): bool
+    {
+        $folder = rtrim(
+            $this->settings["sftpgo_base_path"],
+            "/\\"
+        ) . DIRECTORY_SEPARATOR . $alias;
+
+        if (!is_dir($folder)) {
+            return true;
+        }
+
+        $items = array_diff(scandir($folder), ['.', '..']);
+
+        if (count($items) > 0) {
+            return false;
+        }
+
+        return rmdir($folder);
+    }
+
     public function provisionClient(string $alias): array
     {
         $basePath = rtrim(

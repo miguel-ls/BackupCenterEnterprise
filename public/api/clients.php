@@ -199,27 +199,82 @@ switch ($method) {
 
     case 'DELETE':
 
-        $ok = $repository->delete(
-            (int)$body['id']
-        );
+        try {
 
-        Audit::info(
+            $client = null;
 
-            'CLIENTS',
+            foreach ($repository->getAll() as $row) {
 
-            'DELETE',
+                if ((int)$row['id'] === (int)$body['id']) {
 
-            'Cliente ID ' . ($body['id'] ?? 0) . ' eliminado',
+                    $client = $row;
 
-            'admin'
+                    break;
 
-        );
+                }
 
-        echo json_encode([
-            'success' => $ok
-        ]);
+            }
 
-        break;
+            if (!$client) {
+
+                throw new Exception('Cliente no encontrado.');
+
+            }
+
+            $service = new SftpGoService();
+
+            $sftpDeleted = false;
+            $folderDeleted = false;
+
+            if (
+                $service->isEnabled() &&
+                !empty($client['sftp_alias'])
+            ) {
+
+                $sftpDeleted = $service->deleteUser(
+                    $client['sftp_alias']
+                );
+
+                $folderDeleted = $service->deleteClientFolder(
+                    $client['sftp_alias']
+                );
+
+            }
+
+            $ok = $repository->delete(
+                (int)$body['id']
+            );
+
+            Audit::info(
+
+                'CLIENTS',
+
+                'DELETE',
+
+                'Cliente ID ' . ($body['id'] ?? 0) . ' eliminado',
+
+                'admin'
+
+            );
+
+            echo json_encode([
+                'success' => $ok,
+                'sftp_deleted' => $sftpDeleted,
+                'folder_deleted' => $folderDeleted
+            ]);
+
+        } catch (Throwable $e) {
+
+            http_response_code(400);
+
+            echo json_encode([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+
+        }
+
+        break;   
 
     default:
 
