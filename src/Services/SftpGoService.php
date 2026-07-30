@@ -209,6 +209,27 @@ class SftpGoService
         }
     }
 
+    private function deleteDirectory(string $directory): void
+    {
+        if (!is_dir($directory)) {
+            return;
+        }
+
+        $items = array_diff(scandir($directory), ['.', '..']);
+
+        foreach ($items as $item) {
+            $path = $directory . DIRECTORY_SEPARATOR . $item;
+
+            if (is_dir($path)) {
+                $this->deleteDirectory($path);
+            } else {
+                unlink($path);
+            }
+        }
+
+        rmdir($directory);
+    }
+
     public function provisionClient(string $alias): array
     {
         $basePath = rtrim(
