@@ -200,11 +200,7 @@ switch ($method) {
     case 'DELETE':
 
 
-        file_put_contents(
-            __DIR__ . '/delete_request.log',
-            date('Y-m-d H:i:s.u') . " DELETE REQUEST\n",
-            FILE_APPEND
-        );
+
 
         try {
 
