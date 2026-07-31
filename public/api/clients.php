@@ -235,6 +235,9 @@ switch ($method) {
                     $client['sftp_alias']
                 );
 
+                var_dump($sftpDeleted);
+                exit;
+
                 $folderDeleted = $service->deleteClientFolder(
                     $client['sftp_alias']
                 );
