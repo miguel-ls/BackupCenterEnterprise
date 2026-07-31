@@ -265,7 +265,8 @@ class SftpGoService
             );
         }
 
-        return true;
+        var_dump($status);
+        exit;
     }
 
     public function deleteClientFolder(string $alias): bool
