@@ -296,3 +296,12 @@ export const deleteClient = (id) =>
         method: "DELETE",
         body: JSON.stringify({ id })
     });
+
+export const resetClientPassword = (id) =>
+    request("clients.php", {
+        method: "POST",
+        body: JSON.stringify({
+            action: "reset-password",
+            id
+        })
+    });    

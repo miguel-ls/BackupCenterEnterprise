@@ -35,6 +35,65 @@ switch ($method) {
 
     case 'POST':
 
+        if (($body['action'] ?? '') === 'reset-password') {
+
+            try {
+
+                $client = null;
+
+                foreach ($repository->getAll() as $row) {
+
+                    if ((int)$row['id'] === (int)$body['id']) {
+                        $client = $row;
+                        break;
+                    }
+
+                }
+
+                if (!$client) {
+                    throw new Exception('Cliente no encontrado.');
+                }
+
+                if (empty($client['sftp_alias'])) {
+                    throw new Exception('El cliente no tiene Alias SFTP.');
+                }
+
+                $service = new SftpGoService();
+
+                $result = $service->resetPassword(
+                    $client['sftp_alias']
+                );
+
+                Audit::info(
+                    'CLIENTS',
+                    'RESET_PASSWORD',
+                    'Contraseña SFTP restablecida para ' . $client['business_name'],
+                    'admin'
+                );
+
+                echo json_encode([
+                    'success' => true,
+                    'username' => $result['username'],
+                    'password' => $result['password']
+                ]);
+
+                break;
+
+            } catch (Throwable $e) {
+
+                http_response_code(400);
+
+                echo json_encode([
+                    'success' => false,
+                    'message' => $e->getMessage()
+                ]);
+
+                break;
+
+            }
+
+        }
+
         $pdo = $app->database()->getConnection();
 
         try {
@@ -67,7 +126,6 @@ switch ($method) {
 
             );
 
-
             $sftp = null;
 
             $service = new SftpGoService();
@@ -86,7 +144,7 @@ switch ($method) {
                     $body['sftp_alias']
                 );
 
-}
+            }
 
             Audit::info(
 

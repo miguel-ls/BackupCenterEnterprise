@@ -5,6 +5,7 @@ namespace BackupCenter\Services;
 use BackupCenter\Core\Database;
 use BackupCenter\Core\Paths;
 
+
 class SftpGoService
 {
     private array $settings;
@@ -53,9 +54,9 @@ class SftpGoService
         $response = curl_exec($ch);
 
         if ($response === false) {
-
-            throw new \Exception(curl_error($ch));
-
+            $error = curl_error($ch);
+            curl_close($ch);
+            throw new \Exception($error);
         }
 
         curl_close($ch);
@@ -150,9 +151,9 @@ class SftpGoService
         $response = curl_exec($ch);
 
         if ($response === false) {
-
-            throw new \Exception(curl_error($ch));
-
+            $error = curl_error($ch);
+            curl_close($ch);
+            throw new \Exception($error);
         }
 
         $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -237,9 +238,9 @@ public function deleteUser(string $username): bool
     $token = $this->getToken();
 
     $url = sprintf(
-        "http://%s:%s/api/v2/users/%s",
+        "http://%s:%d/api/v2/users/%s",
         trim($this->settings['sftpgo_host']),
-        trim((string)$this->settings['sftpgo_port']),
+        (int)$this->settings['sftpgo_port'],
         rawurlencode($username)
     );
 
@@ -257,7 +258,9 @@ public function deleteUser(string $username): bool
     $response = curl_exec($ch);
 
     if ($response === false) {
-        throw new \Exception(curl_error($ch));
+        $error = curl_error($ch);
+        curl_close($ch);
+        throw new \Exception($error);
     }
 
     $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -276,6 +279,146 @@ public function deleteUser(string $username): bool
     }
 
     return true;
+}
+
+public function getUser(string $username): array
+{
+    $token = $this->getToken();
+
+    $url = sprintf(
+        "http://%s:%d/api/v2/users/%s",
+        trim($this->settings['sftpgo_host']),
+        (int)$this->settings['sftpgo_port'],
+        rawurlencode(trim($username))
+    );
+
+    $ch = curl_init($url);
+
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => [
+            "Authorization: Bearer {$token}",
+            "Accept: application/json"
+        ]
+    ]);
+
+    $response = curl_exec($ch);
+
+    if ($response === false) {
+        $error = curl_error($ch);
+        curl_close($ch);
+        throw new \Exception($error);
+    }
+
+    $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+    curl_close($ch);
+
+    if ($status !== 200) {
+        throw new \Exception(
+            "No se pudo obtener el usuario SFTPGo. HTTP {$status}"
+        );
+    }
+
+    $user = json_decode($response, true);
+
+    if (!is_array($user)) {
+        throw new \Exception('Respuesta JSON inválida de SFTPGo.');
+    }
+
+    return $user;
+}
+
+public function resetPassword(string $username): array
+{
+    $current = $this->getUser($username);
+
+    $password = $this->generatePassword();
+
+    $user = [
+        "status" => $current["status"] ?? 1,
+        "username" => $current["username"],
+        "password" => $password,
+        "home_dir" => $current["home_dir"],
+        "uid" => $current["uid"] ?? 0,
+        "gid" => $current["gid"] ?? 0,
+        "max_sessions" => $current["max_sessions"] ?? 0,
+        "quota_size" => $current["quota_size"] ?? 0,
+        "quota_files" => $current["quota_files"] ?? 0,
+        "permissions" => $current["permissions"],
+        "upload_data_transfer" => $current["upload_data_transfer"] ?? 0,
+        "download_data_transfer" => $current["download_data_transfer"] ?? 0,
+        "total_data_transfer" => $current["total_data_transfer"] ?? 0,
+
+        // Requerido por SFTPGo 2.7.x.
+        // Los objetos vacíos deben serializarse como {} (stdClass) para que el PUT sea aceptado.
+        "filesystem" => [
+            "provider" => 0,
+            "osconfig" => new \stdClass(),
+            "s3config" => new \stdClass(),
+            "gcsconfig" => new \stdClass(),
+            "azblobconfig" => new \stdClass(),
+            "cryptconfig" => new \stdClass(),
+            "sftpconfig" => new \stdClass(),
+            "httpconfig" => new \stdClass()
+        ]
+    ];
+
+    $payload = json_encode(
+        $user,
+        JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
+    );
+
+    if ($payload === false) {
+        throw new \Exception('Error generando JSON: ' . json_last_error_msg());
+    }
+
+    $token = $this->getToken();
+
+    $url = sprintf(
+        "http://%s:%d/api/v2/users/%s",
+        trim($this->settings['sftpgo_host']),
+        (int)$this->settings['sftpgo_port'],
+        rawurlencode(trim($username))
+    );
+
+    $ch = curl_init($url);
+
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_CUSTOMREQUEST => "PUT",
+        CURLOPT_POSTFIELDS => $payload,
+        CURLOPT_HTTPHEADER => [
+            "Authorization: Bearer {$token}",
+            "Content-Type: application/json",
+            "Accept: application/json"
+        ]
+    ]);
+
+    $response = curl_exec($ch);
+
+    if ($response === false) {
+        $error = curl_error($ch);
+        curl_close($ch);
+        throw new \Exception($error);
+    }
+
+    $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+    curl_close($ch);
+
+    if (!in_array($status, [200, 202], true)) {
+        throw new \Exception(sprintf(
+            'SFTPGo devolvió HTTP %d%s',
+            $status,
+            $response ? ': ' . $response : ''
+        ));
+    }
+
+    return [
+        "username" => $username,
+        "password" => $password
+    ];
 }
 
     public function deleteClientFolder(string $alias): bool
