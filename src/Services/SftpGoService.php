@@ -230,50 +230,53 @@ class SftpGoService
         rmdir($directory);
     }
 
-    public function deleteUser(string $username): bool
-    {
-        file_put_contents(
-            __DIR__ . '/delete_sftp.log',
-            date('Y-m-d H:i:s') . " DELETE {$username}\n",
-            FILE_APPEND
-        );
+public function deleteUser(string $username): bool
+{
+    $username = trim($username);
 
-        
-        $token = $this->getToken();
+    $token = $this->getToken();
 
-        $url =
-            "http://{$this->settings['sftpgo_host']}:{$this->settings['sftpgo_port']}/api/v2/users/" .
-            urlencode($username);
+    $url = sprintf(
+        "http://%s:%s/api/v2/users/%s",
+        trim($this->settings['sftpgo_host']),
+        trim((string)$this->settings['sftpgo_port']),
+        rawurlencode($username)
+    );
 
-        $ch = curl_init($url);
+    $ch = curl_init($url);
 
-        curl_setopt_array($ch, [
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_CUSTOMREQUEST => "DELETE",
-            CURLOPT_HTTPHEADER => [
-                "Authorization: Bearer {$token}"
-            ]
-        ]);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_CUSTOMREQUEST  => "DELETE",
+        CURLOPT_HTTPHEADER => [
+            "Authorization: Bearer {$token}",
+            "Accept: application/json"
+        ],
+    ]);
 
-        $response = curl_exec($ch);
+    $response = curl_exec($ch);
 
-        if ($response === false) {
-            throw new \Exception(curl_error($ch));
-        }
+    if ($response === false) {
+        throw new \Exception(curl_error($ch));
+    }
 
-        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-        curl_close($ch);
+    curl_close($ch);
 
-        // SFTPGo puede responder 200 o 204 al eliminar
-        if (!in_array($status, [200, 204])) {
-            throw new \Exception(
-                "No se pudo eliminar el usuario SFTPGo. HTTP {$status}. {$response}"
-            );
-        }
-
+    if ($status === 404) {
+        // Si ya no existe el usuario, lo consideramos eliminado.
         return true;
     }
+
+    if (!in_array($status, [200, 204], true)) {
+        throw new \Exception(
+            "No se pudo eliminar el usuario SFTPGo. HTTP {$status}. {$response}"
+        );
+    }
+
+    return true;
+}
 
     public function deleteClientFolder(string $alias): bool
     {
