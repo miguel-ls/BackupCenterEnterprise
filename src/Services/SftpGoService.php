@@ -248,9 +248,9 @@ class SftpGoService
             ]
         ]);
 
-        curl_exec($ch);
+        $response = curl_exec($ch);
 
-        if (curl_errno($ch)) {
+        if ($response === false) {
             throw new \Exception(curl_error($ch));
         }
 
@@ -258,7 +258,14 @@ class SftpGoService
 
         curl_close($ch);
 
-        return $status === 204;
+        // SFTPGo puede responder 200 o 204 al eliminar
+        if (!in_array($status, [200, 204])) {
+            throw new \Exception(
+                "No se pudo eliminar el usuario SFTPGo. HTTP {$status}. {$response}"
+            );
+        }
+
+        return true;
     }
 
     public function deleteClientFolder(string $alias): bool
