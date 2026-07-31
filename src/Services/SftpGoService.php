@@ -232,6 +232,14 @@ class SftpGoService
 
     public function deleteUser(string $username): bool
     {
+        file_put_contents(
+            '/tmp/delete_sftp.log',
+            date('Y-m-d H:i:s') . " DELETE {$username}\n",
+            FILE_APPEND
+        );
+
+
+        
         $token = $this->getToken();
 
         $url =
