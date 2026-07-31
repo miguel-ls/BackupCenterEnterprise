@@ -199,6 +199,9 @@ switch ($method) {
 
     case 'DELETE':
 
+
+        error_log("DELETE CLIENT REQUEST " . microtime(true));
+        
         try {
 
             $client = null;
@@ -235,8 +238,7 @@ switch ($method) {
                     $client['sftp_alias']
                 );
 
-                var_dump($sftpDeleted);
-                exit;
+
 
                 $folderDeleted = $service->deleteClientFolder(
                     $client['sftp_alias']
