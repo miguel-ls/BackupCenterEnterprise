@@ -1,11 +1,17 @@
 <?php
 
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\Image\SvgImageBackEnd;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
+use BaconQrCode\Writer;
+
 use BackupCenter\Core\ApiController;
 use BackupCenter\Core\ApiResponse;
 use PragmaRX\Google2FA\Google2FA;
 
 require_once __DIR__ . '/cors.php';
 require_once __DIR__ . '/bootstrap.php';
+
 
 ApiController::boot();
 
@@ -79,11 +85,23 @@ $uri = $google2fa->getQRCodeUrl(
 
 );
 
+$renderer = new ImageRenderer(
+    new RendererStyle(250),
+    new SvgImageBackEnd()
+);
+
+$writer = new Writer($renderer);
+
+$svg = $writer->writeString($uri);
+
+
 ApiResponse::success([
 
     "secret" => $secret,
 
     "uri" => $uri,
+
+    "qr" => "data:image/svg+xml;base64," . base64_encode($svg),
 
     "manual" => true
 
