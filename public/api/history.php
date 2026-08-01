@@ -156,6 +156,39 @@ $stmt->bindValue(
 
 $stmt->execute();
 
+$data = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+$timezone = new DateTimeZone('America/Lima');
+
+foreach ($data as &$row) {
+
+    foreach (['started_at', 'finished_at'] as $field) {
+
+        if (empty($row[$field])) {
+            continue;
+        }
+
+        try {
+
+            $date = new DateTime($row[$field]);
+
+            $date->setTimezone($timezone);
+
+            $row[$field] = $date->format('Y-m-d H:i:s');
+
+        } catch (Throwable $e) {
+
+            // Si la fecha ya viene en formato local o no es válida,
+            // la dejamos tal como está.
+
+        }
+
+    }
+
+}
+
+unset($row);
+
 echo json_encode([
 
     'success' => true,
@@ -166,12 +199,8 @@ echo json_encode([
 
     'total' => $total,
 
-    'pages' => (int)ceil(
-        $total / $limit
-    ),
+    'pages' => (int)ceil($total / $limit),
 
-    'data' => $stmt->fetchAll(
-        \PDO::FETCH_ASSOC
-    )
+    'data' => $data
 
 ]);

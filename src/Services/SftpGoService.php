@@ -171,6 +171,31 @@ class SftpGoService
         ];
     }    
 
+    private function fixPermissions(string $directory): void
+    {
+        if (!file_exists($directory)) {
+            return;
+        }
+
+        chown($directory, 'apps');
+        chgrp($directory, 'apps');
+
+        $items = array_diff(scandir($directory), ['.', '..']);
+
+        foreach ($items as $item) {
+
+            $path = $directory . DIRECTORY_SEPARATOR . $item;
+
+            chown($path, 'apps');
+            chgrp($path, 'apps');
+
+            if (is_dir($path)) {
+                $this->fixPermissions($path);
+            }
+
+        }
+    }
+
     private function copyDirectory(string $source, string $destination): void
     {
         if (!is_dir($source)) {
@@ -473,6 +498,9 @@ public function resetPassword(string $username): array
                 $template,
                 $home
             );
+
+            // Cambiar propietario al usuario del contenedor Apps
+            $this->fixPermissions($home);
 
             // Generar contraseña
             $password = $this->generatePassword();
