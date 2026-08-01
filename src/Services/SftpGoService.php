@@ -196,44 +196,7 @@ class SftpGoService
         }
     }
 
-    private function copyDirectory(string $source, string $destination): void
-    {
-        if (!is_dir($source)) {
-            throw new \Exception("No existe la carpeta template: {$source}");
-        }
 
-        if (is_dir($destination)) {
-            throw new \Exception("La carpeta destino ya existe: {$destination}");
-        }
-
-        if (!mkdir($destination, 0775, true)) {
-            throw new \Exception("No se pudo crear la carpeta {$destination}");
-        }
-
-        $items = scandir($source);
-
-        foreach ($items as $item) {
-
-            if ($item === "." || $item === "..") {
-                continue;
-            }
-
-            $src = $source . DIRECTORY_SEPARATOR . $item;
-            $dst = $destination . DIRECTORY_SEPARATOR . $item;
-
-            if (is_dir($src)) {
-
-                $this->copyDirectory($src, $dst);
-
-            } else {
-
-                if (!copy($src, $dst)) {
-                    throw new \Exception("No se pudo copiar {$src}");
-                }
-
-            }
-        }
-    }
 
     private function deleteDirectory(string $directory): void
     {
@@ -466,6 +429,24 @@ public function resetPassword(string $username): array
         return rmdir($folder);
     }
 
+    private function cloneTemplate(string $template, string $home): void
+    {
+        $command = sprintf(
+            'cp -a %s %s 2>&1',
+            escapeshellarg($template),
+            escapeshellarg($home)
+        );
+
+        exec($command, $output, $result);
+
+        if ($result !== 0) {
+            throw new \Exception(
+                "No se pudo crear la carpeta del cliente.\n" .
+                implode("\n", $output)
+            );
+        }
+    }
+    
     public function provisionClient(string $alias): array
     {
         $basePath = rtrim(
@@ -473,34 +454,44 @@ public function resetPassword(string $username): array
             "/\\"
         );
 
-        
-
-
         $template = $basePath . DIRECTORY_SEPARATOR . "_template";
         $home = $basePath . DIRECTORY_SEPARATOR . $alias;
 
         if (is_dir($home)) {
+
             throw new \Exception(
                 "La carpeta del cliente ya existe."
             );
+
         }
 
         if (!is_dir($template)) {
+
             throw new \Exception(
                 "No existe la carpeta _template."
             );
+
         }
 
         try {
 
-            // Clonar la estructura del template
-            $this->copyDirectory(
-                $template,
-                $home
+            // Clonar el template preservando propietario, grupo y permisos
+            $command = sprintf(
+                'cp -a %s %s 2>&1',
+                escapeshellarg($template),
+                escapeshellarg($home)
             );
 
-            // Cambiar propietario al usuario del contenedor Apps
-            $this->fixPermissions($home);
+            exec($command, $output, $result);
+
+            if ($result !== 0) {
+
+                throw new \Exception(
+                    "No se pudo crear la carpeta del cliente.\n" .
+                    implode("\n", $output)
+                );
+
+            }
 
             // Generar contraseña
             $password = $this->generatePassword();
@@ -531,7 +522,7 @@ public function resetPassword(string $username): array
 
         } catch (\Throwable $e) {
 
-            // Si ya se creó la carpeta, eliminarla
+            // Si ocurre un error, eliminar la carpeta creada
             $this->deleteDirectory($home);
 
             throw $e;
