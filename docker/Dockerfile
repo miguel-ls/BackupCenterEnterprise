@@ -68,8 +68,16 @@ RUN cp -R dist/* /var/www/html/public/
 # Volver al proyecto
 WORKDIR /var/www/html
 
+# Crear usuario y grupo apps (UID/GID 568)
+RUN groupadd -g 568 apps && \
+    useradd -u 568 -g apps -M -s /usr/sbin/nologin apps
+
 # Configuración de PHP
 COPY docker/php/php.ini /usr/local/etc/php/conf.d/custom.ini
+
+# PHP-FPM ejecutará los procesos como apps
+RUN sed -i 's/^user = .*/user = apps/' /usr/local/etc/php-fpm.d/www.conf && \
+    sed -i 's/^group = .*/group = apps/' /usr/local/etc/php-fpm.d/www.conf
 
 # Configuración de Nginx
 COPY docker/nginx/default.conf /etc/nginx/sites-enabled/default
@@ -84,7 +92,7 @@ RUN mkdir -p \
     /var/log/supervisor
 
 # Permisos
-RUN chown -R www-data:www-data \
+RUN chown -R apps:apps \
     /var/www/html/storage \
     /var/www/html/database \
     /var/log/supervisor
