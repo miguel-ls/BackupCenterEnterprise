@@ -61,6 +61,9 @@ export const updateSettings = (settings) =>
         body: JSON.stringify(settings)
     });
 
+export const testSftpGo = () =>
+    request("sftpgo/test.php");
+    
 /* ================= QUEUE ================= */
 
 export const getQueue = () => request("job-queue.php");
@@ -293,3 +296,12 @@ export const deleteClient = (id) =>
         method: "DELETE",
         body: JSON.stringify({ id })
     });
+
+export const resetClientPassword = (id) =>
+    request("clients.php", {
+        method: "POST",
+        body: JSON.stringify({
+            action: "reset-password",
+            id
+        })
+    });    

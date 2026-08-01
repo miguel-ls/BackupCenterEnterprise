@@ -146,22 +146,30 @@
 
         </div>
 
-        <div class="mt-8 flex justify-end">
 
-            <button
-                @click="save"
-                class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg"
-            >
+        
+<div class="mt-8 flex justify-between">
 
-                Guardar Configuración
+<button
+    type="button"
+    @click="testSftpGo"
+    class="bg-red-600 text-white px-10 py-6 rounded-lg text-2xl"
+>
+    🔥 PROBAR SFTPGO 🔥
+</button>
 
-            </button>
+    <button
+        @click="save"
+        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg"
+    >
+        Guardar Configuración
+    </button>
 
-        </div>
+</div>
 
     </div>
 
-</MainLayout>
+ </MainLayout>
 
 </template>
 
@@ -174,7 +182,8 @@ import MainLayout from "../components/layout/MainLayout.vue";
 import {
 
     getSettings,
-    updateSettings
+    updateSettings,
+    testSftpGo as apiTestSftpGo
 
 } from "../api/client";
 
@@ -187,7 +196,14 @@ const settings = reactive({
     compression:1,
     log_level:"INFO",
     log_path:"",
-    connection_timeout:30
+    connection_timeout:30,
+
+    sftpgo_enabled:0,
+    sftpgo_protocol:"http",
+    sftpgo_host:"",
+    sftpgo_port:8088,
+    sftpgo_api_key:"",
+    sftpgo_base_path:"/mnt/Interno1TB/BackupsSQL"
 
 });
 
@@ -212,6 +228,22 @@ async function load(){
     const response=await getSettings();
 
     Object.assign(settings,response.data);
+
+}
+
+async function testSftpGo() {
+
+    const result = await apiTestSftpGo();
+
+    if (result.success) {
+
+        alert("Conexión correcta con SFTPGo.");
+
+    } else {
+
+        alert(result.message);
+
+    }
 
 }
 

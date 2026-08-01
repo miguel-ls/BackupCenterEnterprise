@@ -75,6 +75,21 @@ class="w-full border rounded-lg p-3 mt-2 bg-neutral-100"
 
 </div>
 
+<div class="flex flex-col items-center gap-4 my-6">
+
+    <img
+        v-if="qr"
+        :src="qr"
+        class="w-56 h-56 border rounded-xl bg-white p-2 shadow"
+    />
+
+    <div class="text-sm text-gray-500">
+        Escanee este código con Google Authenticator
+    </div>
+
+</div>
+
+
 <div>
 
 <label class="font-semibold">
@@ -198,9 +213,8 @@ const emit=defineEmits([
 ])
 
 const loading=ref(false)
-
 const secret=ref("")
-
+const qr = ref("")
 const code=ref("")
 
 watch(
@@ -255,7 +269,8 @@ return
 
 }
 
-secret.value=j.data.secret
+secret.value = j.data.secret
+qr.value = j.data.qr
 
 }
 

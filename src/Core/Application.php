@@ -31,6 +31,8 @@ use BackupCenter\Repositories\NotificationRepository;
 use BackupCenter\Repositories\UserRepository;
 use BackupCenter\Repositories\AuditRepository;
 
+use BackupCenter\Repositories\SettingsRepository;
+
 class Application
 {
     private ConfigurationManager $config;
@@ -61,6 +63,7 @@ private BackupService $backupService;
     private UserRepository $userRepository;
     private AuditRepository $auditRepository;
 
+private SettingsRepository $settingsRepository;
 
     public function __construct()
     {
@@ -143,6 +146,12 @@ $this->auditRepository = new AuditRepository(
 Audit::initialize(
     $this->auditRepository
 );
+
+$this->settingsRepository = new SettingsRepository(
+    $this->database
+);
+
+$this->settingsRepository->initialize();
 
 $hostedAgent = new HostedAgent(
     $this,
@@ -289,6 +298,11 @@ public function connectionRepository(): ConnectionRepository
 public function clientRepository(): ClientRepository
 {
     return $this->clientRepository;
+}
+
+public function settingsRepository(): SettingsRepository
+{
+    return $this->settingsRepository;
 }
 
 }

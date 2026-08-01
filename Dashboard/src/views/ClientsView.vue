@@ -105,6 +105,14 @@
             <Trash2 :size="17"/>
         </button>
 
+        <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-200 transition"
+            title="Restablecer contraseña SFTP"
+            @click="resetPassword(client)"
+        >
+            <KeyRound :size="17"/>
+        </button>        
+
     </div>
 
 </td>
@@ -186,6 +194,64 @@
 
 </div>
 
+<div
+    v-if="showPassword"
+    class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+>
+
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+
+        <h2 class="text-xl font-bold mb-6">
+            Nueva contraseña SFTP
+        </h2>
+
+        <div class="space-y-4">
+
+            <div>
+
+                <label class="text-sm font-semibold">
+                    Usuario
+                </label>
+
+                <input
+                    class="w-full border rounded-lg p-2"
+                    :value="credentials.username"
+                    readonly
+                >
+
+            </div>
+
+            <div>
+
+                <label class="text-sm font-semibold">
+                    Contraseña
+                </label>
+
+                <input
+                    class="w-full border rounded-lg p-2"
+                    :value="credentials.password"
+                    readonly
+                >
+
+            </div>
+
+        </div>
+
+        <div class="flex justify-end mt-6">
+
+            <button
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg"
+                @click="showPassword=false"
+            >
+                Cerrar
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
 
 </MainLayout>
 
@@ -195,7 +261,7 @@
 
 import {
 
-    Play,
+    KeyRound,
     Pencil,
     Trash2
 
@@ -211,13 +277,21 @@ import {
     getClients,
     createClient,
     updateClient,
-    deleteClient
+    deleteClient,
+    resetClientPassword
 
 } from "@/api/client"
 
 const clients = ref([])
-const showForm = ref(false)
 const selectedClient = ref(null)
+const showForm = ref(false)
+
+const showPassword = ref(false)
+
+const credentials = ref({
+    username: "",
+    password: ""
+})
 
 async function loadClients() {
 
@@ -281,6 +355,34 @@ async function removeClient(client) {
 
 }
 
+async function resetPassword(client) {
+
+    const ok = confirm(
+        `¿Restablecer la contraseña SFTP de "${client.business_name}"?`
+    )
+
+    if (!ok) return
+
+    const response = await resetClientPassword(client.id)
+
+    if (!response.success) {
+
+        alert(response.message)
+
+        return
+
+    }
+
+    credentials.value = {
+        username: response.username,
+        password: response.password
+    }
+
+    showPassword.value = true
+
+}
+
+
 function closeForm() {
 
     selectedClient.value = null
@@ -291,31 +393,29 @@ function closeForm() {
 
 async function saveClient(client) {
 
-    try {
+    let response;
 
-        if (client.id) {
+    if (client.id) {
 
-            await updateClient(client)
+        response = await updateClient(client);
 
-        }
-        else {
+    } else {
 
-            await createClient(client)
-
-        }
-
-        await loadClients()
-
-        closeForm()
+        response = await createClient(client);
 
     }
-    catch (error) {
 
-        console.error(error)
+    if (!response.success) {
 
-        alert("No fue posible guardar el cliente.")
+        alert(response.message);
+
+        return;
 
     }
+
+    await loadClients();
+
+    closeForm();
 
 }
 
