@@ -36,6 +36,18 @@
                     Conexión
                 </th>
 
+                <th class="text-left px-4 py-3 font-semibold">
+                    Destino
+                </th>
+
+                <th class="text-left px-4 py-3 font-semibold">
+                    Programación
+                </th>
+
+                <th class="text-left px-4 py-3 font-semibold">
+                    Hora
+                </th>                
+
                 <th class="text-center px-4 py-3 font-semibold">
                     Estado
                 </th>
@@ -79,6 +91,18 @@
                 <td class="px-4 py-3 text-neutral-600">
                     {{ job.connection }}
                 </td>
+
+                <td class="px-4 py-3 text-neutral-600">
+                    {{ job.destination }}
+                </td>
+
+                <td class="px-4 py-3 text-neutral-600">
+                    {{ getScheduleType(job.schedule) }}
+                </td>
+
+                <td class="px-4 py-3 text-neutral-600">
+                    {{ getScheduleTime(job.schedule) }}
+                </td>                
 
                 <td class="px-4 py-3 text-center">
 
@@ -160,7 +184,7 @@
             <tr>
 
                 <td
-                    colspan="7"
+                    colspan="10"
                     class="text-center py-10 text-neutral-500"
                 >
 
@@ -205,4 +229,51 @@ defineEmits([
 
 ]);
 
+function getScheduleTime(cron) {
+
+    if (!cron) return "-";
+
+    const parts = cron.split(" ");
+
+    if (parts.length < 2) return "-";
+
+    return `${parts[1].padStart(2, "0")}:${parts[0].padStart(2, "0")}`;
+
+}
+
+function getScheduleType(cron) {
+
+    if (!cron) return "-";
+
+    const parts = cron.split(" ");
+
+    if (parts.length < 5) return "-";
+
+    if (
+        parts[2] === "*" &&
+        parts[3] === "*" &&
+        parts[4] === "*"
+    ) {
+        return "Cada día";
+    }
+
+    if (
+        parts[2] === "*" &&
+        parts[3] === "*" &&
+        parts[4] !== "*"
+    ) {
+        return "Semanal";
+    }
+
+    if (
+        parts[2] !== "*" &&
+        parts[3] === "*" &&
+        parts[4] === "*"
+    ) {
+        return "Mensual";
+    }
+
+    return "Personalizado";
+
+}
 </script>
