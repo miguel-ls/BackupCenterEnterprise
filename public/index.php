@@ -4,7 +4,7 @@
 
 <meta charset="UTF-8">
 
-<title>Backup Center Enterprise</title>
+<title>Backup Center Enterprise prueba</title>
 
 <link rel="stylesheet" href="assets/css/style.css">
 
