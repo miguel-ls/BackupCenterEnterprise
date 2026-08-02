@@ -98,13 +98,13 @@
 
                     <td class="px-4 py-3 text-sm text-slate-600">
 
-                        {{ item.started_at || "-" }}
+                        {{ formatDate(item.started_at) }}
 
                     </td>
 
                     <td class="px-4 py-3 text-sm text-slate-600">
 
-                        {{ item.finished_at || "-" }}
+                        {{ formatDate(item.finished_at) }}
 
                     </td>
 
@@ -149,5 +149,28 @@ defineProps({
     }
 
 })
+
+function formatDate(value) {
+
+    if (!value) {
+
+        return "-"
+
+    }
+
+    return new Date(value).toLocaleString(
+        "es-PE",
+        {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false
+        }
+    )
+
+}
 
 </script>

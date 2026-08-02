@@ -138,9 +138,7 @@
                 </td>
 
                 <td class="px-4 py-3 text-sm text-neutral-600">
-
-                    {{ job.time }}
-
+                    {{ formatDate(job.time) }}
                 </td>
 
                 <td class="px-4 py-3">
@@ -276,4 +274,29 @@ function getScheduleType(cron) {
     return "Personalizado";
 
 }
+
+function formatDate(value) {
+
+    if (!value || value === "-") {
+
+        return "-";
+
+    }
+
+    return new Date(value).toLocaleString(
+        "es-PE",
+        {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false
+        }
+    );
+
+}
+
+
 </script>
