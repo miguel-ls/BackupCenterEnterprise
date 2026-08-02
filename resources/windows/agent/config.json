@@ -1,6 +1,6 @@
 {
   "Server": "https://backup.codesicorp.net",
-  "InstallToken": "b1606dcd301d4587f51eff18dfc9e5ed",
+  "InstallToken": "",
 
   "Backup": {
     "Extensions": [
