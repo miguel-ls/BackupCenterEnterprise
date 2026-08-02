@@ -200,15 +200,31 @@ public function updateJob(
 public function getEnabledJobs(): array
 {
     $stmt = $this->db->query("
-        SELECT *
-        FROM jobs
-        WHERE enabled = 1
-        ORDER BY id
+
+        SELECT
+
+            j.*,
+
+            c.name AS connection_name,
+
+            cl.name AS client_name
+
+        FROM jobs j
+
+        LEFT JOIN connections c
+            ON c.id = j.connection_id
+
+        LEFT JOIN clients cl
+            ON cl.id = c.client_id
+
+        WHERE j.enabled = 1
+
+        ORDER BY j.id
+
     ");
 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-
 public function isRunning(int $id): bool
 {
     $stmt = $this->db->prepare("

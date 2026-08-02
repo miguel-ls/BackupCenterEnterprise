@@ -46,10 +46,20 @@ class SchedulerEngine
 
                     "SKIP",
 
-                    "Job {$job['name']} ya está ejecutándose.",
+                    sprintf(
+
+                        "Trabajo: %s | Cliente: %s | Conexión: %s | Ya está ejecutándose.",
+
+                        $job["name"],
+
+                        $job["client_name"],
+
+                        $job["connection_name"]
+
+                    ),
 
                     "SYSTEM"
-
+                    
                 );
 
                 continue;
@@ -66,7 +76,17 @@ class SchedulerEngine
 
                     "SKIP",
 
-                    "Job {$job['name']} ya fue ejecutado este minuto.",
+                    sprintf(
+
+                        "Trabajo: %s | Cliente: %s | Conexión: %s | Ya fue ejecutado este minuto.",
+
+                        $job["name"],
+
+                        $job["client_name"],
+
+                        $job["connection_name"]
+
+                    ),
 
                     "SYSTEM"
 
@@ -93,7 +113,17 @@ class SchedulerEngine
 
                 "QUEUE",
 
-                "Job {$job['name']} agregado a la cola.",
+                sprintf(
+
+                    "Trabajo: %s | Cliente: %s | Conexión: %s",
+
+                    $job["name"],
+
+                    $job["client_name"],
+
+                    $job["connection_name"]
+
+                ),
 
                 "SYSTEM"
 
