@@ -1,46 +1,33 @@
 <template>
 
-    <div class="doc-card" @click="$emit('click')">
+    <div class="doc-card">
 
-        <div class="icon">
-            <slot name="icon"/>
-        </div>
-
-        <h2>
-            <slot name="title"/>
-        </h2>
-
-        <p>
-            <slot/>
-        </p>
+        <slot />
 
     </div>
 
 </template>
 
 <script setup>
-
-defineEmits(["click"])
-
 </script>
 
 <style scoped>
 
 .doc-card{
 
-    background:white;
+    background:#fff;
 
-    border-radius:16px;
+    border-radius:18px;
 
-    padding:30px;
+    border:1px solid #e5e7eb;
 
-    cursor:pointer;
+    padding:28px;
 
     transition:.25s;
 
-    box-shadow:0 4px 15px rgba(0,0,0,.06);
+    box-shadow:0 4px 18px rgba(0,0,0,.05);
 
-    border:1px solid #ececec;
+    height:100%;
 
 }
 
@@ -48,29 +35,9 @@ defineEmits(["click"])
 
     transform:translateY(-6px);
 
-    box-shadow:0 14px 30px rgba(0,0,0,.12);
+    box-shadow:0 15px 35px rgba(0,0,0,.12);
 
-}
-
-.icon{
-
-    font-size:42px;
-
-    margin-bottom:20px;
-
-}
-
-h2{
-
-    margin-bottom:15px;
-
-}
-
-p{
-
-    color:#666;
-
-    line-height:1.6;
+    border-color:#2563eb;
 
 }
 

@@ -11,7 +11,7 @@ async function request(endpoint, options = {}) {
     });
 
     const content = await response.text();
-    let json = null;
+    let json;
 
     try {
         json = content ? JSON.parse(content) : null;
