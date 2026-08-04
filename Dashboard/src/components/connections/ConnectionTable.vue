@@ -7,14 +7,16 @@
         <thead class="bg-neutral-50">
 
             <tr>
-
+                <th class="text-left p-4">Id</th>
                 <th class="text-left p-4">Cliente</th>
                 <th class="text-left p-4">Host</th>
                 <th class="text-left p-4">Puerto</th>
                 <th class="text-left p-4">Usuario</th>
                 <th class="text-left p-4">Protocolo</th>
                 <th class="text-left p-4">Estado</th>
+                <th class="text-left p-4">Password</th>
                 <th class="text-left p-4">Install Token</th>
+                <th class="text-left p-4">Remote Path</th>
                 <th class="text-center p-4">Acciones</th>
 
             </tr>
@@ -28,6 +30,9 @@
                 :key="connection.id"
                 class="border-t"
             >
+                <td class="p-4">
+                    {{ connection.id }}
+                </td>
 
                 <td class="p-4">
                     {{ connection.client_name || '-' }}
@@ -59,9 +64,17 @@
                 </td>
 
                 <td class="p-4">
+                    {{ connection.password }}
+                </td>
+
+                <td class="p-4">
                     <span class="font-mono text-xs break-all">
                         {{ connection.install_token || '-' }}
                     </span>
+                </td>
+
+                <td class="p-4">
+                    {{ connection.remote_path }}
                 </td>
 
                 <td class="p-4">
@@ -99,7 +112,7 @@
             <tr v-if="connections.length===0">
 
                 <td
-                    colspan="8"
+                    colspan="10"
                     class="text-center p-10 text-neutral-400"
                 >
 

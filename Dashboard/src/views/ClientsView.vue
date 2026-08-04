@@ -34,12 +34,14 @@
                 <thead class="bg-neutral-100">
 
                     <tr>
-
+                        <th class="text-left p-3">Id</th>
                         <th class="text-left p-3">Código</th>
                         <th class="text-left p-3">Razón Social</th>
                         <th class="text-left p-3">Contacto</th>
                         <th class="text-left p-3">Correo</th>
+                        <th class="text-left p-3">SFTP Alias</th>
                         <th class="text-center p-3">Estado</th>
+                        
                         <th class="text-center p-3">Acciones</th>
 
                     </tr>
@@ -55,6 +57,10 @@
                     >
 
                         <td class="p-3">
+                            {{ client.id }}
+                        </td>
+
+                        <td class="p-3">
                             {{ client.code }}
                         </td>
 
@@ -68,6 +74,10 @@
 
                         <td class="p-3">
                             {{ client.email }}
+                        </td>
+
+                        <td class="p-3">
+                            {{ client.sftp_alias }}
                         </td>
 
                         <td class="p-3 text-center">
