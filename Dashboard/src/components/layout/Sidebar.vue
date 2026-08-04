@@ -172,6 +172,14 @@
 
         </RouterLink>
 
+        <RouterLink to="/documentation" class="menu">
+
+            <span>📚</span>
+
+            <span>Documentación</span>
+
+        </RouterLink>
+
         <RouterLink to="/about" class="menu">
 
             <span>ℹ️</span>

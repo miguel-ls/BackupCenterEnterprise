@@ -13,6 +13,7 @@ import UsersView from '../views/UsersView.vue'
 import AuditView from '../views/AuditView.vue'
 import ReportsView from '../views/ReportsView.vue'
 import ClientsView from "../views/ClientsView.vue"
+import documentationRoutes from "../documentation/router/documentation"
 
 const router = createRouter({
 
@@ -43,11 +44,11 @@ const router = createRouter({
             meta: { requiresAuth: true }
         },
 
-{
-    path: "/clients",
-    component: ClientsView,
-    meta: { requiresAuth: true }
-},
+        {
+            path: "/clients",
+            component: ClientsView,
+            meta: { requiresAuth: true }
+        },
 
         {
             path: '/queue',
@@ -95,7 +96,9 @@ const router = createRouter({
             path: '/about',
             component: AboutView,
             meta: { requiresAuth: true }
-        }
+        },
+
+        ...documentationRoutes
 
     ]
 
