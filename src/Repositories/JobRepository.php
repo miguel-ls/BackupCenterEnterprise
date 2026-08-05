@@ -207,7 +207,7 @@ public function getEnabledJobs(): array
 
             c.name AS connection_name,
 
-            cl.name AS client_name
+            cl.business_name AS client_name
 
         FROM jobs j
 
