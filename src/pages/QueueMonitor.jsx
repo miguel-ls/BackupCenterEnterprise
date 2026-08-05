@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
+import API from "@/config/api";
 
 export default function QueueMonitor() {
 
     const [rows, setRows] = useState([]);
-
-    const API = import.meta.env.VITE_API_URL;
-
 
     async function load() {
 

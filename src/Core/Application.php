@@ -28,6 +28,7 @@ use BackupCenter\Repositories\JobQueueRepository;
 use BackupCenter\Workers\BackupWorker;
 
 use BackupCenter\Repositories\NotificationRepository;
+use BackupCenter\Repositories\SystemLogRepository;
 use BackupCenter\Repositories\UserRepository;
 use BackupCenter\Repositories\AuditRepository;
 
@@ -60,6 +61,7 @@ private BackupService $backupService;
     private BackupWorker $backupWorker;
 
     private NotificationRepository $notificationRepository;
+    private SystemLogRepository $systemLogRepository;
     private UserRepository $userRepository;
     private AuditRepository $auditRepository;
 
@@ -132,6 +134,12 @@ $this->notificationRepository = new NotificationRepository(
 );
 
 $this->notificationRepository->initialize();
+
+$this->systemLogRepository = new SystemLogRepository(
+    $this->database
+);
+
+$this->systemLogRepository->initialize();
 
 $this->userRepository = new UserRepository(
     $this->database
