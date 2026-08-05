@@ -8,6 +8,7 @@ use BackupCenter\Core\RetryPolicy;
 use BackupCenter\Services\UploadManager;
 use BackupCenter\Core\FileScanner;
 use BackupCenter\Core\FileValidator;
+use BackupCenter\Core\SystemLog;
 use BackupCenter\Repositories\UploadedFileRepository;
 use BackupCenter\Repositories\ExecutionHistoryRepository;
 
@@ -153,6 +154,10 @@ $this->auditRepository = new AuditRepository(
 
 Audit::initialize(
     $this->auditRepository
+);
+
+SystemLog::initialize(
+    $this->systemLogRepository
 );
 
 $this->settingsRepository = new SettingsRepository(

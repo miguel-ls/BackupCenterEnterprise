@@ -33,4 +33,51 @@ class SystemLogRepository
         )
     ");
 }
+
+public function add(
+    string $level,
+    string $module,
+    string $action,
+    string $message,
+    array $context = [],
+    ?string $username = null,
+    ?int $clientId = null,
+    ?int $connectionId = null,
+    ?int $jobId = null
+): void
+{
+    $stmt = $this->db->prepare("
+        INSERT INTO system_logs
+        (
+            created_at,
+            level,
+            module,
+            action,
+            message,
+            context,
+            username,
+            client_id,
+            connection_id,
+            job_id
+        )
+        VALUES
+        (
+            ?,?,?,?,?,?,?,?,?,?
+        )
+    ");
+
+    $stmt->execute([
+        date('Y-m-d H:i:s'),
+        strtoupper($level),
+        $module,
+        $action,
+        $message,
+        json_encode($context, JSON_UNESCAPED_UNICODE),
+        $username,
+        $clientId,
+        $connectionId,
+        $jobId
+    ]);
+}
+
 }
