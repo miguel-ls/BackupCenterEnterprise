@@ -93,6 +93,8 @@ watch
 
 } from "vue"
 
+import API from "@/config/api";
+
 const props=defineProps({
 
 modelValue:Boolean,
@@ -127,8 +129,6 @@ generate()
 
 async function generate(){
 
-const API = import.meta.env.VITE_API_URL;
-
 const r=await fetch(
 
 
@@ -161,8 +161,6 @@ codes.value=j.data??[]
 }
 
 async function download(){
-
-const API = import.meta.env.VITE_API_URL;
 
 const r=await fetch(
 

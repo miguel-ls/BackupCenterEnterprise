@@ -57,7 +57,7 @@ import UserFormModal from "../components/users/UserFormModal.vue"
 
 import TwoFactorModal from "../components/users/TwoFactorModal.vue"
 
-const API = import.meta.env.VITE_API_URL;
+import API from "@/config/api";
 
 const users=ref([])
 

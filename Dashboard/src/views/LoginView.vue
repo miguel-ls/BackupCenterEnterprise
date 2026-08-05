@@ -117,7 +117,7 @@ import { useRouter } from "vue-router"
 
 const router = useRouter()
 
-const API = import.meta.env.VITE_API_URL;
+import API from "@/config/api";
 
 const username = ref("")
 const password = ref("")

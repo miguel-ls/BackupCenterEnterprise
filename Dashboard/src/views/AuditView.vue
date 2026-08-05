@@ -179,7 +179,7 @@ import {ref,computed,onMounted} from "vue"
 
 import MainLayout from "../components/layout/MainLayout.vue"
 
-const API = import.meta.env.VITE_API_URL;
+import API from "@/config/api";
 
 const audit=ref([])
 

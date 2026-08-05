@@ -139,6 +139,8 @@ watch
 
 } from "vue"
 
+import API from "@/config/api";
+
 const props=defineProps({
 
 modelValue:Boolean
@@ -218,7 +220,7 @@ localStorage.getItem("user")??"{}"
 )
 
 
-const API = import.meta.env.VITE_API_URL;
+
 
 const r=await fetch(
 

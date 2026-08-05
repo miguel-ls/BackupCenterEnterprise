@@ -1,5 +1,4 @@
-const API =  import.meta.env.VITE_API_URL;
-
+import API from "@/config/api";
 
 async function request(endpoint, options = {}) {
     const response = await fetch(`${API}/${endpoint}`, {
