@@ -1,6 +1,7 @@
 <?php
 
 namespace BackupCenter\Core;
+use BackupCenter\Core\SystemLog;
 
 class Logger
 {
@@ -34,21 +35,45 @@ class Logger
 
     public function info(string $message): void
     {
+        SystemLog::info(
+            'LOGGER',
+            'INFO',
+            $message
+        );
+
         $this->write('INFO', $message);
     }
 
     public function warning(string $message): void
     {
+        SystemLog::warning(
+            'LOGGER',
+            'WARNING',
+            $message
+        );
+
         $this->write('WARNING', $message);
     }
 
     public function error(string $message): void
     {
+        SystemLog::error(
+            'LOGGER',
+            'ERROR',
+            $message
+        );
+
         $this->write('ERROR', $message);
     }
 
     public function success(string $message): void
     {
+        SystemLog::success(
+            'LOGGER',
+            'SUCCESS',
+            $message
+        );
+
         $this->write('SUCCESS', $message);
     }
 }
