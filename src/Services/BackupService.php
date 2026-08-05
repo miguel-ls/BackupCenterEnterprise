@@ -3,6 +3,7 @@
 namespace BackupCenter\Services;
 
 use BackupCenter\Core\Audit;
+use BackupCenter\Core\SystemLog;
 use BackupCenter\Core\HostedAgent;
 use BackupCenter\Core\JobConfiguration;
 use BackupCenter\Repositories\ConnectionRepository;
@@ -35,6 +36,15 @@ class BackupService
             "Inicio Job {$jobId}",
             "SYSTEM"
         );
+
+        SystemLog::info(
+            'BACKUP',
+            'START',
+            "Inicio Job {$jobId}",
+            [
+                'job_id' => $jobId
+            ]
+        ); 
 
         $job = $this->jobRepository->getJob($jobId);
 
@@ -117,6 +127,16 @@ class BackupService
                     "SYSTEM"
                 );
 
+                SystemLog::success(
+                    'BACKUP',
+                    'SUCCESS',
+                    "Job {$job['name']} completado en {$seconds} segundos.",
+                    [
+                        'job_id' => $jobId,
+                        'connection_id' => $job['connection_id'] ?? null
+                    ]
+                );                
+
             }else{
 
                 $this->jobRepository->updateExecution(
@@ -130,6 +150,16 @@ class BackupService
                     "Job {$job['name']} terminó con errores.",
                     "SYSTEM"
                 );
+
+                SystemLog::error(
+                    'BACKUP',
+                    'FAILED',
+                    "Job {$job['name']} terminó con errores.",
+                    [
+                        'job_id' => $jobId,
+                        'connection_id' => $job['connection_id'] ?? null
+                    ]
+                );                
 
             }
 
@@ -148,6 +178,16 @@ class BackupService
                 $e->getMessage(),
                 "SYSTEM"
             );
+
+            SystemLog::error(
+                'BACKUP',
+                'EXCEPTION',
+                $e->getMessage(),
+                [
+                    'job_id' => $jobId,
+                    'exception' => get_class($e)
+                ]
+            );            
 
             throw $e;
         }
