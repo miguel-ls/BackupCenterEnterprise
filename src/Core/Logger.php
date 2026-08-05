@@ -38,7 +38,10 @@ class Logger
         SystemLog::info(
             'LOGGER',
             'INFO',
-            $message
+            $message,
+            [
+                'source' => 'Logger'
+            ]
         );
 
         $this->write('INFO', $message);
@@ -49,7 +52,10 @@ class Logger
         SystemLog::warning(
             'LOGGER',
             'WARNING',
-            $message
+            $message,
+            [
+                'source' => 'Logger'
+            ]
         );
 
         $this->write('WARNING', $message);
@@ -60,7 +66,10 @@ class Logger
         SystemLog::error(
             'LOGGER',
             'ERROR',
-            $message
+            $message,
+            [
+                'source' => 'Logger'
+            ]
         );
 
         $this->write('ERROR', $message);
@@ -71,7 +80,10 @@ class Logger
         SystemLog::success(
             'LOGGER',
             'SUCCESS',
-            $message
+            $message,
+            [
+                'source' => 'Logger'
+            ]
         );
 
         $this->write('SUCCESS', $message);
