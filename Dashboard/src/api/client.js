@@ -44,7 +44,14 @@ export const getStatistics = () => request("statistics.php");
 
 export const getVersion = () => request("version.php");
 
-export const getChart = () => request("chart.php");
+export const getChart = (
+    clientId = 0,
+    startDate = "",
+    endDate = ""
+) =>
+    request(
+        `chart.php?client_id=${clientId}&start_date=${startDate}&end_date=${endDate}`
+    );
 
 export const getSystemStatus = () => request("system-status.php");
 

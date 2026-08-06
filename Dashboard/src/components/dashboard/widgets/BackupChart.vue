@@ -40,6 +40,18 @@
 
             </select>
 
+<input
+    v-model="startDate"
+    type="date"
+    class="border rounded-md px-3 py-2 text-sm"
+/>
+
+<input
+    v-model="endDate"
+    type="date"
+    class="border rounded-md px-3 py-2 text-sm"
+/>            
+
             <button
                 @click="onUpdate"
                 class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
@@ -139,6 +151,15 @@ const loaded = ref(false)
 const clients = ref([])
 const selectedClient = ref(0)
 
+const today = new Date()
+
+const endDate = ref(formatLocalDate(today))
+
+const start = new Date(today)
+start.setDate(start.getDate() - 7)
+
+const startDate = ref(formatLocalDate(start))
+
 const chartData = ref({
 
     labels:[],
@@ -229,6 +250,14 @@ function formatLocalDate(date) {
     return `${year}-${month}-${day}`
 }
 
+function parseLocalDate(value) {
+
+    const [year, month, day] = value.split("-").map(Number)
+
+    return new Date(year, month - 1, day, 12, 0, 0)
+
+}
+
 function utcToLocalDate(dateString) {
 
     if (!dateString) return ""
@@ -243,73 +272,83 @@ async function __loadBackupChartData() {
 
     loaded.value = false
 
-    if (selectedClient.value === 0) {
+    try {
 
-        const response = await getChart()
+        const response = await getChart(
+            selectedClient.value,
+            startDate.value,
+            endDate.value
+        )
 
-        chartData.value = {
-
-            labels: response.data.map(item => item.day),
-
-            datasets:[
-
-                {
-
-                    label:"Archivos subidos",
-
-                    data: response.data.map(item => item.uploaded),
-
-                    borderColor: "#2563EB",
-                    backgroundColor: "rgba(37,99,235,0.08)",
-                    fill: true,
-                    tension: 0.25,
-                    pointRadius: 3
-
-                }
-
-            ]
-
-        }
-
-    } else {
-
-        // get history for client and aggregate per day for last 7 days
-        const resp = await getHistory(1,100,selectedClient.value)
-        const rows = Array.isArray(resp.data) ? resp.data : []
+        const rows = Array.isArray(response.data)
+            ? response.data
+            : []
 
         const labels = []
-        const map = {}
-
-        for (let i = 6; i >= 0; i--) {
-            const d = new Date()
-            d.setDate(d.getDate() - i)
-
-            const day = formatLocalDate(d)
-
-            labels.push(day)
-            map[day] = 0
-        }
+        const values = {}
 
         rows.forEach(item => {
-            const day = utcToLocalDate(item.started_at)
-            if (day in map) {
-                map[day] += Number(item.files_uploaded) || 0
-            }
+            values[item.day] = Number(item.uploaded) || 0
         })
 
+        function parseLocalDate(value) {
+
+            const [year, month, day] = value.split("-").map(Number)
+
+            return new Date(year, month - 1, day, 12, 0, 0)
+
+        }
+
+        const current = parseLocalDate(startDate.value)
+        const end = parseLocalDate(endDate.value)
+
+        while (current <= end) {
+
+            labels.push(formatLocalDate(current))
+
+            current.setDate(current.getDate() + 1)
+
+        }
+
         chartData.value = {
-            labels: labels,
+
+            labels,
+
             datasets: [
+
                 {
+
                     label: "Archivos subidos",
-                    data: labels.map(l => map[l] || 0),
+
+                    data: labels.map(day => values[day] ?? 0),
+
                     borderColor: "#2563EB",
+
                     backgroundColor: "rgba(37,99,235,0.08)",
+
                     fill: true,
+
                     tension: 0.25,
+
                     pointRadius: 3
+
                 }
+
             ]
+
+        }
+
+    }
+    catch (e) {
+
+        console.error(e)
+
+        chartData.value = {
+
+            labels: [],
+
+            datasets: []
+
         }
 
     }
