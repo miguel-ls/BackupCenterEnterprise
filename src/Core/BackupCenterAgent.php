@@ -71,6 +71,10 @@ class BackupCenterAgent
 
         $summary->found = count($files);
 
+        $this->logger->info(
+            "Se encontraron {$summary->found} archivo(s) para procesar."
+        );
+
         $connection = $configuration->getConnectionConfig();
 
         $this->logger->info(sprintf(
@@ -125,10 +129,17 @@ class BackupCenterAgent
                     "SYSTEM"
                 );
 
+                $this->logger->info(
+                    "Archivo omitido: {$file->getName()} (ya enviado)"
+                );                
+
                 continue;
             }
 
             try{
+                $this->logger->info(
+                    "Procesando archivo: {$file->getName()}"
+                );                
 
                 $this->uploadManager->upload($file, $configuration);
 
@@ -149,6 +160,10 @@ class BackupCenterAgent
                 );
 
                 $summary->uploaded++;
+
+                $this->logger->success(
+                    "Archivo enviado: {$file->getName()}"
+                );
 
                 Audit::info(
 
