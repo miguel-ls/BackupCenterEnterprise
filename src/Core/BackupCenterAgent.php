@@ -55,6 +55,7 @@ class BackupCenterAgent
 
         $this->logger->info('=== Backup Center iniciado ===');
 
+
         $summary = new ExecutionSummary();
 
         $path = $configuration->get('backup.local_path')

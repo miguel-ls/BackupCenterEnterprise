@@ -14,12 +14,13 @@ $pdo = $db->getConnection();
 
 $stmt = $pdo->query("
 SELECT
-    date(started_at) AS day,
+    date(datetime(replace(substr(started_at,1,19),'T',' '), '-5 hours')) AS day,
     COUNT(*) AS executions,
     COALESCE(SUM(files_uploaded),0) AS uploaded
 FROM execution_history
-WHERE started_at >= date('now','-6 day')
-GROUP BY date(started_at)
+WHERE datetime(replace(substr(started_at,1,19),'T',' '), '-5 hours')
+      >= datetime('now','localtime','-6 day')
+GROUP BY date(datetime(replace(substr(started_at,1,19),'T',' '), '-5 hours'))
 ORDER BY day
 ");
 

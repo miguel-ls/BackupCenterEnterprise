@@ -229,6 +229,15 @@ function formatLocalDate(date) {
     return `${year}-${month}-${day}`
 }
 
+function utcToLocalDate(dateString) {
+
+    if (!dateString) return ""
+
+    const date = new Date(dateString)
+
+    return formatLocalDate(date)
+
+}
 
 async function __loadBackupChartData() {
 
@@ -282,7 +291,7 @@ async function __loadBackupChartData() {
         }
 
         rows.forEach(item => {
-            const day = (item.started_at  || '').slice(0,10)
+            const day = utcToLocalDate(item.started_at)
             if (day in map) {
                 map[day] += Number(item.files_uploaded) || 0
             }
