@@ -43,11 +43,13 @@
 
 </div>
 
-    <div class="overflow-x-auto">
+<div class="overflow-x-auto">
+
+    <div class="max-h-[360px] overflow-y-auto">
 
         <table class="w-full">
 
-            <thead class="bg-neutral-50">
+            <thead class="bg-neutral-50 sticky top-0 z-10">
 
                 <tr>
 
@@ -92,7 +94,7 @@
                     </td>
 
                     <td class="p-3 text-center">
-                        {{ Number(item.duration_seconds).toFixed(2) }} s
+                        {{ formatDuration(item.duration_seconds) }}
                     </td>
 
                     <td class="p-3 text-center">
@@ -126,7 +128,7 @@
         </table>
 
     </div>
-
+   </div>
 </div>
 
 </template>
@@ -175,7 +177,7 @@ async function load(){
 
         const response = await getHistory(
             1,
-            5,
+            100,
             selectedClient.value
         );
 
@@ -207,6 +209,27 @@ function formatDate(date){
     ).toLocaleString();
 
 }
+
+function formatDuration(seconds) {
+
+    seconds = Math.max(0, Math.floor(Number(seconds) || 0));
+
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+
+    if (hours > 0) {
+        return `${hours}h ${minutes}m ${secs}s`;
+    }
+
+    if (minutes > 0) {
+        return `${minutes}m ${secs}s`;
+    }
+
+    return `${secs}s`;
+
+}
+
 
 function badgeClass(status){
 
