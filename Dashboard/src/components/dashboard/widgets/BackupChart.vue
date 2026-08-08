@@ -270,8 +270,6 @@ function utcToLocalDate(dateString) {
 
 async function __loadBackupChartData() {
 
-    loaded.value = false
-
     try {
 
         const response = await getChart(
@@ -291,70 +289,78 @@ async function __loadBackupChartData() {
             values[item.day] = Number(item.uploaded) || 0
         })
 
-        function parseLocalDate(value) {
-
-            const [year, month, day] = value.split("-").map(Number)
-
-            return new Date(year, month - 1, day, 12, 0, 0)
-
-        }
-
         const current = parseLocalDate(startDate.value)
         const end = parseLocalDate(endDate.value)
 
         while (current <= end) {
 
-            labels.push(formatLocalDate(current))
+            labels.push(
+                formatLocalDate(current)
+            )
 
-            current.setDate(current.getDate() + 1)
-
+            current.setDate(
+                current.getDate() + 1
+            )
         }
 
         chartData.value = {
-
             labels,
 
             datasets: [
-
                 {
-
                     label: "Archivos subidos",
 
-                    data: labels.map(day => values[day] ?? 0),
+                    data: labels.map(
+                        day => values[day] ?? 0
+                    ),
 
                     borderColor: "#2563EB",
 
-                    backgroundColor: "rgba(37,99,235,0.08)",
+                    backgroundColor:
+                        "rgba(37,99,235,0.08)",
 
                     fill: true,
 
                     tension: 0.25,
 
                     pointRadius: 3
-
                 }
-
             ]
-
         }
+
+        /*
+         * Solo mostramos Cargando...
+         * durante la primera carga.
+         *
+         * Las actualizaciones automáticas
+         * mantienen el gráfico visible.
+         */
+        loaded.value = true
 
     }
     catch (e) {
 
-        console.error(e)
+        console.error(
+            "Error cargando actividad de backups:",
+            e
+        )
 
-        chartData.value = {
+        /*
+         * IMPORTANTE:
+         *
+         * No vaciamos chartData.
+         *
+         * Si falla una actualización automática,
+         * conservamos el último gráfico válido.
+         */
 
-            labels: [],
-
-            datasets: []
-
+        if (!loaded.value) {
+            chartData.value = {
+                labels: [],
+                datasets: []
+            }
         }
-
     }
-
-    loaded.value = true
-
 }
 
 function onUpdate() {

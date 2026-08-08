@@ -168,9 +168,11 @@ const last = computed(() => {
 
 });
 
-async function load() {
+async function load(showLoading = false) {
 
-    loading.value = true;
+    if (showLoading) {
+        loading.value = true;
+    }
 
     try {
 
@@ -180,7 +182,9 @@ async function load() {
 
     } finally {
 
-        loading.value = false;
+        if (showLoading) {
+            loading.value = false;
+        }
 
     }
 
@@ -211,9 +215,11 @@ function badge(status) {
 
 onMounted(() => {
 
-    load();
+    load(true);
 
-    timer = setInterval(load, 10000);
+    timer = setInterval(() => {
+        load(false);
+    }, 10000);
 
 });
 
