@@ -1,43 +1,128 @@
 <?php
 
 require_once __DIR__ . '/../../vendor/autoload.php';
-
-use BackupCenter\Core\Database;
-use BackupCenter\Core\Paths;
+require_once __DIR__ . '/../../src/Core/Database.php';
 
 header('Content-Type: application/json');
 
 $data = json_decode(
-    file_get_contents('php://input'),
+    file_get_contents("php://input"),
     true
 );
 
-$jobId    = $data['job_id'] ?? 0;
+$jobId = $data['job_id'] ?? 0;
 $fileName = $data['file_name'] ?? '';
+
 $uploaded = $data['uploaded_bytes'] ?? 0;
-$total    = $data['total_bytes'] ?? 0;
-$speed    = $data['speed'] ?? 0;
-$status   = $data['status'] ?? 'uploading';
+$total = $data['total_bytes'] ?? 0;
+
+$speed = $data['speed'] ?? 0;
+$status = $data['status'] ?? 'uploading';
+
+
+/*
+|--------------------------------------------------------------------------
+| Validación básica
+|--------------------------------------------------------------------------
+*/
 
 if (!$jobId || !$fileName) {
+
     http_response_code(400);
 
     echo json_encode([
-        'error' => 'Invalid data'
+        "error" => "Invalid data"
     ]);
 
     exit;
 }
 
+
+/*
+|--------------------------------------------------------------------------
+| Normalización de valores
+|--------------------------------------------------------------------------
+*/
+
+$jobId = (int) $jobId;
+
+$uploaded = max(
+    0,
+    (int) $uploaded
+);
+
+$total = max(
+    0,
+    (int) $total
+);
+
+$speed = max(
+    0,
+    (float) $speed
+);
+
+
+/*
+|--------------------------------------------------------------------------
+| Protección:
+| uploaded_bytes nunca puede superar total_bytes
+|--------------------------------------------------------------------------
+*/
+
+if ($total > 0) {
+
+    $uploaded = min(
+        $uploaded,
+        $total
+    );
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Estados permitidos
+|--------------------------------------------------------------------------
+*/
+
+$allowedStatuses = [
+    'uploading',
+    'completed',
+    'failed'
+];
+
+
+if (!in_array(
+    $status,
+    $allowedStatuses,
+    true
+)) {
+
+    $status = 'uploading';
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Si está completado, debe estar al 100%
+|--------------------------------------------------------------------------
+*/
+
+if ($status === 'completed' && $total > 0) {
+
+    $uploaded = $total;
+
+}
+
+
 try {
 
-    $databaseFile = Paths::database() . '/backupcenter.db';
+    $db = \BackupCenter\Core\Database::getInstance();
 
-    $database = new Database($databaseFile);
 
-    $pdo = $database->getConnection();
-
-    $sql = "
+    $db->execute(
+        "
         INSERT INTO transfer_progress
         (
             job_id,
@@ -48,45 +133,57 @@ try {
             status,
             updated_at
         )
+
         VALUES
         (
-            :job_id,
-            :file_name,
-            :total_bytes,
-            :uploaded_bytes,
-            :speed,
-            :status,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
             datetime('now')
         )
+
         ON CONFLICT(job_id, file_name)
         DO UPDATE SET
-            total_bytes = excluded.total_bytes,
-            uploaded_bytes = excluded.uploaded_bytes,
-            speed = excluded.speed,
-            status = excluded.status,
-            updated_at = excluded.updated_at
-    ";
 
-    $statement = $pdo->prepare($sql);
+            uploaded_bytes =
+                excluded.uploaded_bytes,
 
-    $statement->execute([
-        ':job_id'         => $jobId,
-        ':file_name'      => $fileName,
-        ':total_bytes'    => $total,
-        ':uploaded_bytes' => $uploaded,
-        ':speed'          => $speed,
-        ':status'         => $status
-    ]);
+            total_bytes =
+                excluded.total_bytes,
+
+            speed =
+                excluded.speed,
+
+            status =
+                excluded.status,
+
+            updated_at =
+                excluded.updated_at
+        ",
+        [
+            $jobId,
+            $fileName,
+            $total,
+            $uploaded,
+            $speed,
+            $status
+        ]
+    );
+
 
     echo json_encode([
-        'ok' => true
+        "ok" => true
     ]);
 
-} catch (\Throwable $e) {
+} catch (Exception $e) {
 
     http_response_code(500);
 
     echo json_encode([
-        'error' => $e->getMessage()
+        "error" => $e->getMessage()
     ]);
+
 }
