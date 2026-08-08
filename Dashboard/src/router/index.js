@@ -14,6 +14,10 @@ import AuditView from '../views/AuditView.vue'
 import ReportsView from '../views/ReportsView.vue'
 import ClientsView from "../views/ClientsView.vue"
 import documentationRoutes from "../documentation/router/documentation"
+import Transfers from '../views/Transfers.vue'
+
+
+console.log("Transfers cargado", Transfers)
 
 const router = createRouter({
 
@@ -25,6 +29,12 @@ const router = createRouter({
             path: '/login',
             component: LoginView
         },
+
+        {
+            path: "/transfers",
+            name: "Transfers",
+            component: Transfers
+        },        
 
         {
             path: '/',
