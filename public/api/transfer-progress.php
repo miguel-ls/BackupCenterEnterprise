@@ -16,6 +16,7 @@ $jobId    = $data['job_id'] ?? 0;
 $fileName = $data['file_name'] ?? '';
 $uploaded = $data['uploaded_bytes'] ?? 0;
 $total    = $data['total_bytes'] ?? 0;
+$speed    = $data['speed'] ?? 0;
 $status   = $data['status'] ?? 'uploading';
 
 if (!$jobId || !$fileName) {
@@ -73,7 +74,7 @@ try {
         ':file_name'      => $fileName,
         ':total_bytes'    => $total,
         ':uploaded_bytes' => $uploaded,
-        ':speed'          => 0,
+        ':speed'          => $speed,
         ':status'         => $status
     ]);
 
