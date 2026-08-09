@@ -576,34 +576,27 @@ function getProgressClass(status) {
 function formatDate(date) {
 
     if (!date) {
-
         return "-"
-
     }
 
+    const value = new Date(date.replace(" ", "T"))
 
-    const value =
-        new Date(
-            date.replace(
-                " ",
-                "T"
-            )
-        )
-
-
-    if (
-        isNaN(
-            value.getTime()
-        )
-    ) {
-
+    if (isNaN(value.getTime())) {
         return date
-
     }
 
+    // 🔥 AJUSTE MANUAL A PERÚ
+    value.setHours(value.getHours() - 5)
 
-    return value.toLocaleString()
-
+    return value.toLocaleString("es-PE", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false
+    }).replace(",", "")
 }
 
 
