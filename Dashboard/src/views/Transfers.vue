@@ -572,7 +572,6 @@ function getProgressClass(status) {
 
 }
 
-
 function formatDate(date) {
 
     if (!date) {
@@ -598,8 +597,6 @@ function formatDate(date) {
         hour12: false
     }).replace(",", "")
 }
-
-
 onMounted(() => {
 
     /*
