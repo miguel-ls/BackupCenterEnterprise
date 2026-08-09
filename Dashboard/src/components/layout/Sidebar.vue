@@ -224,6 +224,13 @@
 
             </div>
 
+            <div class="flex justify-between text-xs">
+
+                <span>Hora servidor:</span>
+                <span class="text-yellow-400 ">{{ serverTime  }}</span>
+                
+            </div>          
+
             <div class="flex justify-between text-xs mt-2">
 
                 <span>Estado</span>
@@ -247,6 +254,20 @@
 <script setup>
 
 import { RouterLink } from "vue-router"
+import { ref, onMounted } from 'vue'
+
+const serverTime = ref('--:--:--')
+
+function updateTime() {
+  const now = new Date()
+  serverTime.value = now.toLocaleTimeString()
+}
+
+onMounted(() => {
+  updateTime()
+  setInterval(updateTime, 1000)
+})
+
 
 </script>
 
