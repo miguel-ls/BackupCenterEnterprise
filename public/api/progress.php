@@ -121,6 +121,13 @@ try {
 
     $items = $statement->fetchAll(PDO::FETCH_ASSOC);
 
+    $client = $_GET['client'] ?? 'all';
+
+    if ($client !== 'all') {
+        $items = array_values(array_filter($items, function ($row) use ($client) {
+            return isset($row['client_name']) && $row['client_name'] === $client;
+        }));
+    }
 
     /*
      * ============================================================

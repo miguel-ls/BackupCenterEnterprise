@@ -14,7 +14,7 @@
                     Filtros
                 </div>
 
-                <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
 
                     <div>
                         <label class="block text-sm font-medium mb-1">
@@ -48,6 +48,28 @@
                             <option value="30days">Últimos 30 días</option>
                         </select>
                     </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-1">
+                            Cliente
+                        </label>
+                        <select
+                            v-model="filters.client"
+                            @change="load(true)"
+                            class="w-full border rounded-lg px-3 py-2"
+                        >
+                            <option value="all">Todos</option>
+
+                            <option
+                                v-for="c in clients"
+                                :key="c"
+                                :value="c"
+                            >
+                                {{ c }}
+                            </option>
+
+                        </select>
+                    </div>                    
 
                 </div>
             </div>
@@ -216,6 +238,8 @@ import MainLayout from "../components/layout/MainLayout.vue"
 
 const items = ref([])
 
+const clients = ref([])
+
 const loading = ref(false)
 
 
@@ -233,11 +257,9 @@ const summary = ref({
 
 
 const filters = ref({
-
     status: "all",
-
-    date: "all"
-
+    date: "all",
+    client: "all"
 })
 
 
@@ -277,13 +299,10 @@ async function load(showLoading = false) {
     try {
 
         const params = new URLSearchParams({
-
             status: filters.value.status,
-
-            date: filters.value.date
-
+            date: filters.value.date,
+            client: filters.value.client
         })
-
 
         const res = await fetch(
             `/api/progress.php?${params.toString()}`,
@@ -314,6 +333,19 @@ async function load(showLoading = false) {
 
         items.value = json.data || []
 
+        // generar lista de clientes única
+        const uniqueClients = new Set()
+
+        items.value.forEach(i => {
+            if (i.client_name) {
+                uniqueClients.add(i.client_name)
+            }
+        })
+
+        // Solo llenar clientes la primera vez (no perder opciones al filtrar)
+        if (clients.value.length === 0) {
+            clients.value = Array.from(uniqueClients).sort()
+        }
 
         summary.value = json.summary || {
 
