@@ -9,7 +9,7 @@ header('Content-Type: application/json');
 try {
 
     $app = new Application();
-    $db = $app->database();
+    $db  = $app->database();
 
     $input = json_decode(file_get_contents('php://input'), true);
 
@@ -17,38 +17,59 @@ try {
         throw new Exception('Invalid JSON');
     }
 
-    $jobId     = $input['job_id'] ?? null;
-    $fileName  = $input['file_name'] ?? null;
-    $progress  = $input['progress'] ?? 0;
-    $bytesSent = $input['bytes_sent'] ?? 0;
-    $totalBytes= $input['total_bytes'] ?? 0;
-    $speed     = $input['speed'] ?? 0;
+    // ✅ CAMPOS CORRECTOS (como envía el agent)
+    $jobId        = $input['job_id'] ?? null;
+    $fileName     = $input['file_name'] ?? null;
+    $uploaded     = $input['uploaded_bytes'] ?? 0;
+    $total        = $input['total_bytes'] ?? 0;
+    $speed        = $input['speed'] ?? 0;
+    $status       = $input['status'] ?? 'uploading';
 
     if (!$jobId || !$fileName) {
         throw new Exception('Missing data');
     }
 
-    $db->execute("
-        INSERT INTO transfer_progress 
-        (job_id, file_name, progress, bytes_sent, total_bytes, speed, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, datetime('now'))
-        ON CONFLICT(job_id, file_name) DO UPDATE SET
-            progress = excluded.progress,
-            bytes_sent = excluded.bytes_sent,
-            total_bytes = excluded.total_bytes,
-            speed = excluded.speed,
-            updated_at = datetime('now')
-    ", [
-        $jobId,
-        $fileName,
-        $progress,
-        $bytesSent,
-        $totalBytes,
-        $speed
+    $pdo = $db->getConnection();
+
+    $stmt = $pdo->prepare("
+        INSERT INTO transfer_progress (
+            job_id,
+            file_name,
+            uploaded_bytes,
+            total_bytes,
+            speed,
+            status,
+            updated_at
+        )
+        VALUES (
+            :job_id,
+            :file_name,
+            :uploaded,
+            :total,
+            :speed,
+            :status,
+            datetime('now')
+        )
+        ON CONFLICT(job_id, file_name)
+        DO UPDATE SET
+            uploaded_bytes = excluded.uploaded_bytes,
+            total_bytes    = excluded.total_bytes,
+            speed          = excluded.speed,
+            status         = excluded.status,
+            updated_at     = datetime('now')
+    ");
+
+    $stmt->execute([
+        ':job_id'   => $jobId,
+        ':file_name'=> $fileName,
+        ':uploaded' => $uploaded,
+        ':total'    => $total,
+        ':speed'    => $speed,
+        ':status'   => $status
     ]);
 
     echo json_encode([
-        'status' => 'ok'
+        'success' => true
     ]);
 
 } catch (Throwable $e) {
