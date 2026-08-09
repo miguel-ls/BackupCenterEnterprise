@@ -35,4 +35,3 @@ supervisord.pid
 # Dashboard compilado
 /public/assets/
 /public/index.html
-/public/favicon.ico

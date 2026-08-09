@@ -10,6 +10,16 @@
 
         </h1>
 
+<div class="flex justify-center mb-4">
+    <div class="w-16 h-16 rounded-xl overflow-hidden bg-white flex items-center justify-center">
+        <img 
+            src="/logo.jpg" 
+            alt="Logo"
+            class="w-full h-full object-contain"
+        />
+    </div>
+</div>      
+
         <p class="text-center text-neutral-500 mb-8">
 
             Iniciar sesión
