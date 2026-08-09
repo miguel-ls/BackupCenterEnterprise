@@ -34,6 +34,19 @@ class JobQueueRepository
 
     public function enqueue(int $jobId): bool
     {
+        $jobStmt = $this->db->prepare("
+            SELECT enabled
+            FROM jobs
+            WHERE id=?
+        ");
+
+        $jobStmt->execute([$jobId]);
+        $job = $jobStmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$job || (int)($job['enabled'] ?? 0) !== 1) {
+            return false;
+        }
+
         if ($this->existsPendingOrRunning($jobId)) {
             return false;
         }

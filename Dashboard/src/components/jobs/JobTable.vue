@@ -146,9 +146,24 @@
                     <div class="flex justify-center gap-2">
 
                         <button
+                            @click="$emit('toggle',job)"
+                            class="w-9 h-9 rounded-lg flex items-center justify-center transition"
+                            :class="isEnabled(job)
+                                ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                                : 'bg-slate-700 hover:bg-slate-800 text-white'"
+                            :title="isEnabled(job) ? 'Deshabilitar' : 'Habilitar'"
+                        >
+                            <Power :size="17"/>
+                        </button>
+
+                        <button
                             @click="$emit('run',job)"
-                            class="w-9 h-9 rounded-lg bg-green-600 hover:bg-green-700 text-white flex items-center justify-center transition"
-                            title="Ejecutar"
+                            class="w-9 h-9 rounded-lg flex items-center justify-center transition"
+                            :class="isEnabled(job)
+                                ? 'bg-green-600 hover:bg-green-700 text-white'
+                                : 'bg-gray-300 text-gray-500 cursor-not-allowed'"
+                            :disabled="!isEnabled(job)"
+                            :title="isEnabled(job) ? 'Ejecutar' : 'Deshabilitado'"
                         >
                             <Play :size="17"/>
                         </button>
@@ -206,6 +221,7 @@ import {
 
     Play,
     Pencil,
+    Power,
     Trash2
 
 } from "lucide-vue-next";
@@ -223,9 +239,16 @@ defineEmits([
 
     "run",
     "edit",
-    "delete"
+    "delete",
+    "toggle"
 
 ]);
+
+function isEnabled(job) {
+
+    return Number(job?.enabled ?? 1) === 1;
+
+}
 
 function getScheduleTime(cron) {
 

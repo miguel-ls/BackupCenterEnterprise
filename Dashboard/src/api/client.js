@@ -190,6 +190,15 @@ export const runJob = (id) =>
         })
     });
 
+export const toggleJob = (id, enabled) =>
+    request("jobs.php", {
+        method: "PATCH",
+        body: JSON.stringify({
+            id,
+            enabled
+        })
+    });
+
 /* ================= LOGS ================= */
 
 export const getLogs = (

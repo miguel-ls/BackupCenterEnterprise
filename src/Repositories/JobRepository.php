@@ -105,7 +105,8 @@ public function createJob(
     string $name,
     string $source,
     string $destination,
-    string $schedule
+    string $schedule,
+    int $enabled = 1
 ): int
 {
     $stmt = $this->db->prepare("
@@ -121,7 +122,7 @@ public function createJob(
         )
         VALUES
         (
-            ?,?,?,?,?,1,'Pendiente'
+            ?,?,?,?,?,?,?
         )
     ");
 
@@ -130,7 +131,9 @@ public function createJob(
         $name,
         $source,
         $destination,
-        $schedule
+        $schedule,
+        $enabled,
+        'Pendiente'
     ]);
 
     return (int)$this->db->lastInsertId();
@@ -142,7 +145,8 @@ public function updateJob(
     string $name,
     string $source,
     string $destination,
-    string $schedule
+    string $schedule,
+    int $enabled = 1
 ): bool
 {
     $stmt = $this->db->prepare("
@@ -152,7 +156,8 @@ public function updateJob(
             name=?,
             source=?,
             destination=?,
-            schedule=?
+            schedule=?,
+            enabled=?
         WHERE id=?
     ");
 
@@ -162,6 +167,21 @@ public function updateJob(
         $source,
         $destination,
         $schedule,
+        $enabled,
+        $id
+    ]);
+}
+
+public function setEnabled(int $id, bool $enabled): bool
+{
+    $stmt = $this->db->prepare("
+        UPDATE jobs
+        SET enabled=?
+        WHERE id=?
+    ");
+
+    return $stmt->execute([
+        $enabled ? 1 : 0,
         $id
     ]);
 }

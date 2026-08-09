@@ -73,13 +73,23 @@ switch ($method) {
 
         if (($body['action'] ?? '') === 'run') {
 
+            $job = $repository->getJob((int)$body['id']);
+
+            if (!$job || (int)($job['enabled'] ?? 1) !== 1) {
+                echo json_encode([
+                    "success" => false,
+                    "message" => "El trabajo está deshabilitado. Habilítelo para ejecutar una cola pendiente."
+                ]);
+
+                exit;
+            }
+
             $ok = $queue->enqueue(
                 (int)$body['id']
             );
 
             if ($ok) {
 
-                $job = $repository->getJob((int)$body['id']);
                 [$connectionName, $clientName] = $resolveJobContext($job);
 
                 Audit::info(
@@ -121,6 +131,8 @@ switch ($method) {
         |--------------------------------------------------------------------------
         */
 
+        $enabled = !empty($body['enabled']) ? 1 : 1;
+
         $id = $repository->createJob(
 
             !empty($body['connection_id'])
@@ -133,7 +145,8 @@ switch ($method) {
 
             $body['destination'] ?? '',
 
-            $body['schedule'] ?? ''
+            $body['schedule'] ?? '',
+            $enabled
 
         );
 
@@ -169,6 +182,8 @@ switch ($method) {
 
     case 'PUT':
 
+        $enabled = !empty($body['enabled']) ? 1 : 1;
+
         $ok = $repository->updateJob(
 
             (int)$body['id'],
@@ -183,7 +198,8 @@ switch ($method) {
 
             $body['destination'] ?? '',
 
-            $body['schedule'] ?? ''
+            $body['schedule'] ?? '',
+            $enabled
 
         );
 
@@ -244,6 +260,24 @@ switch ($method) {
 
         echo json_encode([
             "success" => $ok
+        ]);
+
+        break;
+
+    case 'PATCH':
+
+        $enabled = !empty($body['enabled']);
+
+        $ok = $repository->setEnabled(
+            (int)$body['id'],
+            $enabled
+        );
+
+        echo json_encode([
+            "success" => $ok,
+            "message" => $enabled
+                ? "Trabajo habilitado."
+                : "Trabajo deshabilitado."
         ]);
 
         break;

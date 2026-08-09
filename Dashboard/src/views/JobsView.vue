@@ -58,6 +58,7 @@
         @edit="editJob"
         @delete="removeJob"
         @run="runJob"
+        @toggle="toggleJob"
     />
 
     <div class="mt-4 text-sm text-neutral-500 text-right">
@@ -90,7 +91,8 @@ import {
 
     getJobs,
     deleteJob,
-    runJob as executeJob
+    runJob as executeJob,
+    toggleJob as toggleJobState
 
 } from '../api/client'
 
@@ -215,6 +217,34 @@ async function runJob(job){
     alert(result.message)
 
     await loadJobs()
+
+}
+
+async function toggleJob(job){
+
+    const nextState = Number(job.enabled ?? 1) === 1 ? 0 : 1
+    const action = nextState === 1 ? 'habilitar' : 'deshabilitar'
+
+    if(!confirm(`¿${action.charAt(0).toUpperCase() + action.slice(1)} el trabajo "${job.name}"?`)){
+
+        return
+
+    }
+
+    const result = await toggleJobState(job.id, nextState)
+
+    if (!result?.success) {
+        alert(result?.message || 'No se pudo actualizar el estado del trabajo.')
+        return
+    }
+
+    jobs.value = jobs.value.map(item =>
+        item.id === job.id
+            ? { ...item, enabled: nextState }
+            : item
+    )
+
+    alert(result.message)
 
 }
 
