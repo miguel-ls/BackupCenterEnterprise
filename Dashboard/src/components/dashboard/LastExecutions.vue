@@ -196,18 +196,21 @@ async function load(){
 
 }
 
-function formatDate(date){
+function formatDate(fecha) {
+  if (!fecha) return ''
 
-    if(!date){
+  // Forzar timezone Perú
+  const f = new Date(fecha.replace(' ', 'T') + '-05:00')
 
-        return "-";
-
-    }
-
-    return new Date(
-        date.replace(" ","T")
-    ).toLocaleString();
-
+  return f.toLocaleString('es-PE', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  })
 }
 
 function formatDuration(seconds) {
@@ -230,7 +233,21 @@ function formatDuration(seconds) {
 
 }
 
+function formatFechaLocal(fecha) {
+  if (!fecha) return ''
 
+  // Forzar que sea interpretado como hora LOCAL (no UTC)
+  const f = new Date(fecha.replace(' ', 'T'))
+
+  return f.toLocaleString('es-PE', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  })
+}
 function badgeClass(status){
 
     switch(status){
