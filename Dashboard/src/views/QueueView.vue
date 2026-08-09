@@ -9,6 +9,28 @@
             subtitle="Monitoreo en tiempo real de la cola de trabajos."
         />
 
+        <div class="mb-6 flex flex-wrap gap-3 bg-white rounded-xl border border-neutral-200 p-4 shadow-sm">
+            <input v-model="filters.from" type="date" class="border rounded-lg px-3 py-2" @change="applyFilters" />
+            <input v-model="filters.to" type="date" class="border rounded-lg px-3 py-2" @change="applyFilters" />
+
+            <select v-model="filters.clientId" class="border rounded-lg px-3 py-2" @change="applyFilters">
+                <option :value="0">Todos los clientes</option>
+                <option v-for="client in filterOptions.clients" :key="client.id" :value="client.id">{{ client.name }}</option>
+            </select>
+
+            <select v-model="filters.jobId" class="border rounded-lg px-3 py-2" @change="applyFilters">
+                <option :value="0">Todos los trabajos</option>
+                <option v-for="job in filterOptions.jobs" :key="job.id" :value="job.id">{{ job.name }}</option>
+            </select>
+
+            <select v-model="filters.status" class="border rounded-lg px-3 py-2" @change="applyFilters">
+                <option value="">Todos los estados</option>
+                <option v-for="statusOption in filterOptions.statuses" :key="statusOption" :value="statusOption">{{ statusOption }}</option>
+            </select>
+
+            <button @click="resetFilters" class="border rounded-lg px-4 py-2">Limpiar</button>
+        </div>
+
         <QueueStatistics
             :items="queue"
         />
@@ -59,20 +81,37 @@ import {
     getQueue
 } from "@/api/client";
 
+const isFirstLoad = ref(true)
+
 const queue = ref([]);
 const loading = ref(true);
+const filterOptions = ref({ clients: [], jobs: [], statuses: [] });
+const filters = ref({
+    clientId: 0,
+    jobId: 0,
+    status: '',
+    from: '',
+    to: ''
+});
 
-async function load(){
+async function load(){ 
 
-    loading.value = true;
+    if (isFirstLoad.value) {
+        loading.value = true;
+    }
 
     try{
 
-        const response = await getQueue();
+        const response = await getQueue({
+            clientId: filters.value.clientId,
+            jobId: filters.value.jobId,
+            status: filters.value.status,
+            from: filters.value.from,
+            to: filters.value.to
+        });
 
         queue.value = response.data ?? response;
-
-    }catch(error){
+        filterOptions.value = response.filters ?? filterOptions.value;
 
         console.error(error);
 
@@ -80,10 +119,28 @@ async function load(){
 
     }finally{
 
-        loading.value = false;
+        if (isFirstLoad.value) {
+            loading.value = false;
+            isFirstLoad.value = false;
+        }
 
     }
 
+}
+
+function applyFilters() {
+    load();
+}
+
+function resetFilters() {
+    filters.value = {
+        clientId: 0,
+        jobId: 0,
+        status: '',
+        from: '',
+        to: ''
+    };
+    load();
 }
 
 let timer = null;

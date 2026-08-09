@@ -14,12 +14,18 @@ class JobLogService
     ): string {
         $message = "Trabajo {$jobName} {$action}";
 
-        if (!empty($connectionName)) {
-            $message .= " para la conexión {$connectionName}";
-        }
+        if (!empty($connectionName) || !empty($clientName)) {
+            $parts = [];
 
-        if (!empty($clientName)) {
-            $message .= " del cliente {$clientName}";
+            if (!empty($connectionName)) {
+                $parts[] = "conexión {$connectionName}";
+            }
+
+            if (!empty($clientName)) {
+                $parts[] = "cliente {$clientName}";
+            }
+
+            $message .= " (" . implode(' | ', $parts) . ")";
         }
 
         return $message;
@@ -95,10 +101,24 @@ class JobLogService
         ?string $connectionName = null,
         ?string $clientName = null
     ): void {
+        $message = $this->buildJobMessage('agregado a la cola', $jobName ?? '', $connectionName, $clientName);
+
+        if (!empty($jobName)) {
+            $message = "Tarea {$jobName} agregada a la cola";
+
+            if (!empty($connectionName)) {
+                $message .= " para la conexión {$connectionName}";
+            }
+
+            if (!empty($clientName)) {
+                $message .= " del cliente {$clientName}";
+            }
+        }
+
         SystemLog::info(
             'JOBS',
             'QUEUE',
-            $this->buildJobMessage('agregado a la cola', $jobName ?? '', $connectionName, $clientName),
+            $message,
             [
                 'job_id' => $jobId,
                 'connection_id' => $connectionId,

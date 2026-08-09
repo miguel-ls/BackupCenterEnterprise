@@ -165,13 +165,50 @@ class JobQueueRepository
         return (int)$stmt->fetchColumn() > 0;
     }
 
-    public function getAll(): array
+    public function getAll(array $filters = []): array
     {
-        $stmt = $this->db->query("
+        $where = [];
+        $params = [];
+
+        $jobId = (int)($filters['job_id'] ?? 0);
+        $clientId = (int)($filters['client_id'] ?? 0);
+        $status = trim((string)($filters['status'] ?? ''));
+        $from = trim((string)($filters['from'] ?? ''));
+        $to = trim((string)($filters['to'] ?? ''));
+
+        if ($jobId > 0) {
+            $where[] = 'j.id = ?';
+            $params[] = $jobId;
+        }
+
+        if ($clientId > 0) {
+            $where[] = 'cl.id = ?';
+            $params[] = $clientId;
+        }
+
+        if ($status !== '') {
+            $where[] = 'LOWER(q.status) = LOWER(?)';
+            $params[] = $status;
+        }
+
+        if ($from !== '') {
+            $where[] = 'date(q.created_at) >= date(?)';
+            $params[] = $from;
+        }
+
+        if ($to !== '') {
+            $where[] = 'date(q.created_at) <= date(?)';
+            $params[] = $to;
+        }
+
+        $whereSql = count($where) > 0 ? ' WHERE ' . implode(' AND ', $where) : '';
+
+        $sql = "
             SELECT
                 q.id,
                 q.job_id,
                 j.name,
+                COALESCE(cl.business_name, '-') AS client_name,
                 q.status,
                 q.worker,
                 q.attempts,
@@ -182,9 +219,22 @@ class JobQueueRepository
             FROM job_queue q
             INNER JOIN jobs j
                 ON j.id=q.job_id
+            LEFT JOIN connections c
+                ON c.id = j.connection_id
+            LEFT JOIN clients cl
+                ON cl.id = c.client_id
+            $whereSql
             ORDER BY q.id DESC
-            LIMIT 50
-        ");
+            LIMIT 100
+        ";
+
+        $stmt = $this->db->prepare($sql);
+
+        foreach ($params as $index => $value) {
+            $stmt->bindValue($index + 1, $value);
+        }
+
+        $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

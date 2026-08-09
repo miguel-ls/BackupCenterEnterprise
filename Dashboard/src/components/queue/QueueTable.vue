@@ -36,6 +36,8 @@
 
                     <th class="text-left px-4 py-3 font-semibold">Trabajo</th>
 
+                    <th class="text-left px-4 py-3 font-semibold">Cliente</th>
+
                     <th class="text-center px-4 py-3 font-semibold">Estado</th>
 
                     <th class="text-left px-4 py-3 font-semibold">Worker</th>
@@ -67,6 +69,12 @@
                     <td class="px-4 py-3">
 
                         {{ item.name }}
+
+                    </td>
+
+                    <td class="px-4 py-3">
+
+                        {{ item.client_name || "-" }}
 
                     </td>
 
@@ -117,7 +125,7 @@
                 <tr>
 
                     <td
-                        colspan="7"
+                        colspan="8"
                         class="text-center py-12 text-neutral-500"
                     >
 

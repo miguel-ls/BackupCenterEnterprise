@@ -72,18 +72,72 @@ export const testSftpGo = () =>
     
 /* ================= QUEUE ================= */
 
-export const getQueue = () => request("job-queue.php");
+export const getQueue = (filters = {}) => {
+    const params = new URLSearchParams();
+
+    if (filters.jobId) {
+        params.set("job_id", String(filters.jobId));
+    }
+
+    if (filters.clientId) {
+        params.set("client_id", String(filters.clientId));
+    }
+
+    if (filters.status) {
+        params.set("status", filters.status);
+    }
+
+    if (filters.from) {
+        params.set("from", filters.from);
+    }
+
+    if (filters.to) {
+        params.set("to", filters.to);
+    }
+
+    const query = params.toString();
+
+    return request(query ? `job-queue.php?${query}` : "job-queue.php");
+};
 
 /* ================= HISTORY ================= */
 
 export const getHistory = (
     page = 1,
     limit = 5,
-    clientId = 0
-) =>
-    request(
-        `history.php?page=${page}&limit=${limit}&client_id=${clientId}`
-    );
+    filters = {}
+) => {
+    const params = new URLSearchParams({
+        page: String(page),
+        limit: String(limit)
+    });
+
+    if (filters.clientId) {
+        params.set("client_id", String(filters.clientId));
+    }
+
+    if (filters.jobId) {
+        params.set("job_id", String(filters.jobId));
+    }
+
+    if (filters.status) {
+        params.set("status", filters.status);
+    }
+
+    if (filters.from) {
+        params.set("from", filters.from);
+    }
+
+    if (filters.to) {
+        params.set("to", filters.to);
+    }
+
+    return request(`history.php?${params.toString()}`);
+};
+
+/* ================= CLIENTS ================= */
+
+export const getClients = () => request("clients.php");
 
 /* ================= USERS ================= */
 
@@ -110,8 +164,34 @@ export const deleteUser = (id) =>
 
 /* ================= AUDIT ================= */
 
-export const getAudit = () =>
-    request("audit.php");
+export const getAudit = (page = 1, limit = 50, filters = {}) => {
+    const params = new URLSearchParams({
+        page: String(page),
+        limit: String(limit)
+    });
+
+    if (filters.user) {
+        params.set("user", filters.user);
+    }
+
+    if (filters.module) {
+        params.set("module", filters.module);
+    }
+
+    if (filters.from) {
+        params.set("from", filters.from);
+    }
+
+    if (filters.to) {
+        params.set("to", filters.to);
+    }
+
+    if (filters.success !== "") {
+        params.set("success", String(filters.success));
+    }
+
+    return request(`audit.php?${params.toString()}`);
+};
 
 /* ================= CONNECTIONS ================= */
 
@@ -290,9 +370,6 @@ export const exportReport = (action, type = "excel") => {
 | CLIENTS
 |--------------------------------------------------------------------------
 */
-
-export const getClients = () =>
-    request("clients.php");
 
 export const createClient = (client) =>
     request("clients.php", {

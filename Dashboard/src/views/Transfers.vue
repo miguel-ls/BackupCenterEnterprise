@@ -234,7 +234,7 @@ import {
 } from "vue"
 
 import MainLayout from "../components/layout/MainLayout.vue"
-
+import API from "../config/api"
 
 const items = ref([])
 
@@ -305,7 +305,7 @@ async function load(showLoading = false) {
         })
 
         const res = await fetch(
-            `/api/progress.php?${params.toString()}`,
+            `${API}/progress.php?${params.toString()}`,
             {
                 cache: "no-store"
             }

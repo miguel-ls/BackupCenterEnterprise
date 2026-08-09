@@ -109,7 +109,6 @@ SELECT
     duration,
 
     metadata,
-
     success
 
 FROM audit_log
@@ -184,6 +183,28 @@ $count->execute();
 
 $total=(int)$count->fetchColumn();
 
+$moduleRows=$pdo->query("
+    SELECT DISTINCT module
+    FROM audit_log
+    WHERE module IS NOT NULL
+    AND TRIM(module) <> ''
+    ORDER BY module
+")->fetchAll(PDO::FETCH_ASSOC);
+
+$modules=[];
+
+foreach($moduleRows as $row){
+
+    $module=trim((string)($row['module'] ?? ''));
+
+    if($module!==''){
+
+        $modules[]=$module;
+
+    }
+
+}
+
 ApiResponse::success([
 
     "page"=>$page,
@@ -194,6 +215,12 @@ ApiResponse::success([
 
     "total"=>$total,
 
-    "items"=>$stmt->fetchAll(PDO::FETCH_ASSOC)
+    "items"=>$stmt->fetchAll(PDO::FETCH_ASSOC),
+
+    "filters"=>[
+
+        "modules"=>$modules
+
+    ]
 
 ]);
