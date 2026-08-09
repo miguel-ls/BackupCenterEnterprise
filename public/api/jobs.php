@@ -6,6 +6,7 @@ use BackupCenter\Core\Application;
 use BackupCenter\Core\Audit;
 use BackupCenter\Repositories\JobRepository;
 use BackupCenter\Repositories\JobQueueRepository;
+use BackupCenter\Services\JobLogService;
 
 
 $app = new Application();
@@ -17,6 +18,28 @@ $repository = new JobRepository($db);
 $queue = new JobQueueRepository($db);
 
 $queue->initialize();
+
+$jobLogService = new JobLogService();
+
+$resolveJobContext = static function (?array $job) use ($app): array {
+    $connectionName = null;
+    $clientName = null;
+
+    if ($job && !empty($job['connection_id'])) {
+        $connection = $app->connectionRepository()->get((int)$job['connection_id']);
+
+        if ($connection) {
+            $connectionName = $connection['name'] ?? null;
+
+            if (!empty($connection['client_id'])) {
+                $client = $app->clientRepository()->get((int)$connection['client_id']);
+                $clientName = $client['business_name'] ?? null;
+            }
+        }
+    }
+
+    return [$connectionName, $clientName];
+};
 
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -56,11 +79,23 @@ switch ($method) {
 
             if ($ok) {
 
+                $job = $repository->getJob((int)$body['id']);
+                [$connectionName, $clientName] = $resolveJobContext($job);
+
                 Audit::info(
                     "JOBS",
                     "QUEUE",
                     "Trabajo {$body['id']} agregado a la cola.",
                     "admin"
+                );
+
+                $jobLogService->logQueue(
+                    (int)$body['id'],
+                    $job['name'] ?? null,
+                    $job['connection_id'] ?? null,
+                    'admin',
+                    $connectionName,
+                    $clientName
                 );
 
                 echo json_encode([
@@ -109,6 +144,22 @@ switch ($method) {
             "admin"
         );
 
+        if ($id > 0) {
+            [$connectionName, $clientName] = $resolveJobContext([
+                'connection_id' => !empty($body['connection_id']) ? (int)$body['connection_id'] : null
+            ]);
+
+            $jobLogService->logCreate(
+                $body['name'] ?? '',
+                $id,
+                !empty($body['connection_id']) ? (int)$body['connection_id'] : null,
+                null,
+                'admin',
+                $connectionName,
+                $clientName
+            );
+        }
+
         echo json_encode([
             "success" => true,
             "id" => $id
@@ -143,6 +194,22 @@ switch ($method) {
             "admin"
         );
 
+        if ($ok) {
+            [$connectionName, $clientName] = $resolveJobContext([
+                'connection_id' => !empty($body['connection_id']) ? (int)$body['connection_id'] : null
+            ]);
+
+            $jobLogService->logUpdate(
+                $body['name'] ?? '',
+                (int)$body['id'],
+                !empty($body['connection_id']) ? (int)$body['connection_id'] : null,
+                null,
+                'admin',
+                $connectionName,
+                $clientName
+            );
+        }
+
         echo json_encode([
             "success" => $ok
         ]);
@@ -161,6 +228,19 @@ switch ($method) {
             "Trabajo {$body['id']} eliminado",
             "admin"
         );
+
+        if ($ok) {
+            $job = $repository->getJob((int)$body['id']);
+            [$connectionName, $clientName] = $resolveJobContext($job);
+
+            $jobLogService->logDelete(
+                $job['name'] ?? (string)$body['id'],
+                (int)$body['id'],
+                'admin',
+                $connectionName,
+                $clientName
+            );
+        }
 
         echo json_encode([
             "success" => $ok

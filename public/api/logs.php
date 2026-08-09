@@ -4,7 +4,7 @@ require_once __DIR__ . '/cors.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 use BackupCenter\Core\Application;
-use PDO;
+
 
 // Los registros se escriben con la hora de Lima. Mantener la misma zona
 // horaria en esta respuesta evita que la fecha de respaldo aparezca en UTC.

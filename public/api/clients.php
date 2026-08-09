@@ -5,11 +5,13 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 use BackupCenter\Core\Application;
 use BackupCenter\Core\Audit;
+use BackupCenter\Services\JobLogService;
 use BackupCenter\Services\SftpGoService;
 
 $app = new Application();
 
 $repository = $app->clientRepository();
+$logService = new JobLogService();
 
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -158,6 +160,13 @@ switch ($method) {
 
             );
 
+            $logService->logClientEvent(
+                'CREATE',
+                $body['business_name'] ?? '',
+                $id,
+                'admin'
+            );
+
             $pdo->commit();
 
             echo json_encode([
@@ -234,6 +243,13 @@ switch ($method) {
 
                 'admin'
 
+            );
+
+            $logService->logClientEvent(
+                'UPDATE',
+                $body['business_name'] ?? '',
+                (int)$body['id'],
+                'admin'
             );
 
             echo json_encode([
@@ -318,6 +334,13 @@ switch ($method) {
 
                 'admin'
 
+            );
+
+            $logService->logClientEvent(
+                'DELETE',
+                $client['business_name'] ?? 'Cliente',
+                (int)$body['id'],
+                'admin'
             );
 
             echo json_encode([

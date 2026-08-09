@@ -3,15 +3,15 @@
 require_once __DIR__ . '/cors.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-use BackupCenter\Core\Database;
-use BackupCenter\Core\Paths;
+use BackupCenter\Core\Application;
 use BackupCenter\Core\Audit;
+use BackupCenter\Services\JobLogService;
 
-$db = new Database(
-    Paths::database() . '/backupcenter.db'
-);
+$app = new Application();
+$db = $app->database();
 
 $pdo = $db->getConnection();
+$logService = new JobLogService();
 
 /*==================================================
 ACTUALIZAR ESTRUCTURA SETTINGS
@@ -192,6 +192,13 @@ if($_SERVER['REQUEST_METHOD']=="PUT"){
 
         "admin"
 
+    );
+
+    $logService->logSettingsEvent(
+        'UPDATE',
+        'Configuración modificada',
+        1,
+        'admin'
     );
 
     echo json_encode([

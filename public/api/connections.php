@@ -3,19 +3,19 @@
 require_once __DIR__ . '/cors.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-use BackupCenter\Core\Database;
-use BackupCenter\Core\Paths;
+use BackupCenter\Core\Application;
 use BackupCenter\Core\Audit;
 use BackupCenter\Repositories\ConnectionRepository;
 use BackupCenter\Repositories\NotificationRepository;
+use BackupCenter\Services\JobLogService;
 
 try {
-    $db = new Database(
-        Paths::database() . '/backupcenter.db'
-    );
+    $app = new Application();
+    $db = $app->database();
 
     $repository = new ConnectionRepository($db);
     $notifications = new NotificationRepository($db);
+    $logService = new JobLogService();
 
     $method = $_SERVER['REQUEST_METHOD'];
 
@@ -165,6 +165,22 @@ case 'POST':
 
     );
 
+    $clientName = null;
+    if (!empty($data['client_id'])) {
+        $clientRepository = new \BackupCenter\Repositories\ClientRepository($db);
+        $client = $clientRepository->get((int)$data['client_id']);
+        $clientName = $client['business_name'] ?? null;
+    }
+
+    $logService->logConnectionEvent(
+        'CREATE',
+        $data['name'] ?? '',
+        $id,
+        $clientName,
+        !empty($data['client_id']) ? (int)$data['client_id'] : null,
+        'admin'
+    );
+
     echo json_encode([
 
         'success'=>true,
@@ -218,6 +234,22 @@ case 'PUT':
 
     );
 
+    $clientName = null;
+    if (!empty($data['client_id'])) {
+        $clientRepository = new \BackupCenter\Repositories\ClientRepository($db);
+        $client = $clientRepository->get((int)$data['client_id']);
+        $clientName = $client['business_name'] ?? null;
+    }
+
+    $logService->logConnectionEvent(
+        'UPDATE',
+        $data['name'] ?? '',
+        (int)$data['id'],
+        $clientName,
+        !empty($data['client_id']) ? (int)$data['client_id'] : null,
+        'admin'
+    );
+
     echo json_encode([
 
         'success'=>true
@@ -232,6 +264,8 @@ case 'DELETE':
         file_get_contents('php://input'),
         true
     );
+
+    $connection = $repository->get((int)$data['id']);
 
     $repository->delete(
 
@@ -249,6 +283,22 @@ case 'DELETE':
 
         "admin"
 
+    );
+
+    $clientName = null;
+    if ($connection && !empty($connection['client_id'])) {
+        $clientRepository = new \BackupCenter\Repositories\ClientRepository($db);
+        $client = $clientRepository->get((int)$connection['client_id']);
+        $clientName = $client['business_name'] ?? null;
+    }
+
+    $logService->logConnectionEvent(
+        'DELETE',
+        $connection['name'] ?? 'Conexión',
+        (int)$data['id'],
+        $clientName,
+        $connection['client_id'] ?? null,
+        'admin'
     );
 
     echo json_encode([

@@ -3,12 +3,15 @@
 use BackupCenter\Core\ApiController;
 use BackupCenter\Core\ApiResponse;
 use BackupCenter\Core\Audit;
+use BackupCenter\Services\JobLogService;
 
 require_once __DIR__ . '/bootstrap.php';
 
 ApiController::boot();
 
 ApiController::method(['GET','POST','PUT','DELETE']);
+
+$logService = new JobLogService();
 
 if($_SERVER['REQUEST_METHOD']=="GET"){
 
@@ -106,6 +109,13 @@ case "POST":
         "admin"
     );
 
+    $logService->logUserEvent(
+        'CREATE',
+        $data['username'],
+        null,
+        'admin'
+    );
+
     ApiResponse::success(
         null,
         "Usuario creado."
@@ -178,6 +188,13 @@ case "PUT":
         "admin"
     );
 
+    $logService->logUserEvent(
+        'UPDATE',
+        $data['username'] ?? '',
+        (int)($data['id'] ?? 0),
+        'admin'
+    );
+
     ApiResponse::success(
         null,
         "Usuario actualizado."
@@ -229,6 +246,13 @@ case "DELETE":
         "DELETE",
         "Usuario ".$username." eliminado",
         "admin"
+    );
+
+    $logService->logUserEvent(
+        'DELETE',
+        $username ?? '',
+        (int)($data['id'] ?? 0),
+        'admin'
     );
 
     ApiResponse::success(

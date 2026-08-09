@@ -19,7 +19,8 @@ class SystemLog
         string $module,
         string $action,
         string $message,
-        array $context = []
+        array $context = [],
+        ?string $username = null
     ): void
     {
         if (!self::$repository) {
@@ -31,7 +32,8 @@ class SystemLog
             $module,
             $action,
             $message,
-            $context
+            $context,
+            $username
         );
     }
 
@@ -39,7 +41,8 @@ class SystemLog
         string $module,
         string $action,
         string $message,
-        array $context = []
+        array $context = [],
+        ?string $username = null
     ): void
     {
         if (!self::$repository) {
@@ -51,7 +54,8 @@ class SystemLog
             $module,
             $action,
             $message,
-            $context
+            $context,
+            $username
         );
     }
 
@@ -59,7 +63,8 @@ class SystemLog
         string $module,
         string $action,
         string $message,
-        array $context = []
+        array $context = [],
+        ?string $username = null
     ): void
     {
         if (!self::$repository) {
@@ -71,7 +76,8 @@ class SystemLog
             $module,
             $action,
             $message,
-            $context
+            $context,
+            $username
         );
     }
 
@@ -79,7 +85,8 @@ class SystemLog
         string $module,
         string $action,
         string $message,
-        array $context = []
+        array $context = [],
+        ?string $username = null
     ): void
     {
         if (!self::$repository) {
@@ -91,7 +98,8 @@ class SystemLog
             $module,
             $action,
             $message,
-            $context
+            $context,
+            $username
         );
     }
 }
