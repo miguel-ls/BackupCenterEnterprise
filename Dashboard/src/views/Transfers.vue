@@ -8,294 +8,187 @@
                 Transferencias
             </h1>
 
-
-            <!-- ================================================= -->
             <!-- FILTROS -->
-            <!-- ================================================= -->
-
             <div class="bg-white rounded-xl border shadow-sm mb-6">
-
                 <div class="p-4 border-b font-semibold">
                     Filtros
                 </div>
 
                 <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
 
-                    <!-- Estado -->
-
                     <div>
-
                         <label class="block text-sm font-medium mb-1">
                             Estado
                         </label>
-
                         <select
                             v-model="filters.status"
                             @change="load(true)"
                             class="w-full border rounded-lg px-3 py-2"
                         >
-
-                            <option value="all">
-                                Todos
-                            </option>
-
-                            <option value="uploading">
-                                Subiendo
-                            </option>
-
-                            <option value="completed">
-                                Completado
-                            </option>
-
-                            <option value="failed">
-                                Error
-                            </option>
-
+                            <option value="all">Todos</option>
+                            <option value="uploading">Subiendo</option>
+                            <option value="completed">Completado</option>
+                            <option value="failed">Error</option>
                         </select>
-
                     </div>
 
-
-                    <!-- Fecha -->
-
                     <div>
-
                         <label class="block text-sm font-medium mb-1">
                             Fecha
                         </label>
-
                         <select
                             v-model="filters.date"
                             @change="load(true)"
                             class="w-full border rounded-lg px-3 py-2"
                         >
-
-                            <option value="all">
-                                Todas
-                            </option>
-
-                            <option value="today">
-                                Hoy
-                            </option>
-
-                            <option value="yesterday">
-                                Ayer
-                            </option>
-
-                            <option value="7days">
-                                Últimos 7 días
-                            </option>
-
-                            <option value="30days">
-                                Últimos 30 días
-                            </option>
-
+                            <option value="all">Todas</option>
+                            <option value="today">Hoy</option>
+                            <option value="yesterday">Ayer</option>
+                            <option value="7days">Últimos 7 días</option>
+                            <option value="30days">Últimos 30 días</option>
                         </select>
-
                     </div>
 
                 </div>
-
             </div>
 
-
-            <!-- ================================================= -->
             <!-- RESUMEN -->
-            <!-- ================================================= -->
-
-            <div
-                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6"
-            >
-
-                <!-- Total -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
 
                 <div class="bg-white rounded-xl border shadow-sm p-4">
-
-                    <div class="text-sm text-gray-500">
-                        Total
-                    </div>
-
+                    <div class="text-sm text-gray-500">Total</div>
                     <div class="text-2xl font-bold mt-1">
                         {{ summary.total }}
                     </div>
-
                 </div>
 
-
-                <!-- Subiendo -->
-
                 <div class="bg-white rounded-xl border shadow-sm p-4">
-
-                    <div class="text-sm text-gray-500">
-                        Subiendo
-                    </div>
-
+                    <div class="text-sm text-gray-500">Subiendo</div>
                     <div class="text-2xl font-bold text-blue-600 mt-1">
                         {{ summary.uploading }}
                     </div>
-
                 </div>
 
-
-                <!-- Completados -->
-
                 <div class="bg-white rounded-xl border shadow-sm p-4">
-
-                    <div class="text-sm text-gray-500">
-                        Completados
-                    </div>
-
+                    <div class="text-sm text-gray-500">Completados</div>
                     <div class="text-2xl font-bold text-green-600 mt-1">
                         {{ summary.completed }}
                     </div>
-
                 </div>
 
-
-                <!-- Errores -->
-
                 <div class="bg-white rounded-xl border shadow-sm p-4">
-
-                    <div class="text-sm text-gray-500">
-                        Errores
-                    </div>
-
+                    <div class="text-sm text-gray-500">Errores</div>
                     <div class="text-2xl font-bold text-red-600 mt-1">
                         {{ summary.failed }}
                     </div>
-
                 </div>
 
             </div>
 
-
-            <!-- ================================================= -->
-            <!-- TRANSFERENCIAS -->
-            <!-- ================================================= -->
-
-            <div class="bg-white rounded-xl border shadow-sm">
+            <!-- TABLA PRO -->
+            <div class="bg-white rounded-xl border shadow-sm overflow-hidden">
 
                 <div class="p-4 border-b font-semibold">
                     Archivos
                 </div>
 
-
-                <!-- CARGA INICIAL -->
-
-                <div
-                    v-if="loading"
-                    class="p-6 text-center text-gray-500"
-                >
+                <div v-if="loading" class="p-6 text-center text-gray-500">
                     Cargando...
                 </div>
 
-
                 <div v-else>
 
-                    <div
-                        v-if="items.length === 0"
-                        class="p-6 text-center text-gray-500"
-                    >
+                    <div v-if="items.length === 0" class="p-6 text-center text-gray-500">
                         No hay transferencias para los filtros seleccionados.
                     </div>
 
+                    <div v-else class="overflow-x-auto">
 
-                    <div
-                        v-for="item in items"
-                        :key="item.job_id + '-' + item.file_name"
-                        class="p-4 border-b"
-                    >
+                        <table class="min-w-full text-sm">
 
-                        <!-- Cabecera -->
+                            <thead class="bg-gray-50 text-gray-600 text-xs uppercase">
+                                <tr>
+                                    <th class="px-4 py-3 text-left">Archivo</th>
+                                    <th class="px-4 py-3 text-left">Cliente / Job</th>
+                                    <th class="px-4 py-3 text-left">Progreso</th>
+                                    <th class="px-4 py-3 text-left">Transferido</th>
+                                    <th class="px-4 py-3 text-left">Velocidad</th>
+                                    <th class="px-4 py-3 text-left">Estado</th>
+                                    <th class="px-4 py-3 text-left">Actualizado</th>
+                                </tr>
+                            </thead>
 
-                        <div class="flex justify-between text-sm mb-1">
+                            <tbody>
 
-                            <div>
+                                <tr
+                                    v-for="item in items"
+                                    :key="item.job_id + '-' + item.file_name"
+                                    class="border-t hover:bg-gray-50 transition"
+                                >
 
-                                <strong>
-                                    {{ item.file_name }}
-                                </strong>
+                                    <!-- Archivo -->
+                                    <td class="px-4 py-3 font-medium text-gray-800">
+                                        {{ item.file_name }}
+                                    </td>
 
-                                <div class="text-gray-500 text-xs">
+                                    <!-- Cliente -->
+                                    <td class="px-4 py-3 text-xs text-gray-500">
+                                        {{ item.client_name }}<br>
+                                        <span class="text-gray-400">
+                                            {{ item.job_name }}
+                                        </span>
+                                    </td>
 
-                                    {{ item.client_name }}
+                                    <!-- Progreso -->
+                                    <td class="px-4 py-3 w-48">
+                                        <div class="w-full bg-gray-200 rounded h-2">
+                                            <div
+                                                class="h-2 rounded transition-all duration-500"
+                                                :class="getProgressClass(item.status)"
+                                                :style="{ width: getProgress(item) + '%' }"
+                                            ></div>
+                                        </div>
+                                        <div class="text-xs text-gray-500 mt-1">
+                                            {{ getProgress(item) }}%
+                                        </div>
+                                    </td>
 
-                                    /
+                                    <!-- Bytes -->
+                                    <td class="px-4 py-3 text-xs text-gray-500">
+                                        {{ formatBytes(item.uploaded_bytes) }}
+                                        /
+                                        {{ formatBytes(item.total_bytes) }}
+                                    </td>
 
-                                    {{ item.job_name }}
+                                    <!-- Velocidad -->
+                                    <td class="px-4 py-3 text-xs text-gray-500">
+                                        {{ formatSpeed(item.speed) }}
+                                    </td>
 
-                                </div>
+                                    <!-- Estado -->
+                                    <td class="px-4 py-3">
+                                        <span
+                                            class="px-2 py-1 rounded text-xs font-semibold"
+                                            :class="{
+                                                'bg-blue-100 text-blue-600': item.status === 'uploading',
+                                                'bg-green-100 text-green-600': item.status === 'completed',
+                                                'bg-red-100 text-red-600': item.status === 'failed'
+                                            }"
+                                        >
+                                            {{ getStatus(item.status) }}
+                                        </span>
+                                    </td>
 
-                            </div>
+                                    <!-- Fecha -->
+                                    <td class="px-4 py-3 text-xs text-gray-400">
+                                        {{ formatDate(item.updated_at) }}
+                                    </td>
 
+                                </tr>
 
-                            <div class="text-right text-xs">
+                            </tbody>
 
-                                <div class="font-semibold">
-                                    {{ getProgress(item) }}%
-                                </div>
-
-                                <div class="text-gray-500">
-                                    {{ getStatus(item.status) }}
-                                </div>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- Barra -->
-
-                        <div class="w-full bg-gray-200 rounded h-3">
-
-                            <div
-                                class="h-3 rounded transition-all duration-500"
-                                :class="getProgressClass(item.status)"
-                                :style="{
-                                    width: getProgress(item) + '%'
-                                }"
-                            ></div>
-
-                        </div>
-
-
-                        <!-- Información -->
-
-                        <div
-                            class="flex justify-between text-xs text-gray-500 mt-1"
-                        >
-
-                            <div>
-
-                                {{ formatBytes(item.uploaded_bytes) }}
-
-                                /
-
-                                {{ formatBytes(item.total_bytes) }}
-
-                            </div>
-
-
-                            <div>
-
-                                {{ formatSpeed(item.speed) }}
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- Fecha -->
-
-                        <div
-                            class="text-xs text-gray-400 mt-2"
-                        >
-
-                            Actualizado:
-
-                            {{ formatDate(item.updated_at) }}
-
-                        </div>
+                        </table>
 
                     </div>
 
