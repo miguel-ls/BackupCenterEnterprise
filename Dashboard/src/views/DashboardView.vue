@@ -20,23 +20,6 @@
 
     </div>
 
-    <div class="mt-6 bg-white border rounded-xl p-4 shadow-sm">
-        <div class="flex justify-between items-center mb-2">
-            <h2 class="font-semibold text-lg">Actualizaciones</h2>
-            <span class="text-sm text-neutral-500">Versión actual: {{ currentVersion }}</span>
-        </div>
-
-        <div v-if="updateInfo" class="text-sm text-neutral-700">
-            <div><strong>Versión remota:</strong> {{ updateInfo.version ?? 'N/A' }}</div>
-            <div><strong>Fecha:</strong> {{ updateInfo.releaseDate ?? 'N/A' }}</div>
-            <div><strong>Notas:</strong> {{ updateInfo.notes ?? 'N/A' }}</div>
-        </div>
-
-        <div v-else class="text-sm text-neutral-500">
-            No hay información de actualizaciones disponible.
-        </div>
-    </div>
-
     <!-- Ejecuciones -->
 
     <div class="grid grid-cols-3 gap-6 mt-6">

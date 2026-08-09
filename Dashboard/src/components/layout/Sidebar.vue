@@ -8,10 +8,12 @@
 
         <div class="flex items-center gap-3">
 
-            <div class="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center text-2xl">
-
-                🛡
-
+            <div class="w-12 h-12 rounded-xl overflow-hidden bg-white flex items-center justify-center">
+                <img 
+                    src="/logo.jpg" 
+                    alt="Logo"
+                    class="w-full h-full object-contain"
+                />
             </div>
 
             <div>
