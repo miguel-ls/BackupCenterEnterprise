@@ -225,11 +225,11 @@
             </div>
 
             <div class="flex justify-between text-xs">
-
-                <span>Hora servidor:</span>
-                <span class="text-yellow-400 ">{{ serverTime  }}</span>
-                
-            </div>          
+                <span>Fecha / Hora:</span>
+                <span class="text-yellow-400 font-mono">
+                    {{ serverDate }} {{ serverTime }}
+                </span>
+            </div>        
 
             <div class="flex justify-between text-xs mt-2">
 
@@ -257,10 +257,18 @@ import { RouterLink } from "vue-router"
 import { ref, onMounted } from 'vue'
 
 const serverTime = ref('--:--:--')
+const serverDate = ref('--/--/----')
 
 function updateTime() {
   const now = new Date()
+
   serverTime.value = now.toLocaleTimeString()
+
+  serverDate.value = now.toLocaleDateString('es-PE', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  })
 }
 
 onMounted(() => {
