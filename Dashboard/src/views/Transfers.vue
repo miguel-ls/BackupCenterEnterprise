@@ -130,9 +130,11 @@
 
                             <thead class="bg-gray-50 text-gray-600 text-xs uppercase">
                                 <tr>
+                                    <th class="px-4 py-3 text-left">Id.</th>
                                     <th class="px-4 py-3 text-left">Archivo</th>
                                     <th class="px-4 py-3 text-left">Cliente / Job</th>
                                     <th class="px-4 py-3 text-left">Progreso</th>
+                                    <th class="px-4 py-3 text-left">Tiempo Rest.</th>
                                     <th class="px-4 py-3 text-left">Transferido</th>
                                     <th class="px-4 py-3 text-left">Velocidad</th>
                                     <th class="px-4 py-3 text-left">Estado</th>
@@ -147,6 +149,10 @@
                                     :key="item.job_id + '-' + item.file_name"
                                     class="border-t hover:bg-gray-50 transition"
                                 >
+                                    <!-- Id -->
+                                    <td class="px-4 py-3 font-medium text-gray-800">
+                                        {{ item.id }}
+                                    </td>
 
                                     <!-- Archivo -->
                                     <td class="px-4 py-3 font-medium text-gray-800">
@@ -174,6 +180,11 @@
                                             {{ getProgress(item) }}%
                                         </div>
                                     </td>
+
+                                    <!-- Tiempo -->
+                                    <td class="p-3 text-center text-gray-500">
+                                        {{ formatRemainingTime(item) }}
+                                    </td>                                    
 
                                     <!-- Bytes -->
                                     <td class="px-4 py-3 text-xs text-gray-500">
@@ -379,6 +390,43 @@ async function load(showLoading = false) {
 
 }
 
+function formatRemainingTime(item) {
+
+    if (!item.total_bytes || !item.uploaded_bytes || !item.speed) {
+        return "-"
+    }
+
+    const remainingBytes = item.total_bytes - item.uploaded_bytes
+
+    if (remainingBytes <= 0) {
+        return "00:00"
+    }
+
+    if (item.speed <= 0) {
+        return "-"
+    }
+
+    const totalSeconds = Math.floor(remainingBytes / item.speed)
+
+    const hours = Math.floor(totalSeconds / 3600)
+    const minutes = Math.floor((totalSeconds % 3600) / 60)
+    const seconds = totalSeconds % 60
+
+    // 🔹 Si es más de 1 hora → hh:mm:ss
+    if (hours > 0) {
+        return (
+            String(hours).padStart(2, '0') + ":" +
+            String(minutes).padStart(2, '0') + ":" +
+            String(seconds).padStart(2, '0')
+        )
+    }
+
+    // 🔹 Si es menos de 1 hora → mm:ss
+    return (
+        String(minutes).padStart(2, '0') + ":" +
+        String(seconds).padStart(2, '0')
+    )
+}
 
 function getProgress(item) {
 

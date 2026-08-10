@@ -84,6 +84,7 @@ try {
 
     $sql = "
         SELECT
+            tp.id,
             tp.job_id,
             tp.file_name,
             tp.total_bytes,

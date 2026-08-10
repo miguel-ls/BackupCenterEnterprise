@@ -37,6 +37,11 @@
                 </th>
 
                 <th class="text-left px-4 py-3 font-semibold">
+                    Origen
+                </th>
+
+
+                <th class="text-left px-4 py-3 font-semibold">
                     Destino
                 </th>
 
@@ -90,6 +95,10 @@
 
                 <td class="px-4 py-3 text-neutral-600">
                     {{ job.connection }}
+                </td>
+
+                <td class="px-4 py-3 text-neutral-600">
+                    {{ job.source }}
                 </td>
 
                 <td class="px-4 py-3 text-neutral-600">
