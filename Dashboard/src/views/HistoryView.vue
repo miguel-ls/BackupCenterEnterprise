@@ -75,7 +75,7 @@
                     <td class="p-3">{{ item.files_uploaded }}</td>
                     <td class="p-3">{{ item.files_skipped }}</td>
                     <td class="p-3">{{ item.files_failed }}</td>
-                    <td class="p-3">{{ Number(item.duration_seconds ?? 0).toFixed(2) }} s</td>
+                    <td class="p-3">{{ formatDuration(item.duration_seconds) }}</td>
 
                     <td class="p-3">
                         <span :class="['Correcto','Completed','OK'].includes(item.status) ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'">
@@ -160,6 +160,17 @@ async function loadFilterOptions() {
         clients: clients.map((item) => ({ id: item.id, name: item.business_name ?? item.name ?? item.client_name ?? '' })),
         jobs: jobs.map((item) => ({ id: item.id, name: item.name ?? '' }))
     }
+}
+
+function formatDuration(seconds) {
+
+    const total = Number(seconds ?? 0)
+
+    const hrs = Math.floor(total / 3600)
+    const mins = Math.floor((total % 3600) / 60)
+    const secs = Math.floor(total % 60)
+
+    return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`
 }
 
 function applyFilters() {
