@@ -2,13 +2,13 @@
 
 <MainLayout>
 
-    <h1 class="text-3xl font-bold mb-8">
-        Dashboard
-    </h1>
-
     <!-- KPI -->
 
     <div class="grid grid-cols-4 gap-6">
+
+        <h1 class="text-3xl font-bold mb-8">
+            Dashboard
+        </h1>
 
         <StatCard title="Trabajos" :value="status.jobs ?? 0"/>
 
@@ -16,7 +16,7 @@
 
         <StatCard title="En Cola" :value="status.queue ?? 0"/>
 
-        <StatCard title="Ejecutando" :value="status.running ?? 0"/>
+
 
     </div>
 

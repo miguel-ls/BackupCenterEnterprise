@@ -6,16 +6,7 @@
 
 <h1 class="text-3xl font-bold">Auditoría</h1>
 
-<div class="flex flex-wrap gap-3 items-center">
 
-<button
-    @click="clearAudit"
-    class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg"
->
-    Limpiar
-</button>
-
-</div>
 
 </div>
 

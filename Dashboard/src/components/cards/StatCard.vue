@@ -33,7 +33,7 @@
 
     </div>
 
-    <div class="mt-5 pt-4 border-t border-neutral-100 flex justify-between items-center">
+    <!-- <div class="mt-5 pt-4 border-t border-neutral-100 flex justify-between items-center">
 
         <span class="text-xs text-neutral-500">
 
@@ -52,7 +52,7 @@
 
         </div>
 
-    </div>
+    </div> -->
 
 </div>
 
