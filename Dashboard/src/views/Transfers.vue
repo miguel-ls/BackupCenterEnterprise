@@ -36,17 +36,12 @@
                         <label class="block text-sm font-medium mb-1">
                             Fecha
                         </label>
-                        <select
-                            v-model="filters.date"
-                            @change="load(true)"
-                            class="w-full border rounded-lg px-3 py-2"
-                        >
-                            <option value="all">Todas</option>
-                            <option value="today">Hoy</option>
-                            <option value="yesterday">Ayer</option>
-                            <option value="7days">Últimos 7 días</option>
-                            <option value="30days">Últimos 30 días</option>
-                        </select>
+<input
+    type="date"
+    v-model="filters.date"
+    @change="load(true)"
+    class="w-full border rounded-lg px-3 py-2"
+/>
                     </div>
 
                     <div>
@@ -269,10 +264,9 @@ const summary = ref({
 
 const filters = ref({
     status: "all",
-    date: "all",
+    date: "", // 🔥 ahora es fecha real YYYY-MM-DD
     client: "all"
 })
-
 
 let timer = null
 
@@ -309,11 +303,10 @@ async function load(showLoading = false) {
 
     try {
 
-        const params = new URLSearchParams({
-            status: filters.value.status,
-            date: filters.value.date,
-            client: filters.value.client
-        })
+const params = new URLSearchParams({
+    status: filters.value.status,
+    client: filters.value.client
+})
 
         const res = await fetch(
             `${API}/progress.php?${params.toString()}`,
@@ -342,7 +335,34 @@ async function load(showLoading = false) {
          * Vue actualiza solamente los elementos que cambiaron.
          */
 
-        items.value = json.data || []
+        let data = json.data || []
+
+// 🔥 FILTRO POR FECHA EN FRONT (PERÚ)
+if (filters.value.date) {
+
+    data = data.filter(item => {
+
+        if (!item.updated_at) return false
+
+        const d = new Date(item.updated_at.replace(" ", "T"))
+
+        if (isNaN(d.getTime())) return false
+
+        // 🔥 MISMO AJUSTE QUE formatDate
+        d.setHours(d.getHours() - 5)
+
+        const [year, month, day] = filters.value.date.split("-").map(Number)
+
+        return (
+            d.getFullYear() === year &&
+            d.getMonth() + 1 === month &&
+            d.getDate() === day
+        )
+    })
+}
+
+items.value = data
+
 
         // generar lista de clientes única
         const uniqueClients = new Set()
@@ -620,6 +640,26 @@ function getProgressClass(status) {
 
 }
 
+function isSameDatePeru(date, selectedDate) {
+
+    if (!selectedDate) return true
+
+    const d = new Date(date.replace(" ", "T"))
+
+    if (isNaN(d.getTime())) return false
+
+    // 🔥 MISMO AJUSTE QUE YA USAS EN LA GRILLA
+    d.setHours(d.getHours() - 5)
+
+    const selected = new Date(selectedDate)
+
+    return (
+        d.getFullYear() === selected.getFullYear() &&
+        d.getMonth() === selected.getMonth() &&
+        d.getDate() === selected.getDate()
+    )
+}
+
 function formatDate(date) {
 
     if (!date) {
@@ -645,6 +685,8 @@ function formatDate(date) {
         hour12: false
     }).replace(",", "")
 }
+
+
 onMounted(() => {
 
     /*
