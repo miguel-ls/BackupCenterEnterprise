@@ -30,6 +30,7 @@
                 {{ client.business_name }}
             </option>
 
+                        
         </select>
 
         <button
@@ -141,7 +142,7 @@ import {
 } from "vue";
 
 import {
-    getHistory,
+    getHistoryDashboard,
     getClients
 } from "@/api/client";
 
@@ -175,7 +176,7 @@ async function load(){
 
     try{
 
-        const response = await getHistory(
+        const response = await getHistoryDashboard(
             1,
             100,
             selectedClient.value

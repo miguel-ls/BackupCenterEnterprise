@@ -100,6 +100,41 @@ export const getQueue = (filters = {}) => {
     return request(query ? `job-queue.php?${query}` : "job-queue.php");
 };
 
+/* ================= HISTORY DASHBOARD ================= */
+
+export const getHistoryDashboard = (
+    page = 1,
+    limit = 5,
+    filters = {}
+) => {
+    const params = new URLSearchParams({
+        page: String(page),
+        limit: String(limit)
+    });
+
+    if (filters.clientId) {
+        params.set("client_id", String(filters.clientId));
+    }
+
+    if (filters.jobId) {
+        params.set("job_id", String(filters.jobId));
+    }
+
+    if (filters.status) {
+        params.set("status", filters.status);
+    }
+
+    if (filters.from) {
+        params.set("from", filters.from);
+    }
+
+    if (filters.to) {
+        params.set("to", filters.to);
+    }
+
+    return request(`historyDashboard.php?${params.toString()}`);
+};
+
 /* ================= HISTORY ================= */
 
 export const getHistory = (
