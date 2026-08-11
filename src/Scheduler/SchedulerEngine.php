@@ -22,17 +22,17 @@ class SchedulerEngine
     {
         $jobs = $this->repository->getEnabledJobs();
 
-        Audit::info(
+        // Audit::info(
 
-            "SCHEDULER",
+        //     "SCHEDULER",
 
-            "START",
+        //     "START",
 
-            "Scheduler iniciado.",
+        //     "Scheduler iniciado.",
 
-            "SYSTEM"
+        //     "SYSTEM"
 
-        );
+        // );
 
         foreach ($jobs as $job) {
 
@@ -132,16 +132,16 @@ class SchedulerEngine
             echo "Encolando Job {$job['id']}" . PHP_EOL;
         }
 
-        Audit::info(
+        // Audit::info(
 
-            "SCHEDULER",
+        //     "SCHEDULER",
 
-            "END",
+        //     "END",
 
-            "Scheduler finalizado.",
+        //     "Scheduler finalizado.",
 
-            "SYSTEM"
+        //     "SYSTEM"
 
-        );
+        // );
     }
 }
