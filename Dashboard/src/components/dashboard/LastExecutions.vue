@@ -30,7 +30,21 @@
                 {{ client.business_name }}
             </option>
 
-                        
+        </select>
+
+        <select
+            v-model="selectedStatus"
+            @change="load"
+            class="border rounded-md px-3 py-2 text-sm"
+        >
+            <option value="">Todos los estados</option>
+            <option
+                v-for="statusOption in filterOptions.statuses"
+                :key="statusOption"
+                :value="statusOption"
+            >
+                {{ statusOption }}
+            </option>
         </select>
 
         <button
@@ -148,8 +162,10 @@ import {
 
 const history = ref([]);
 const clients = ref([]);
+const filterOptions = ref({ statuses: [] });
 
 const selectedClient = ref(0);
+const selectedStatus = ref('');
 
 async function loadClients(){
 
@@ -178,13 +194,20 @@ async function load(){
 
         const response = await getHistoryDashboard(
             1,
-            100,
-            selectedClient.value
+            200,
+            {
+                clientId: selectedClient.value,
+                status: selectedStatus.value
+            }
         );
 
         history.value = Array.isArray(response.data)
             ? response.data
             : [];
+
+        filterOptions.value.statuses = Array.isArray(response.filters?.statuses)
+            ? response.filters.statuses
+            : Array.from(new Set(history.value.map(item => item.status))).sort();
 
     }
     catch(error){

@@ -25,7 +25,7 @@ $status = trim((string)($_GET['status'] ?? ''));
 $from = trim((string)($_GET['from'] ?? ''));
 $to = trim((string)($_GET['to'] ?? ''));
 
-$allowedLimits = [5,10,20,50,100];
+$allowedLimits = [5,10,20,50,100,200];
 
 if (!in_array($limit, $allowedLimits, true)) {
     $limit = 5;
@@ -103,7 +103,7 @@ FROM execution_history eh
 INNER JOIN jobs j ON j.id = eh.job_id
 INNER JOIN connections cn ON cn.id = j.connection_id
 INNER JOIN clients c ON c.id = cn.client_id
-WHERE files_uploaded   > 0 
+WHERE (files_uploaded   > 0  or files_failed >0) 
 $whereSql
 ORDER BY eh.id DESC
 LIMIT ?
