@@ -17,7 +17,7 @@ services:
       - ./logs:/var/log/supervisor
 
       # Dataset de clientes
-      - /mnt/Interno1TB/BackupsSQL:/backups
+      - /mnt/Interno3TB/BackupsSQL:/backups
 
     restart: unless-stopped
 

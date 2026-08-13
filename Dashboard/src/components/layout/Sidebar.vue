@@ -182,13 +182,13 @@
 
         </RouterLink>
 
-        <RouterLink to="/documentation" class="menu">
+        <!-- <RouterLink to="/documentation" class="menu">
 
             <span>📚</span>
 
             <span>Documentación</span>
 
-        </RouterLink>
+        </RouterLink> -->
 
         <RouterLink to="/about" class="menu">
 

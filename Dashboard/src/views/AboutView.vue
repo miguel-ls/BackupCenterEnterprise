@@ -14,7 +14,11 @@
                     <div
                         class="w-16 h-16 rounded-xl bg-blue-600 text-white flex items-center justify-center text-3xl font-bold"
                     >
-                        B
+                <img 
+                    src="/logo.jpg" 
+                    alt="Logo"
+                    class="w-full h-full object-contain"
+                />
                     </div>
 
                     <div>

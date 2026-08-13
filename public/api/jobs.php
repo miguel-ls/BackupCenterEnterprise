@@ -95,7 +95,7 @@ switch ($method) {
                 Audit::info(
                     "JOBS",
                     "QUEUE",
-                    "Trabajo {$body['id']} agregado a la cola.",
+                    "Trabajo: {$job['name']} agregado a la cola. | Cliente: {$clientName} | Conexión: {$connectionName} ",
                     "admin"
                 );
 
