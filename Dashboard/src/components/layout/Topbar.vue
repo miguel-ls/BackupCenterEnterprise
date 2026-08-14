@@ -4,11 +4,18 @@
 
     <div>
 
-        <h2 class="text-xl font-semibold">
+        <h1 class="text-xl font-semibold">
+            
 
+            Backup Center 
 
+        </h1>
 
-        </h2>
+                    <div class="text-xs ">
+
+                        Enterprise Edition
+
+                    </div>        
 
     </div>
 
