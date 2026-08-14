@@ -1,30 +1,14 @@
-# ============================================================
-# BackupCenter Agent Installer (FINAL CON VALIDACIÓN TOKEN)
-# ============================================================
-
 param(
     [string]$InstallToken
 )
 
 $ErrorActionPreference = "Stop"
 
-$ServiceName = "BackupCenterAgent"
-$InstallDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$AgentDir = Join-Path $InstallDir "agent"
-$AgentExe = Join-Path $AgentDir "BackupCenterAgent.exe"
+Write-Host "DEBUG: SCRIPT INICIADO"
+Write-Host "TOKEN:"
+Write-Host $InstallToken
 
-# Log
-$LogPath = Join-Path $InstallDir "install.log"
-Start-Transcript -Path $LogPath -Append
-
-Write-Host "==== Instalando BackupCenter Agent ===="
-
-# ============================================================
-# VALIDAR TOKEN CONTRA API
-# ============================================================
-
-Write-Host "Validando token contra el servidor..."
-
+# VALIDAR TOKEN
 $apiUrl = "https://backup.codesicorp.net/api/validate-token.php"
 
 try {
@@ -32,87 +16,35 @@ try {
         InstallToken = $InstallToken
     } | ConvertTo-Json
 
-    $response = Invoke-RestMethod `
-        -Uri $apiUrl `
-        -Method Post `
-        -Body $body `
-        -ContentType "application/json"
+    $response = Invoke-RestMethod -Uri $apiUrl -Method Post -Body $body -ContentType "application/json"
 
     if (-not $response.valid) {
-        Write-Host "ERROR: Token inválido"
-        Stop-Transcript
-        exit 1
+        Write-Host "TOKEN INVALIDO"
+        exit
     }
 
-    Write-Host "Token válido ✔"
+    Write-Host "TOKEN OK"
 
 } catch {
-    Write-Host "ERROR: No se pudo validar el token"
-    Stop-Transcript
-    exit 1
+    Write-Host "ERROR VALIDANDO TOKEN"
+    exit
 }
 
-# ============================================================
-# GENERAR CONFIG DINÁMICO
-# ============================================================
+# MARCAR INSTALADO
+$markUrl = "https://backup.codesicorp.net/api/mark-installed.php"
 
-$ConfigPath = Join-Path $AgentDir "config.json"
+try {
+    $body = @{
+        InstallToken = $InstallToken
+    } | ConvertTo-Json
 
-$configData = @{
-    Server = "https://backup.codesicorp.net"
-    InstallToken = $InstallToken
-    Backup = @{
-        Extensions = @("zip", "rar", "bak")
-    }
+    $response = Invoke-RestMethod -Uri $markUrl -Method Post -Body $body -ContentType "application/json"
+
+    Write-Host "RESPUESTA:"
+    $response | ConvertTo-Json
+
+} catch {
+    Write-Host "ERROR API"
 }
 
-$configJson = $configData | ConvertTo-Json -Depth 5
-
-$configJson | Out-File -Encoding UTF8 -FilePath $ConfigPath
-
-Write-Host "Config generado en: $ConfigPath"
-
-# ============================================================
-# VALIDAR EXE
-# ============================================================
-
-if (!(Test-Path $AgentExe)) {
-    Write-Error "No se encontró el ejecutable del agente: $AgentExe"
-    Stop-Transcript
-    exit 1
-}
-
-# ============================================================
-# SERVICIO
-# ============================================================
-
-$service = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
-
-if ($service) {
-    Write-Host "Servicio existe, actualizando..."
-
-    if ($service.Status -ne "Stopped") {
-        Stop-Service $ServiceName -Force
-        Start-Sleep -Seconds 2
-    }
-
-    sc.exe delete $ServiceName | Out-Null
-    Start-Sleep -Seconds 2
-}
-
-Write-Host "Creando servicio..."
-
-New-Service `
-    -Name $ServiceName `
-    -BinaryPathName "`"$AgentExe`"" `
-    -DisplayName "Backup Center Agent" `
-    -StartupType Automatic
-
-sc.exe description $ServiceName "Backup Center Agent Service" | Out-Null
-
-Start-Service $ServiceName
-
-Write-Host "Servicio instalado y ejecutándose correctamente"
-
-Stop-Transcript
-exit 0
+Write-Host "FIN"
