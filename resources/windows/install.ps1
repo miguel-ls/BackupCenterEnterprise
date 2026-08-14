@@ -1,151 +1,118 @@
+# ============================================================
+# BackupCenter Agent Installer (FINAL CON VALIDACIÓN TOKEN)
+# ============================================================
+
 param(
-    [string]$InstallDir = "$env:ProgramFiles\BackupCenter",
-    [string]$ServiceName = "BackupCenterAgent"
+    [string]$InstallToken
 )
 
 $ErrorActionPreference = "Stop"
 
-Write-Host ""
-Write-Host "========================================="
-Write-Host " Backup Center Enterprise Agent Installer"
-Write-Host "========================================="
-Write-Host ""
+$ServiceName = "BackupCenterAgent"
+$InstallDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$AgentDir = Join-Path $InstallDir "agent"
+$AgentExe = Join-Path $AgentDir "BackupCenterAgent.exe"
 
-#------------------------------------------------------------
-# Rutas
-#------------------------------------------------------------
+# Log
+$LogPath = Join-Path $InstallDir "install.log"
+Start-Transcript -Path $LogPath -Append
 
-$SourceDir    = Split-Path -Parent $PSScriptRoot
-$SourceAgent  = Join-Path $SourceDir "agent"
+Write-Host "==== Instalando BackupCenter Agent ===="
 
-$AgentDir     = Join-Path $InstallDir "agent"
-$AgentExe     = Join-Path $AgentDir "BackupCenterAgent.exe"
+# ============================================================
+# VALIDAR TOKEN CONTRA API
+# ============================================================
 
-$SourceConfig = Join-Path $SourceDir "config.json"
-$ConfigPath   = Join-Path $AgentDir "config.json"
+Write-Host "Validando token contra el servidor..."
 
-$LogPath      = Join-Path $InstallDir "install.log"
+$apiUrl = "https://backup.codesicorp.net/api/validate-token.php"
 
-#------------------------------------------------------------
-# Validaciones
-#------------------------------------------------------------
+try {
+    $body = @{
+        InstallToken = $InstallToken
+    } | ConvertTo-Json
 
-if (-not (Test-Path $SourceAgent)) {
-    throw "No se encontró la carpeta 'agent'."
+    $response = Invoke-RestMethod `
+        -Uri $apiUrl `
+        -Method Post `
+        -Body $body `
+        -ContentType "application/json"
+
+    if (-not $response.valid) {
+        Write-Host "ERROR: Token inválido"
+        Stop-Transcript
+        exit 1
+    }
+
+    Write-Host "Token válido ✔"
+
+} catch {
+    Write-Host "ERROR: No se pudo validar el token"
+    Stop-Transcript
+    exit 1
 }
 
-if (-not (Test-Path (Join-Path $SourceAgent "BackupCenterAgent.exe"))) {
-    throw "No se encontró BackupCenterAgent.exe."
+# ============================================================
+# GENERAR CONFIG DINÁMICO
+# ============================================================
+
+$ConfigPath = Join-Path $AgentDir "config.json"
+
+$configData = @{
+    Server = "https://backup.codesicorp.net"
+    InstallToken = $InstallToken
+    Backup = @{
+        Extensions = @("zip", "rar", "bak")
+    }
 }
 
-#------------------------------------------------------------
-# Crear directorios
-#------------------------------------------------------------
+$configJson = $configData | ConvertTo-Json -Depth 5
 
-Write-Host "Creando directorios..."
+$configJson | Out-File -Encoding UTF8 -FilePath $ConfigPath
 
-New-Item -ItemType Directory -Force -Path $InstallDir | Out-Null
-New-Item -ItemType Directory -Force -Path $AgentDir | Out-Null
+Write-Host "Config generado en: $ConfigPath"
 
-#------------------------------------------------------------
-# ¿Existe el servicio?
-#------------------------------------------------------------
+# ============================================================
+# VALIDAR EXE
+# ============================================================
+
+if (!(Test-Path $AgentExe)) {
+    Write-Error "No se encontró el ejecutable del agente: $AgentExe"
+    Stop-Transcript
+    exit 1
+}
+
+# ============================================================
+# SERVICIO
+# ============================================================
 
 $service = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
 
 if ($service) {
+    Write-Host "Servicio existe, actualizando..."
 
-    Write-Host "Actualizando instalación existente..."
-
-    if ($service.Status -eq "Running") {
+    if ($service.Status -ne "Stopped") {
         Stop-Service $ServiceName -Force
+        Start-Sleep -Seconds 2
     }
+
+    sc.exe delete $ServiceName | Out-Null
+    Start-Sleep -Seconds 2
 }
 
-#------------------------------------------------------------
-# Copiar archivos
-#------------------------------------------------------------
+Write-Host "Creando servicio..."
 
-Write-Host "Copiando archivos..."
+New-Service `
+    -Name $ServiceName `
+    -BinaryPathName "`"$AgentExe`"" `
+    -DisplayName "Backup Center Agent" `
+    -StartupType Automatic
 
-Copy-Item `
-    -Path (Join-Path $SourceAgent "*") `
-    -Destination $AgentDir `
-    -Recurse `
-    -Force
-
-if (Test-Path $SourceConfig) {
-
-    Copy-Item `
-        $SourceConfig `
-        $ConfigPath `
-        -Force
-}
-
-#------------------------------------------------------------
-# Crear servicio si no existe
-#------------------------------------------------------------
-
-if (-not $service) {
-
-    Write-Host "Creando servicio..."
-
-    New-Service `
-        -Name $ServiceName `
-        -BinaryPathName "`"$AgentExe`"" `
-        -DisplayName "Backup Center Agent" `
-        -Description "Backup Center Agent Service" `
-        -StartupType Automatic
-}
-
-#------------------------------------------------------------
-# Iniciar servicio
-#------------------------------------------------------------
-
-Write-Host "Iniciando servicio..."
+sc.exe description $ServiceName "Backup Center Agent Service" | Out-Null
 
 Start-Service $ServiceName
 
-Start-Sleep -Seconds 2
+Write-Host "Servicio instalado y ejecutándose correctamente"
 
-$service = Get-Service $ServiceName
-
-#------------------------------------------------------------
-# Crear log
-#------------------------------------------------------------
-
-@"
-==================================================
-Backup Center Agent
-==================================================
-
-Fecha........: $(Get-Date)
-
-Directorio...: $InstallDir
-
-Agent........: $AgentExe
-
-Servicio.....: $ServiceName
-
-Estado.......: $($service.Status)
-
-Config.......: $ConfigPath
-
-==================================================
-"@ | Set-Content $LogPath -Encoding UTF8
-
-#------------------------------------------------------------
-# Resultado
-#------------------------------------------------------------
-
-Write-Host ""
-Write-Host "========================================="
-Write-Host " Instalación completada"
-Write-Host "========================================="
-Write-Host ""
-
-Write-Host "Servicio : $ServiceName"
-Write-Host "Estado   : $($service.Status)"
-Write-Host "Ruta     : $AgentExe"
-Write-Host "Config   : $ConfigPath"
-Write-Host ""
+Stop-Transcript
+exit 0

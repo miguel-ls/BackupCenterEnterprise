@@ -1,65 +1,53 @@
-param(
-    [string]$InstallDir = "$env:ProgramFiles\BackupCenter",
-    [string]$ServiceName = "BackupCenterAgent"
-)
+# ============================================================
+# BackupCenter Agent Uninstaller
+# ============================================================
 
 $ErrorActionPreference = "Stop"
 
-Write-Host ""
-Write-Host "========================================="
-Write-Host " Backup Center Enterprise Agent"
-Write-Host " Desinstalador"
-Write-Host "========================================="
-Write-Host ""
-
+$ServiceName = "BackupCenterAgent"
+$InstallDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $AgentDir = Join-Path $InstallDir "agent"
 
-#------------------------------------------------------------
-# Detener servicio
-#------------------------------------------------------------
+# Log
+$LogPath = Join-Path $InstallDir "uninstall.log"
+Start-Transcript -Path $LogPath -Append
 
+Write-Host "==== Desinstalando BackupCenter Agent ===="
+
+# Verificar servicio
 $service = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
 
 if ($service) {
+    Write-Host "Deteniendo servicio..."
 
-    if ($service.Status -eq "Running") {
-
-        Write-Host "Deteniendo servicio..."
-
+    if ($service.Status -ne "Stopped") {
         Stop-Service $ServiceName -Force
-
         Start-Sleep -Seconds 2
     }
 
     Write-Host "Eliminando servicio..."
-
     sc.exe delete $ServiceName | Out-Null
-
     Start-Sleep -Seconds 2
-}
-else {
-
-    Write-Host "El servicio no existe."
+} else {
+    Write-Host "Servicio no existe"
 }
 
-#------------------------------------------------------------
-# Eliminar archivos
-#------------------------------------------------------------
-
-if (Test-Path $InstallDir) {
-
-    Write-Host "Eliminando archivos..."
-
-    Remove-Item `
-        -Path $InstallDir `
-        -Recurse `
-        -Force
+# Eliminar archivos del agente
+if (Test-Path $AgentDir) {
+    Write-Host "Eliminando archivos del agente..."
+    Remove-Item $AgentDir -Recurse -Force
+} else {
+    Write-Host "Directorio del agente no encontrado"
 }
 
-Write-Host ""
-Write-Host "========================================="
-Write-Host " Desinstalación completada"
-Write-Host "========================================="
-Write-Host ""
+# ⚠️ NO eliminamos config en ProgramData (correcto para persistencia)
+$ConfigDir = "$env:ProgramData\BackupCenter"
 
-pause
+if (Test-Path $ConfigDir) {
+    Write-Host "Config preservado en: $ConfigDir"
+}
+
+Write-Host "Desinstalación completada correctamente"
+
+Stop-Transcript
+exit 0
