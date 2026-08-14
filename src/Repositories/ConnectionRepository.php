@@ -197,6 +197,18 @@ $installToken = $this->generateInstallToken();
         ]);
     }
 
+    public function setInstalled(int $id, bool $installed): bool
+    {
+        $stmt = $this->db->prepare(
+            'UPDATE connections SET installed=? WHERE id=?'
+        );
+
+        return $stmt->execute([
+            $installed ? 1 : 0,
+            $id
+        ]);
+    }
+
     public function delete(int $id): bool
     {
         $stmt = $this->db->prepare("

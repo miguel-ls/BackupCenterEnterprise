@@ -17,6 +17,7 @@
                 <th class="text-left p-4">Password</th>
                 <th class="text-left p-4">Install Token</th>
                 <th class="text-left p-4">Remote Path</th>
+                <th class="text-left p-4">Estado de instalación</th>
                 <th class="text-center p-4">Acciones</th>
 
             </tr>
@@ -78,6 +79,15 @@
                 </td>
 
                 <td class="p-4">
+                    <span
+                        :class="Number(connection.installed) === 1 ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'"
+                        class="px-2 py-1 rounded-full text-xs font-semibold"
+                    >
+                        {{ Number(connection.installed) === 1 ? 'Instalado' : 'No instalado' }}
+                    </span>
+                </td>
+
+                <td class="p-4">
 
                     <div class="flex justify-center gap-2">
 
@@ -87,14 +97,28 @@
                         >
                             <Pencil :size="17"/>
                         </button>
+                                                
+                        <button
+                            @click="$emit('toggle-installed', connection)"
+                            :class="Number(connection.installed) === 1 ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-neutral-500 hover:bg-neutral-600'"
+                            class="text-white rounded p-2"
+                            :title="Number(connection.installed) === 1 ? 'Marcar como no instalado' : 'Marcar como instalado'"
+                        >
+                            <ToggleRight v-if="Number(connection.installed) === 1" :size="17"/>
+                            <ToggleLeft v-else :size="17"/>
+                        </button>
+
+
 
                         <button
                             @click="$emit('generate-install',connection)"
-                            class="bg-emerald-600 hover:bg-emerald-700 text-white rounded p-2"
+                            class="bg-blue-600 hover:bg-blue-700 text-white rounded p-2"
                             title="Generar instalación"
                         >
                             <Download :size="17"/>
                         </button>
+
+
 
                         <button
                             @click="$emit('delete',connection.id)"
@@ -112,7 +136,7 @@
             <tr v-if="connections.length===0">
 
                 <td
-                    colspan="10"
+                    colspan="12"
                     class="text-center p-10 text-neutral-400"
                 >
 
@@ -136,7 +160,9 @@ import {
 
     Pencil,
     Trash2,
-    Download
+    Download,
+    ToggleLeft,
+    ToggleRight
 
 } from "lucide-vue-next";
 
@@ -153,7 +179,8 @@ defineEmits([
 
     'edit',
     'delete',
-    'generate-install'
+    'generate-install',
+    'toggle-installed'
 
 ])
 

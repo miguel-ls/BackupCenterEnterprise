@@ -131,6 +131,35 @@ case 'POST':
         exit;
     }
 
+    if (($data['action'] ?? '') === 'set-installed') {
+        $connection = $repository->get((int)($data['id'] ?? 0));
+
+        if (!$connection) {
+            http_response_code(404);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Conexión no encontrada'
+            ]);
+            break;
+        }
+
+        $installed = !empty($data['installed']);
+        $repository->setInstalled((int)$connection['id'], $installed);
+
+        Audit::info(
+            'CONNECTIONS',
+            'UPDATE_INSTALLATION_STATUS',
+            'Estado de instalación de la conexión ' . $connection['name'] . ' actualizado',
+            'admin'
+        );
+
+        echo json_encode([
+            'success' => true,
+            'installed' => $installed ? 1 : 0
+        ]);
+        break;
+    }
+
     $id = $repository->create(
 
         (int)$data['client_id'],

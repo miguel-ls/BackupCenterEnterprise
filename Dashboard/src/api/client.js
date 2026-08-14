@@ -4,7 +4,7 @@ async function request(endpoint, options = {}) {
     const response = await fetch(`${API}/${endpoint}`, {
         headers: {
             "Content-Type": "application/json",
-            ...(options.headers || {})
+            ...options.headers
         },
         ...options
     });
@@ -14,7 +14,7 @@ async function request(endpoint, options = {}) {
 
     try {
         json = content ? JSON.parse(content) : null;
-    } catch (error) {
+    } catch {
         console.error(`Invalid JSON response from ${endpoint}:`, content);
         return {
             success: false,
@@ -28,7 +28,7 @@ async function request(endpoint, options = {}) {
         return {
             success: false,
             status: response.status,
-            ...(json || {}),
+            ...json,
             raw: content
         };
     }
@@ -248,6 +248,16 @@ export const deleteConnection = (id) =>
     request("connections.php", {
         method: "DELETE",
         body: JSON.stringify({ id })
+    });
+
+export const updateConnectionInstallationStatus = (id, installed) =>
+    request("connections.php", {
+        method: "POST",
+        body: JSON.stringify({
+            action: "set-installed",
+            id,
+            installed
+        })
     });
 
 export const downloadInstallPackage = async (id) => {

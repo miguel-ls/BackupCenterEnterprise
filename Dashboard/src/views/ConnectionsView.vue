@@ -53,6 +53,7 @@
         @edit="editConnection"
         @delete="removeConnection"
         @generate-install="generateInstallPackage"
+        @toggle-installed="toggleInstallationStatus"
     />
 
 </MainLayout>
@@ -70,7 +71,8 @@ import ConnectionTable from '../components/connections/ConnectionTable.vue'
 import {
     getConnections,
     deleteConnection,
-    downloadInstallPackage
+    downloadInstallPackage,
+    updateConnectionInstallationStatus
 } from '../api/client'
 
 const connections = ref([])
@@ -158,6 +160,22 @@ async function generateInstallPackage(connection){
     link.click()
 
     URL.revokeObjectURL(url)
+
+}
+
+async function toggleInstallationStatus(connection){
+
+    const response = await updateConnectionInstallationStatus(
+        connection.id,
+        Number(connection.installed) !== 1
+    )
+
+    if (!response?.success) {
+        alert('No se pudo actualizar el estado de instalación')
+        return
+    }
+
+    await loadConnections()
 
 }
 
