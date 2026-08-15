@@ -251,22 +251,25 @@ public function saveExecutionHistory(array $data): void
 
         /*
         |--------------------------------------------------------------------------
-        | Si este Job estaba en la cola, finalizar el último registro Running
+        | Si este Job estaba en la cola, finalizarlo
         |--------------------------------------------------------------------------
         */
 
-        $stmt = $this->pdo->prepare("
-            UPDATE job_queue
-            SET
-                status = 'Completed',
-                finished_at = :finished_at
-            WHERE id = :queue_id
-        ");
+        if (array_key_exists('queueId', $data) && $data['queueId'] !== null) {
 
-        $stmt->execute([
-            ':finished_at' => $data['finishedAt'],
-            ':queue_id' => $data['queueId']
-        ]);
+            $stmt = $this->pdo->prepare("
+                UPDATE job_queue
+                SET
+                    status = 'Completed',
+                    finished_at = :finished_at
+                WHERE id = :queue_id
+            ");
+
+            $stmt->execute([
+                ':finished_at' => $data['finishedAt'],
+                ':queue_id' => $data['queueId']
+            ]);
+        }
 
         $this->pdo->commit();
     }
