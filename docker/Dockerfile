@@ -63,7 +63,10 @@ RUN npm install
 RUN npm run build
 
 # Copiar Dashboard compilado a public
-RUN cp -R dist/* /var/www/html/public/
+RUN cp -R dist/* /var/www/html/public/ && \
+    chown -R apps:apps /var/www/html/public && \
+    chmod -R 755 /var/www/html/public && \
+    find /var/www/html/public -type f -exec chmod 644 {} \;
 
 # Volver al proyecto
 WORKDIR /var/www/html
@@ -102,3 +105,6 @@ EXPOSE 80
 
 # Iniciar Supervisor
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+
+RUN chmod -R 755 /var/www/html/public && \
+    find /var/www/html/public -type f -exec chmod 644 {} \;
