@@ -100,7 +100,7 @@
                                                 
                         <button
                             @click="$emit('toggle-installed', connection)"
-                            :class="Number(connection.installed) === 1 ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-neutral-500 hover:bg-neutral-600'"
+                            :class="Number(connection.installed) === 1 ? 'bg-blue-600 hover:bg-blue-700' : 'bg-neutral-500 hover:bg-neutral-600'"
                             class="text-white rounded p-2"
                             :title="Number(connection.installed) === 1 ? 'Marcar como no instalado' : 'Marcar como instalado'"
                         >
@@ -110,13 +110,13 @@
 
 
 
-                        <button
+                        <!-- <button
                             @click="$emit('generate-install',connection)"
                             class="bg-blue-600 hover:bg-blue-700 text-white rounded p-2"
                             title="Generar instalación"
                         >
                             <Download :size="17"/>
-                        </button>
+                        </button> -->
 
 
 
