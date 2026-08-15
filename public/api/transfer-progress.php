@@ -3,6 +3,7 @@
 require __DIR__ . '/../../vendor/autoload.php';
 
 use BackupCenter\Core\AgentAuth;
+use BackupCenter\Core\ApiResponse;
 use BackupCenter\Core\Application;
 use BackupCenter\Repositories\AgentRepository;
 
@@ -13,10 +14,13 @@ try {
     $app = new Application();
     $pdo = $app->database()->getConnection();
 
+    $authenticatedConnectionId = null;
+
     if (
         array_key_exists('HTTP_AUTHORIZATION', $_SERVER)
     ) {
-        AgentAuth::validateAgentToken(new AgentRepository($pdo));
+        $agentIdentity = AgentAuth::validateAgentToken(new AgentRepository($pdo));
+        $authenticatedConnectionId = $agentIdentity['connection_id'];
     }
 
     $input = json_decode(file_get_contents('php://input'), true);
@@ -50,6 +54,18 @@ try {
     $uploaded = max(0, (int)$uploaded);
     $total    = max(0, (int)$total);
     $speed    = max(0, (float)$speed);
+
+    if ($authenticatedConnectionId !== null) {
+        $jobConnectionId = (new AgentRepository($pdo))->findJobConnectionId($jobId);
+
+        if ($jobConnectionId === null) {
+            ApiResponse::error('Job not found', 404);
+        }
+
+        if ($jobConnectionId !== $authenticatedConnectionId) {
+            ApiResponse::error('Forbidden', 403);
+        }
+    }
 
     /*
     |--------------------------------------------------------------------------

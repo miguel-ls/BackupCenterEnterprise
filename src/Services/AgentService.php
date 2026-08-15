@@ -17,14 +17,36 @@ class AgentService
         $this->repository = new AgentRepository($pdo);
     }
 
-public function exists(): void
+private function authorizeJob(
+    int $jobId,
+    int $authenticatedConnectionId
+): void
+{
+    $jobConnectionId = $this->repository->findJobConnectionId($jobId);
+
+    if ($jobConnectionId === null) {
+        ApiResponse::error('Job not found', 404);
+    }
+
+    if ($jobConnectionId !== $authenticatedConnectionId) {
+        ApiResponse::error('Forbidden', 403);
+    }
+}
+
+public function exists(?int $authenticatedConnectionId = null): void
 {
     try
     {
         $data = json_decode(file_get_contents('php://input'), true);
 
+        $jobId = (int)$data['jobId'];
+
+        if ($authenticatedConnectionId !== null) {
+            $this->authorizeJob($jobId, $authenticatedConnectionId);
+        }
+
         $exists = $this->repository->fileExists(
-            (int)$data['jobId'],
+            $jobId,
             $data['sha256']
         );
 
@@ -45,14 +67,20 @@ public function exists(): void
     }
 }
 
-public function registerFile(): void
+public function registerFile(?int $authenticatedConnectionId = null): void
 {
     try
     {
         $data = json_decode(file_get_contents('php://input'), true);
 
+        $jobId = (int)$data['jobId'];
+
+        if ($authenticatedConnectionId !== null) {
+            $this->authorizeJob($jobId, $authenticatedConnectionId);
+        }
+
         $this->repository->saveFile(
-            (int)$data['jobId'],
+            $jobId,
             $data['fileName'],
             (int)$data['fileSize'],
             $data['sha256']
@@ -154,11 +182,31 @@ public function register(): void
     ApiResponse::success($response);
 }
 
-public function executionHistory(): void
+public function executionHistory(?int $authenticatedConnectionId = null): void
 {
     try
     {
         $data = json_decode(file_get_contents('php://input'), true);
+
+        if ($authenticatedConnectionId !== null) {
+            $jobId = (int)$data['jobId'];
+
+            if (array_key_exists('queueId', $data) && $data['queueId'] !== null) {
+                $queueJobId = $this->repository->findQueueJobId(
+                    (int)$data['queueId']
+                );
+
+                if ($queueJobId === null) {
+                    ApiResponse::error('Queue not found', 404);
+                }
+
+                if ($queueJobId !== $jobId) {
+                    ApiResponse::error('Forbidden', 403);
+                }
+            }
+
+            $this->authorizeJob($jobId, $authenticatedConnectionId);
+        }
 
         $this->repository->saveExecutionHistory($data);
 

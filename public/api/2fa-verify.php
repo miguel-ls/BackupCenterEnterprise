@@ -3,6 +3,7 @@
 use BackupCenter\Core\ApiController;
 use BackupCenter\Core\ApiResponse;
 use BackupCenter\Core\Audit;
+use BackupCenter\Repositories\SessionRepository;
 use PragmaRX\Google2FA\Google2FA;
 
 require_once __DIR__ . '/cors.php';
@@ -157,5 +158,24 @@ Audit::info(
 unset($_SESSION["2fa"]);
 
 unset($user["twofactor_secret"]);
+
+$token = bin2hex(random_bytes(32));
+
+$sessionRepository = new SessionRepository(
+    $app->database()
+);
+
+$sessionRepository->create(
+    (int)$user["id"],
+    $token,
+    $_SERVER["HTTP_USER_AGENT"] ?? "Unknown",
+    $_SERVER["REMOTE_ADDR"] ?? "LOCAL",
+    date(
+        "Y-m-d H:i:s",
+        strtotime("+30 days")
+    )
+);
+
+$user["token"] = $token;
 
 ApiResponse::success($user);

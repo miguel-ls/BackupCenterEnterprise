@@ -12,12 +12,14 @@ use BackupCenter\Services\AgentService;
 $service = new AgentService($pdo);
 
 $action = $_GET['action'] ?? '';
+$authenticatedConnectionId = null;
 
 if (
     in_array($action, ['exists', 'register-file', 'execution-history'], true)
     && array_key_exists('HTTP_AUTHORIZATION', $_SERVER)
 ) {
-    AgentAuth::validateAgentToken(new AgentRepository($pdo));
+    $agentIdentity = AgentAuth::validateAgentToken(new AgentRepository($pdo));
+    $authenticatedConnectionId = $agentIdentity['connection_id'];
 }
 
 switch ($action) {
@@ -27,15 +29,15 @@ switch ($action) {
         break;
 
     case 'exists':
-        $service->exists();
+        $service->exists($authenticatedConnectionId);
         break;
 
     case 'register-file':
-        $service->registerFile();
+        $service->registerFile($authenticatedConnectionId);
         break;
                 
     case 'execution-history':
-        $service->executionHistory();
+        $service->executionHistory($authenticatedConnectionId);
         break;
 
     default:

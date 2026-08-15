@@ -79,6 +79,38 @@ class AgentRepository
         ];
     }
 
+    public function findJobConnectionId(int $jobId): ?int
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT connection_id
+            FROM jobs
+            WHERE id = ?
+            LIMIT 1
+        ");
+
+        $stmt->execute([$jobId]);
+
+        $connectionId = $stmt->fetchColumn();
+
+        return $connectionId === false ? null : (int)$connectionId;
+    }
+
+    public function findQueueJobId(int $queueId): ?int
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT job_id
+            FROM job_queue
+            WHERE id = ?
+            LIMIT 1
+        ");
+
+        $stmt->execute([$queueId]);
+
+        $jobId = $stmt->fetchColumn();
+
+        return $jobId === false ? null : (int)$jobId;
+    }
+
     public function getEnabledJobs(int $connectionId): array
     {
         $stmt = $this->pdo->prepare("
