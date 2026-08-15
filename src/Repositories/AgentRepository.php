@@ -26,7 +26,8 @@ class AgentRepository
                 password,
                 hostkey,
                 protocol,
-                remote_path
+                remote_path,
+                agent_token_hash
             FROM connections
             WHERE install_token = ?
             LIMIT 1
@@ -37,6 +38,23 @@ class AgentRepository
         $connection = $stmt->fetch(PDO::FETCH_ASSOC);
 
         return $connection ?: null;
+    }
+
+    public function saveAgentTokenHash(int $connectionId, string $agentTokenHash): bool
+    {
+        $stmt = $this->pdo->prepare("
+            UPDATE connections
+            SET agent_token_hash = ?
+            WHERE id = ?
+              AND (agent_token_hash IS NULL OR agent_token_hash = '')
+        ");
+
+        $stmt->execute([
+            $agentTokenHash,
+            $connectionId
+        ]);
+
+        return $stmt->rowCount() > 0;
     }
 
     public function getEnabledJobs(int $connectionId): array

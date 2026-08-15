@@ -94,6 +94,20 @@ public function register(): void
         return;
     }
 
+    $agentToken = null;
+
+    if (empty($connection['agent_token_hash'])) {
+        $candidateToken = bin2hex(random_bytes(32));
+        $candidateHash = hash('sha256', $candidateToken);
+
+        if ($this->repository->saveAgentTokenHash(
+            (int)$connection['id'],
+            $candidateHash
+        )) {
+            $agentToken = $candidateToken;
+        }
+    }
+
     $jobs = $this->repository->getEnabledJobs(
         (int)$connection['id']
     );
@@ -102,7 +116,7 @@ public function register(): void
         (int)$connection['id']
     );
 
-    ApiResponse::success([
+    $response = [
 
         'connection' => [
 
@@ -131,8 +145,13 @@ public function register(): void
         'jobs' => $jobs,
 
         'queue' => $queue
+    ];
 
-    ]);
+    if ($agentToken !== null) {
+        $response['agentToken'] = $agentToken;
+    }
+
+    ApiResponse::success($response);
 }
 
 public function executionHistory(): void
