@@ -2,12 +2,15 @@
 
 use BackupCenter\Core\ApiController;
 use BackupCenter\Core\ApiResponse;
+use BackupCenter\Core\Auth;
 use BackupCenter\Repositories\SessionRepository;
 
 require_once __DIR__ . '/cors.php';
 require_once __DIR__.'/bootstrap.php';
 
 ApiController::boot();
+
+Auth::require();
 
 $repository=new SessionRepository(
     $app->database()

@@ -106,6 +106,7 @@
 import { ref, computed, onMounted } from "vue"
 import MainLayout from "../components/layout/MainLayout.vue"
 import { getAudit } from "../api/client"
+import { token } from "../api/auth"
 
 const audit = ref([])
 const modules = ref([])
@@ -180,7 +181,12 @@ async function clearAudit() {
         return
     }
 
-    await fetch(`${window.location.origin}/api/audit.php`, { method: "DELETE" })
+    await fetch(`${window.location.origin}/api/audit.php`, {
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${token()}`
+        }
+    })
     load()
 }
 

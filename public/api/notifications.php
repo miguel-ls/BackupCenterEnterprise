@@ -6,7 +6,10 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 use BackupCenter\Core\Database;
 use BackupCenter\Core\Paths;
 use BackupCenter\Core\Audit;
+use BackupCenter\Core\Auth;
 use BackupCenter\Repositories\NotificationRepository;
+
+Auth::require();
 
 $db = new Database(
     Paths::database() . '/backupcenter.db'

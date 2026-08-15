@@ -195,6 +195,7 @@ watch
 } from "vue"
 
 import API from "@/config/api";
+import { token } from "@/api/auth";
 
 const props=defineProps({
 
@@ -241,7 +242,9 @@ method:"POST",
 
 headers:{
 
-"Content-Type":"application/json"
+"Content-Type":"application/json",
+
+Authorization:`Bearer ${token()}`
 
 },
 
@@ -290,7 +293,9 @@ method:"POST",
 
 headers:{
 
-"Content-Type":"application/json"
+"Content-Type":"application/json",
+
+Authorization:`Bearer ${token()}`
 
 },
 

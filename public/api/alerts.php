@@ -7,7 +7,10 @@ require_once __DIR__ . '/bootstrap.php';
 use BackupCenter\Core\Application;
 use BackupCenter\Core\Paths;
 use BackupCenter\Repositories\ExecutionHistoryRepository;
+use BackupCenter\Core\Auth;
 
+
+Auth::require();
 
 $app = new Application();
 

@@ -58,6 +58,7 @@ import UserFormModal from "../components/users/UserFormModal.vue"
 import TwoFactorModal from "../components/users/TwoFactorModal.vue"
 
 import API from "@/config/api";
+import { token } from "@/api/auth";
 
 const users=ref([])
 
@@ -97,7 +98,17 @@ async function load(){
 
 const r=await fetch(
 
-`${API}/users.php`
+`${API}/users.php`,
+
+{
+
+headers:{
+
+Authorization:`Bearer ${token()}`
+
+}
+
+}
 
 )
 
@@ -147,7 +158,9 @@ method,
 
 headers:{
 
-"Content-Type":"application/json"
+"Content-Type":"application/json",
+
+Authorization:`Bearer ${token()}`
 
 },
 
@@ -197,7 +210,9 @@ method:"DELETE",
 
 headers:{
 
-"Content-Type":"application/json"
+"Content-Type":"application/json",
+
+Authorization:`Bearer ${token()}`
 
 },
 

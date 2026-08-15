@@ -1,11 +1,14 @@
 <?php
 
 use BackupCenter\Core\ApiController;
+use BackupCenter\Core\Auth;
 use BackupCenter\Repositories\RecoveryCodeRepository;
 
 require_once __DIR__.'/bootstrap.php';
 
 ApiController::boot();
+
+Auth::require();
 
 ApiController::method("POST");
 

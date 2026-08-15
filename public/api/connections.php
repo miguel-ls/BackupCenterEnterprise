@@ -5,9 +5,12 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 use BackupCenter\Core\Application;
 use BackupCenter\Core\Audit;
+use BackupCenter\Core\Auth;
 use BackupCenter\Repositories\ConnectionRepository;
 use BackupCenter\Repositories\NotificationRepository;
 use BackupCenter\Services\JobLogService;
+
+Auth::require();
 
 try {
     $app = new Application();

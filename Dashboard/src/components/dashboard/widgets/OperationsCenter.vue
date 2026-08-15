@@ -145,12 +145,19 @@ const events = ref([])
 const alerts = ref([])
 
 import API from "@/config/api";
+import { token } from "@/api/auth";
 
 async function load(){
 
     const r = await fetch(
 
-        `${API}/alerts.php`
+        `${API}/alerts.php`,
+
+        {
+            headers: {
+                Authorization: `Bearer ${token()}`
+            }
+        }
 
     )
 

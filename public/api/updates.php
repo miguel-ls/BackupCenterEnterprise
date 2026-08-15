@@ -1,6 +1,11 @@
 <?php
 
 require_once __DIR__ . '/cors.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+use BackupCenter\Core\Auth;
+
+Auth::require();
 
 $versionFile = __DIR__ . '/../../resources/updates/version.json';
 

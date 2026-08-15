@@ -4,9 +4,12 @@ require_once __DIR__ . '/cors.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 use BackupCenter\Core\Application;
+use BackupCenter\Core\Auth;
 use BackupCenter\Repositories\JobQueueRepository;
 use BackupCenter\Repositories\ExecutionHistoryRepository;
 use BackupCenter\Services\WindowsServiceMonitor;
+
+Auth::require();
 
 $app = new Application();
 

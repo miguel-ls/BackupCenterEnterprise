@@ -5,10 +5,13 @@ require_once __DIR__ . '/../../../vendor/autoload.php';
 
 use BackupCenter\Core\Database;
 use BackupCenter\Core\Paths;
+use BackupCenter\Core\Auth;
 
 header('Content-Type: application/json');
 
 try {
+
+    Auth::require();
 
     $db = new Database(
         Paths::database() . '/backupcenter.db'

@@ -241,6 +241,7 @@ import {
 
 import MainLayout from "../components/layout/MainLayout.vue"
 import API from "../config/api"
+import { token } from "../api/auth"
 
 const items = ref([])
 
@@ -311,7 +312,10 @@ const params = new URLSearchParams({
         const res = await fetch(
             `${API}/progress.php?${params.toString()}`,
             {
-                cache: "no-store"
+                cache: "no-store",
+                headers: {
+                    Authorization: `Bearer ${token()}`
+                }
             }
         )
 

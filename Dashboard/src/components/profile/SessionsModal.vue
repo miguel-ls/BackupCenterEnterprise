@@ -163,6 +163,7 @@ watch
 } from "vue"
 
 import API from "@/config/api";
+import { token } from "@/api/auth";
 
 const props=defineProps({
 
@@ -202,7 +203,17 @@ async function load(){
 
 const r=await fetch(
 
-`${API}/sessions.php?user_id=${props.user.id}`
+`${API}/sessions.php?user_id=${props.user.id}`,
+
+{
+
+headers:{
+
+Authorization:`Bearer ${token()}`
+
+}
+
+}
 
 )
 
@@ -230,7 +241,9 @@ method:"DELETE",
 
 headers:{
 
-"Content-Type":"application/json"
+"Content-Type":"application/json",
+
+Authorization:`Bearer ${token()}`
 
 },
 

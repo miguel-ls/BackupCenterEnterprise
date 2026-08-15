@@ -4,7 +4,10 @@ require_once __DIR__ . '/cors.php';
 require_once __DIR__ . '/bootstrap.php';
 
 use BackupCenter\Core\Application;
+use BackupCenter\Core\Auth;
 use BackupCenter\Services\CronService;
+
+Auth::require();
 
 $app = new Application();
 

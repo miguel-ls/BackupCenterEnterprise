@@ -19,12 +19,13 @@ class Auth
             return false;
         }
 
-        /*
-         * En la siguiente etapa validaremos el token
-         * contra la tabla user_sessions.
-         */
+        $database = new Database(
+            Paths::database() . '/backupcenter.db'
+        );
 
-        return true;
+        $session = (new SessionRepository($database))->validate($token);
+
+        return $session !== null;
     }
 
     public static function require(): void

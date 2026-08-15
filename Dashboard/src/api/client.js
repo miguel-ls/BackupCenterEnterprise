@@ -1,9 +1,11 @@
 import API from "@/config/api";
+import { token } from "@/api/auth";
 
 async function request(endpoint, options = {}) {
     const response = await fetch(`${API}/${endpoint}`, {
         headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token()}`,
             ...options.headers
         },
         ...options
@@ -264,7 +266,8 @@ export const downloadInstallPackage = async (id) => {
     const response = await fetch(`${API}/connections.php`, {
         method: "POST",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token()}`
         },
         body: JSON.stringify({
             action: "install-package",

@@ -3,10 +3,13 @@
 use BackupCenter\Core\ApiController;
 use BackupCenter\Core\ApiResponse;
 use BackupCenter\Core\Audit;
+use BackupCenter\Core\Auth;
 
 require_once __DIR__ . '/bootstrap.php';
 
 ApiController::boot();
+
+Auth::require();
 
 ApiController::method(["GET","PUT"]);
 

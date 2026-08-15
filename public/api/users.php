@@ -3,11 +3,14 @@
 use BackupCenter\Core\ApiController;
 use BackupCenter\Core\ApiResponse;
 use BackupCenter\Core\Audit;
+use BackupCenter\Core\Auth;
 use BackupCenter\Services\JobLogService;
 
 require_once __DIR__ . '/bootstrap.php';
 
 ApiController::boot();
+
+Auth::require();
 
 ApiController::method(['GET','POST','PUT','DELETE']);
 

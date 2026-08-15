@@ -84,13 +84,21 @@ import {
 
 } from "vue"
 
+import { token } from "@/api/auth"
+
 const alerts = ref([])
 
 async function load(){
 
     const r = await fetch(
 
-         `${API}/alerts.php`
+         `${API}/alerts.php`,
+
+        {
+            headers: {
+                Authorization: `Bearer ${token()}`
+            }
+        }
 
     )
 
