@@ -2,7 +2,9 @@
 
 require __DIR__ . '/../../vendor/autoload.php';
 
+use BackupCenter\Core\AgentAuth;
 use BackupCenter\Core\Application;
+use BackupCenter\Repositories\AgentRepository;
 
 header('Content-Type: application/json');
 
@@ -10,6 +12,12 @@ try {
 
     $app = new Application();
     $pdo = $app->database()->getConnection();
+
+    if (
+        array_key_exists('HTTP_AUTHORIZATION', $_SERVER)
+    ) {
+        AgentAuth::validateAgentToken(new AgentRepository($pdo));
+    }
 
     $input = json_decode(file_get_contents('php://input'), true);
 

@@ -57,6 +57,28 @@ class AgentRepository
         return $stmt->rowCount() > 0;
     }
 
+    public function findConnectionByAgentTokenHash(string $hash): ?array
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT id, agent_token_hash
+            FROM connections
+            WHERE agent_token_hash = ?
+            LIMIT 1
+        ");
+
+        $stmt->execute([$hash]);
+
+        $connection = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$connection) {
+            return null;
+        }
+
+        return [
+            'connection_id' => (int)$connection['id']
+        ];
+    }
+
     public function getEnabledJobs(int $connectionId): array
     {
         $stmt = $this->pdo->prepare("
