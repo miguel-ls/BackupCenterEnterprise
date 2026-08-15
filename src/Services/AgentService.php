@@ -122,18 +122,15 @@ public function register(): void
         return;
     }
 
-    $agentToken = null;
+    $agentToken = bin2hex(random_bytes(32));
+    $agentTokenHash = hash('sha256', $agentToken);
 
-    if (empty($connection['agent_token_hash'])) {
-        $candidateToken = bin2hex(random_bytes(32));
-        $candidateHash = hash('sha256', $candidateToken);
-
-        if ($this->repository->saveAgentTokenHash(
-            (int)$connection['id'],
-            $candidateHash
-        )) {
-            $agentToken = $candidateToken;
-        }
+    if (!$this->repository->saveAgentTokenHash(
+        (int)$connection['id'],
+        $agentTokenHash
+    )) {
+        ApiResponse::error('No fue posible generar las credenciales del agente');
+        return;
     }
 
     $jobs = $this->repository->getEnabledJobs(

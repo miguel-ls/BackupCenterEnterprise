@@ -40,21 +40,20 @@ class AgentRepository
         return $connection ?: null;
     }
 
-    public function saveAgentTokenHash(int $connectionId, string $agentTokenHash): bool
-    {
+    public function saveAgentTokenHash(
+        int $connectionId,
+        string $agentTokenHash
+    ): bool {
         $stmt = $this->pdo->prepare("
             UPDATE connections
             SET agent_token_hash = ?
             WHERE id = ?
-              AND (agent_token_hash IS NULL OR agent_token_hash = '')
         ");
 
-        $stmt->execute([
+        return $stmt->execute([
             $agentTokenHash,
             $connectionId
         ]);
-
-        return $stmt->rowCount() > 0;
     }
 
     public function findConnectionByAgentTokenHash(string $hash): ?array
