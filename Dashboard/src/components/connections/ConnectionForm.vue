@@ -138,6 +138,8 @@ watch(
 
             Object.assign(connection,value)
 
+            connection.password=''
+
         }else{
 
             Object.assign(connection,{

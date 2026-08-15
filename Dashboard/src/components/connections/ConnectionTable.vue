@@ -14,7 +14,6 @@
                 <th class="text-left p-4">Usuario</th>
                 <th class="text-left p-4">Protocolo</th>
                 <th class="text-left p-4">Estado</th>
-                <th class="text-left p-4">Password</th>
                 <th class="text-left p-4">Install Token</th>
                 <th class="text-left p-4">Remote Path</th>
                 <th class="text-left p-4">Estado de instalación</th>
@@ -62,10 +61,6 @@
                     >
                         {{ connection.install_token ? 'Listo' : 'Sin token' }}
                     </span>
-                </td>
-
-                <td class="p-4">
-                    {{ connection.password }}
                 </td>
 
                 <td class="p-4">

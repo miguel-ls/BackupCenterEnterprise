@@ -94,7 +94,18 @@ class ConnectionRepository
     {
     $stmt = $this->db->query("
         SELECT
-            c.*,
+            c.id,
+            c.name,
+            c.host,
+            c.port,
+            c.username,
+            c.hostkey,
+            c.protocol,
+            c.client_id,
+            c.remote_path,
+            c.created_at,
+            c.install_token,
+            c.installed,
             cl.business_name AS client_name
         FROM connections c
         LEFT JOIN clients cl
