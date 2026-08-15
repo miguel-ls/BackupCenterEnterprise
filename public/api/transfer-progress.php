@@ -168,9 +168,20 @@ try {
     if ($status === 'completed') {
 
         $pdo->prepare("
-            INSERT INTO notifications (type, message, created_at)
-            VALUES ('success', :message, datetime('now'))
+            INSERT INTO notifications (
+                level,
+                title,
+                message,
+                created_at
+            )
+            VALUES (
+                'SUCCESS',
+                :title,
+                :message,
+                datetime('now')
+            )
         ")->execute([
+            ':title'   => 'Backup completado',
             ':message' => "Backup completado: $fileName"
         ]);
     }
@@ -178,13 +189,23 @@ try {
     if ($status === 'failed') {
 
         $pdo->prepare("
-            INSERT INTO notifications (type, message, created_at)
-            VALUES ('error', :message, datetime('now'))
+            INSERT INTO notifications (
+                level,
+                title,
+                message,
+                created_at
+            )
+            VALUES (
+                'ERROR',
+                :title,
+                :message,
+                datetime('now')
+            )
         ")->execute([
+            ':title'   => 'Error en backup',
             ':message' => "Error en backup: $fileName"
         ]);
     }
-
     /*
     |--------------------------------------------------------------------------
     | RESPUESTA
