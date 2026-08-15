@@ -30,11 +30,13 @@ class ConnectionRepository
                 client_id INTEGER,
                 remote_path TEXT NOT NULL,
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-                install_token TEXT
+                install_token TEXT,
+                agent_token_hash TEXT
             );
         ");
 
         $this->ensureInstallTokenColumn();
+        $this->ensureAgentTokenHashColumn();
         $this->populateMissingInstallTokens();
     }
 
@@ -50,6 +52,20 @@ class ConnectionRepository
         }
 
         $this->db->exec('ALTER TABLE connections ADD COLUMN install_token TEXT');
+    }
+
+    private function ensureAgentTokenHashColumn(): void
+    {
+        $stmt = $this->db->query('PRAGMA table_info(connections)');
+        $columns = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($columns as $column) {
+            if (($column['name'] ?? '') === 'agent_token_hash') {
+                return;
+            }
+        }
+
+        $this->db->exec('ALTER TABLE connections ADD COLUMN agent_token_hash TEXT');
     }
 
     private function populateMissingInstallTokens(): void
