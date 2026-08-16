@@ -191,47 +191,51 @@ public function saveExecutionHistory(array $data): void
 
     try
     {
-        $stmt = $this->pdo->prepare("
-            INSERT INTO execution_history
-            (
-                job_id,
-                started_at,
-                finished_at,
-                files_found,
-                files_uploaded,
-                files_skipped,
-                files_failed,
-                duration_seconds,
-                status,
-                created_at
-            )
-            VALUES
-            (
-                :job_id,
-                :started_at,
-                :finished_at,
-                :files_found,
-                :files_uploaded,
-                :files_skipped,
-                :files_failed,
-                :duration_seconds,
-                :status,
-                :created_at
-            )
-        ");
+        //  SOLO controlar el INSERT 
+        if ((int)$data['filesFound'] !== (int)$data['filesSkipped']) {
 
-        $stmt->execute([
-            ':job_id' => $data['jobId'],
-            ':started_at' => $data['startedAt'],
-            ':finished_at' => $data['finishedAt'],
-            ':files_found' => $data['filesFound'],
-            ':files_uploaded' => $data['filesUploaded'],
-            ':files_skipped' => $data['filesSkipped'],
-            ':files_failed' => $data['filesFailed'],
-            ':duration_seconds' => $data['durationSeconds'],
-            ':status' => $data['status'],
-            ':created_at' => date('Y-m-d H:i:s')
-        ]);
+            $stmt = $this->pdo->prepare("
+                INSERT INTO execution_history
+                (
+                    job_id,
+                    started_at,
+                    finished_at,
+                    files_found,
+                    files_uploaded,
+                    files_skipped,
+                    files_failed,
+                    duration_seconds,
+                    status,
+                    created_at
+                )
+                VALUES
+                (
+                    :job_id,
+                    :started_at,
+                    :finished_at,
+                    :files_found,
+                    :files_uploaded,
+                    :files_skipped,
+                    :files_failed,
+                    :duration_seconds,
+                    :status,
+                    :created_at
+                )
+            ");
+
+            $stmt->execute([
+                ':job_id' => $data['jobId'],
+                ':started_at' => $data['startedAt'],
+                ':finished_at' => $data['finishedAt'],
+                ':files_found' => $data['filesFound'],
+                ':files_uploaded' => $data['filesUploaded'],
+                ':files_skipped' => $data['filesSkipped'],
+                ':files_failed' => $data['filesFailed'],
+                ':duration_seconds' => $data['durationSeconds'],
+                ':status' => $data['status'],
+                ':created_at' => date('Y-m-d H:i:s')
+            ]);
+        }
 
         $stmt = $this->pdo->prepare("
             UPDATE jobs
