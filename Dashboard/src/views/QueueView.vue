@@ -52,6 +52,7 @@
         <QueueTable
             v-else
             :items="queue"
+            :on-finish="finishQueue"
         />
 
     </div>
@@ -78,6 +79,7 @@ import QueueTable from "@/components/queue/QueueTable.vue";
 import QueueStatistics from "@/components/queue/QueueStatistics.vue";
 
 import {
+    completeQueue,
     getQueue
 } from "@/api/client";
 
@@ -113,8 +115,8 @@ async function load(){
         queue.value = response.data ?? response;
         filterOptions.value = response.filters ?? filterOptions.value;
 
+    } catch (error) {
         console.error(error);
-
         queue.value = [];
 
     }finally{
@@ -126,6 +128,16 @@ async function load(){
 
     }
 
+}
+
+async function finishQueue(item) {
+    const response = await completeQueue(item.id)
+
+    if (!response?.success) {
+        throw new Error(response?.message ?? "No se pudo terminar la cola.")
+    }
+
+    await load()
 }
 
 function applyFilters() {

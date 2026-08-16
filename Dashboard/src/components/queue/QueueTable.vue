@@ -40,13 +40,15 @@
 
                     <th class="text-center px-4 py-3 font-semibold">Estado</th>
 
-                    <th class="text-left px-4 py-3 font-semibold">Worker</th>
-
-                    <th class="text-center px-4 py-3 font-semibold">Intentos</th>
+                    <th class="text-left px-4 py-3 font-semibold">Creado</th>
 
                     <th class="text-left px-4 py-3 font-semibold">Inicio</th>
 
                     <th class="text-left px-4 py-3 font-semibold">Fin</th>
+
+                    <th class="text-center px-4 py-3 font-semibold">Tiempo</th>
+
+                    <th class="text-center px-4 py-3 font-semibold">Accion</th>
 
                 </tr>
 
@@ -86,21 +88,9 @@
 
                     </td>
 
-                    <td class="px-4 py-3">
+                    <td class="px-4 py-3 text-sm text-slate-600">
 
-                        {{ item.worker || "-" }}
-
-                    </td>
-
-                    <td class="px-4 py-3 text-center">
-
-                        <span
-                            class="inline-flex items-center justify-center min-w-[34px] h-8 rounded-full bg-slate-100 font-semibold"
-                        >
-
-                            {{ item.attempts }}
-
-                        </span>
+                        {{ formatDate(item.created_at) }}
 
                     </td>
 
@@ -116,6 +106,28 @@
 
                     </td>
 
+                    <td class="px-4 py-3 text-center text-sm text-slate-600 whitespace-nowrap">
+
+                        {{ formatQueueDuration(item) }}
+
+                    </td>
+
+                    <td class="px-4 py-3 text-center">
+
+                        <button
+                            v-if="item.status === 'Pending' || item.status === 'Pendiente'"
+                            type="button"
+                            class="rounded-lg bg-amber-500 px-3 py-2 text-sm font-semibold text-white hover:bg-amber-600 disabled:opacity-60"
+                            :disabled="finishingId === item.id"
+                            @click="finishQueue(item)"
+                        >
+                            {{ finishingId === item.id ? 'Finalizando...' : 'Terminar cola' }}
+                        </button>
+
+                        <span v-else class="text-neutral-400">-</span>
+
+                    </td>
+
                 </tr>
 
             </tbody>
@@ -125,7 +137,7 @@
                 <tr>
 
                     <td
-                        colspan="8"
+                        colspan="9"
                         class="text-center py-12 text-neutral-500"
                     >
 
@@ -147,16 +159,36 @@
 
 <script setup>
 
+import { ref } from "vue"
 import StatusBadge from "@/components/common/StatusBadge.vue"
 
-defineProps({
+const props = defineProps({
 
     items:{
         type:Array,
         default:()=>[]
+    },
+    onFinish: {
+        type: Function,
+        required: true
     }
 
 })
+const finishingId = ref(null)
+
+async function finishQueue(item) {
+    if (!window.confirm("¿Desea cambiar esta cola pendiente a completada?")) {
+        return
+    }
+
+    finishingId.value = item.id
+
+    try {
+        await props.onFinish(item)
+    } finally {
+        finishingId.value = null
+    }
+}
 
 function formatDate(value) {
 
@@ -166,7 +198,13 @@ function formatDate(value) {
 
     }
 
-    return new Date(value).toLocaleString(
+    const date = parsePeruDate(value)
+
+    if (!date) {
+        return "-"
+    }
+
+    return date.toLocaleString(
         "es-PE",
         {
             year: "numeric",
@@ -179,6 +217,47 @@ function formatDate(value) {
         }
     )
 
+}
+
+function parsePeruDate(value) {
+    if (!value) {
+        return null
+    }
+
+    const normalized = String(value).trim().replace(' ', 'T')
+
+    if (!normalized || normalized.startsWith('0000-00-00')) {
+        return null
+    }
+
+    const hasTimezone = /(?:Z|[+-]\d{2}:?\d{2})$/.test(normalized)
+    const date = new Date(hasTimezone ? normalized : `${normalized}-05:00`)
+
+    return Number.isNaN(date.getTime()) ? null : date
+}
+
+function formatQueueDuration(item) {
+    const created = parsePeruDate(item.created_at)
+    const end = parsePeruDate(item.finished_at)
+
+    if (!created || !end) {
+        return '-'
+    }
+
+    const seconds = Math.max(0, Math.floor((end.getTime() - created.getTime()) / 1000))
+    const hours = Math.floor(seconds / 3600)
+    const minutes = Math.floor((seconds % 3600) / 60)
+    const remainingSeconds = seconds % 60
+
+    if (hours > 0) {
+        return `${hours}h ${minutes}m ${remainingSeconds}s`
+    }
+
+    if (minutes > 0) {
+        return `${minutes}m ${remainingSeconds}s`
+    }
+
+    return `${remainingSeconds}s`
 }
 
 </script>

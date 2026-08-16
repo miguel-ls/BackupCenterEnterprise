@@ -17,6 +17,36 @@ $repository = new JobQueueRepository(
 
 $repository->initialize();
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $payload = json_decode(file_get_contents('php://input'), true) ?: [];
+
+    if (($payload['action'] ?? '') !== 'complete') {
+        http_response_code(400);
+        echo json_encode([
+            'success' => false,
+            'message' => 'Acción no válida.'
+        ]);
+        exit;
+    }
+
+    $completed = $repository->completePending((int)($payload['id'] ?? 0));
+
+    if (!$completed) {
+        http_response_code(409);
+        echo json_encode([
+            'success' => false,
+            'message' => 'La cola no existe o ya no está pendiente.'
+        ]);
+        exit;
+    }
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'Cola completada.'
+    ]);
+    exit;
+}
+
 $filters = [
     'job_id' => (int)($_GET['job_id'] ?? 0),
     'client_id' => (int)($_GET['client_id'] ?? 0),

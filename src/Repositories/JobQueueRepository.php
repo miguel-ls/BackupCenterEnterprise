@@ -30,6 +30,8 @@ class JobQueueRepository
             last_error TEXT
         );
         ");
+
+        $this->db->exec("\n            UPDATE job_queue\n            SET started_at = created_at\n            WHERE status = 'Pending'\n              AND started_at IS NULL\n              AND created_at IS NOT NULL\n        ");
     }
 
     public function enqueue(int $jobId): bool
@@ -51,12 +53,15 @@ class JobQueueRepository
             return false;
         }
 
+        $createdAt = date('Y-m-d H:i:s');
+
         $stmt = $this->db->prepare("
             INSERT INTO job_queue
             (
                 job_id,
                 status,
                 created_at,
+                started_at,
                 attempts
             )
             VALUES
@@ -64,13 +69,15 @@ class JobQueueRepository
                 ?,
                 'Pending',
                 ?,
+                ?,
                 0
             )
         ");
 
         return $stmt->execute([
             $jobId,
-            date('Y-m-d H:i:s')
+            $createdAt,
+            $createdAt
         ]);
     }
 
@@ -121,6 +128,18 @@ class JobQueueRepository
             date('Y-m-d H:i:s'),
             $id
         ]);
+    }
+
+    public function completePending(int $id): bool
+    {
+        $stmt = $this->db->prepare("\n            UPDATE job_queue\n            SET\n                status='Completed',\n                finished_at=?\n            WHERE id=?\n              AND status='Pending'\n        ");
+
+        $stmt->execute([
+            date('Y-m-d H:i:s'),
+            $id
+        ]);
+
+        return $stmt->rowCount() > 0;
     }
 
     public function fail(

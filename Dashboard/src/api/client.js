@@ -113,6 +113,15 @@ export const getQueue = (filters = {}) => {
     return request(query ? `job-queue.php?${query}` : "job-queue.php");
 };
 
+export const completeQueue = (id) =>
+    request("job-queue.php", {
+        method: "POST",
+        body: JSON.stringify({
+            action: "complete",
+            id
+        })
+    });
+
 /* ================= HISTORY DASHBOARD ================= */
 
 export const getHistoryDashboard = (
