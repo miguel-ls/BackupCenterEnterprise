@@ -422,14 +422,48 @@ export const exportConnectionsExcel = () => {
 
 };
 
-export const exportReport = (action, type = "excel") => {
+export const exportReport = async (action, type = "excel") => {
 
     const format = type === "pdf" ? "pdf" : "excel";
 
-    window.open(
+    // reports-export.php requires the Authorization header, so it can't be opened as a plain URL
+    const response = await fetch(
         `${API}/reports-export.php?action=${encodeURIComponent(action)}&type=${format}`,
-        "_blank"
+        {
+            headers: {
+                Authorization: `Bearer ${token()}`
+            }
+        }
     );
+
+    if (!response.ok) {
+
+        throw new Error(`Error al exportar el reporte (HTTP ${response.status})`);
+
+    }
+
+    const disposition = response.headers.get("Content-Disposition") ?? "";
+
+    const match = disposition.match(/filename="?([^"]+)"?/);
+
+    const filename = match
+        ? match[1]
+        : `reporte.${format === "pdf" ? "pdf" : "xlsx"}`;
+
+    const blob = await response.blob();
+
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = filename;
+
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    window.URL.revokeObjectURL(url);
 
 };
 

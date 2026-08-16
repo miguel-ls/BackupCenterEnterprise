@@ -487,7 +487,13 @@ async function load(){
 
 function download(action,type){
 
-    exportReport(action,type)
+    exportReport(action,type).catch((e) => {
+
+        console.error(e)
+
+        alert("No se pudo exportar el reporte. Vuelve a iniciar sesión e inténtalo de nuevo.")
+
+    })
 
 }
 

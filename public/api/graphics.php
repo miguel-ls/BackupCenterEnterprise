@@ -56,10 +56,12 @@ FROM execution_history eh
 INNER JOIN jobs j ON j.id = eh.job_id
 INNER JOIN connections cn ON cn.id = j.connection_id
 INNER JOIN clients c ON c.id = cn.client_id
-WHERE $whereSql
+WHERE (files_uploaded > 0 OR files_failed > 0) AND $whereSql
 GROUP BY day, c.id, c.business_name
 ORDER BY day, c.business_name
 ";
+
+//echo "<pre>$sql</pre>";
 
 $stmt = $pdo->prepare($sql);
 foreach ($params as $name => $value) {
@@ -78,7 +80,7 @@ FROM execution_history eh
 INNER JOIN jobs j ON j.id = eh.job_id
 INNER JOIN connections cn ON cn.id = j.connection_id
 INNER JOIN clients c ON c.id = cn.client_id
-WHERE $whereSql
+WHERE (files_uploaded > 0 OR files_failed > 0) AND $whereSql
 ";
 
 $summaryStmt = $pdo->prepare($summarySql);

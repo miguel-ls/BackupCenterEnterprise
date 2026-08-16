@@ -44,11 +44,11 @@
     <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
         <section class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
             <div class="mb-4">
-                <h2 class="text-xl font-bold">Archivos encontrados por dia y cliente</h2>
+                <h2 class="text-xl font-bold">Archivos subidos por dia y cliente</h2>
                 <p class="mt-1 text-sm text-neutral-500">Comparativo diario en barras</p>
             </div>
             <div class="h-[360px]">
-                <Bar v-if="hasData" :data="foundByDayChart" :options="barOptions" />
+                <Bar v-if="hasData" :data="uploadedByDayChart" :options="barOptions" />
                 <div v-else class="flex h-full items-center justify-center text-neutral-500">No existen datos para los filtros seleccionados.</div>
             </div>
         </section>
@@ -182,10 +182,10 @@ function datasetsFor(field) {
     }))
 }
 
-const foundByDayChart = computed(() => ({
-    labels: days.value,
-    datasets: datasetsFor('files_found')
-}))
+// const foundByDayChart = computed(() => ({
+//     labels: days.value,
+//     datasets: datasetsFor('files_uploaded')
+// }))
 
 const uploadedByDayChart = computed(() => ({
     labels: days.value,
@@ -193,9 +193,9 @@ const uploadedByDayChart = computed(() => ({
 }))
 
 const summaryChart = computed(() => ({
-    labels: ['Encontrados', 'Subidos', 'Omitidos', 'Errores'],
+    labels: [ 'Encontrados','Subidos', 'Omitidos', 'Errores'],
     datasets: [{
-        data: ['files_found', 'files_uploaded', 'files_skipped', 'files_failed'].map((field) => valueFor(summary.value, field)),
+        data: [ 'files_found', 'files_uploaded', 'files_skipped', 'files_failed'].map((field) => valueFor(summary.value, field)),
         backgroundColor: ['#2563EB', '#10B981', '#F59E0B', '#EF4444'],
         borderColor: '#ffffff',
         borderWidth: 2
