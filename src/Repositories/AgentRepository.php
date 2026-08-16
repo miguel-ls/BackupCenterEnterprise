@@ -260,11 +260,13 @@ public function saveExecutionHistory(array $data): void
                 UPDATE job_queue
                 SET
                     status = 'Completed',
+                    started_at = COALESCE(started_at, :started_at),
                     finished_at = :finished_at
                 WHERE id = :queue_id
             ");
 
             $stmt->execute([
+                ':started_at' => $data['startedAt'],
                 ':finished_at' => $data['finishedAt'],
                 ':queue_id' => $data['queueId']
             ]);
