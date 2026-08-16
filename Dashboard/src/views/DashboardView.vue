@@ -26,16 +26,16 @@
 
         <div class="col-span-2">
             <LastExecutions/>
-        </div>
+        </div> 
 
-        <QueueWidget/>
-
+        <!-- <QueueWidget/> -->
+        <OperationsCenter/>
     </div>
 
     <!-- Gráfico -->
 
-    <div class="grid grid-cols-2 gap-6 mt-6">
-        <OperationsCenter/>
+    <div class="grid grid-cols-1 gap-6 mt-6">
+        
         <BackupChart/>
     </div>
 
