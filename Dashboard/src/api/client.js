@@ -55,6 +55,17 @@ export const getChart = (
         `chart.php?client_id=${clientId}&start_date=${startDate}&end_date=${endDate}`
     );
 
+export const getGraphics = (filters = {}) => {
+    const params = new URLSearchParams({
+        client_id: String(filters.clientId ?? 0),
+        status: filters.status ?? '',
+        from: filters.from ?? '',
+        to: filters.to ?? ''
+    });
+
+    return request(`graphics.php?${params.toString()}`);
+};
+
 export const getSystemStatus = () => request("system-status.php");
 
 //export const getSystemInfo = () => request("system-info.php");

@@ -12,6 +12,7 @@ import QueueView from '../views/QueueView.vue'
 import UsersView from '../views/UsersView.vue'
 import AuditView from '../views/AuditView.vue'
 import ReportsView from '../views/ReportsView.vue'
+import GraphicsView from '../views/GraphicsView.vue'
 import ClientsView from "../views/ClientsView.vue"
 import documentationRoutes from "../documentation/router/documentation"
 import Transfers from '../views/Transfers.vue'
@@ -93,6 +94,12 @@ const router = createRouter({
         {
             path: '/reports',
             component: ReportsView,
+            meta: { requiresAuth: true }
+        },
+
+        {
+            path: '/graphics',
+            component: GraphicsView,
             meta: { requiresAuth: true }
         },
 

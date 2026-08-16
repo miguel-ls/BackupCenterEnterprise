@@ -78,7 +78,7 @@
                     <td class="p-3">{{ formatDuration(item.duration_seconds) }}</td>
 
                     <td class="p-3">
-                        <span :class="['Correcto','Completed','OK'].includes(item.status) ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'">
+                        <span :class="['Correcto','Completed','OK','success'].includes(item.status) ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'">
                             {{ item.status }}
                         </span>
                     </td>

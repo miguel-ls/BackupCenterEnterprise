@@ -2,7 +2,7 @@
 
 <div class="bg-white rounded-xl border border-neutral-200 shadow-sm">
 
-    <div class="flex items-center justify-between px-6 py-5 border-b">
+    <div class="flex flex-col gap-4 px-6 py-5 border-b">
 
         <div>
 
@@ -20,12 +20,12 @@
 
         </div>
 
-        <div class="flex items-center gap-3">
+        <div class="flex min-w-0 flex-wrap items-center justify-end gap-2">
 
             <select
                 v-model="selectedClient"
                 @change="onUpdate"
-                class="border rounded-md px-3 py-2 text-sm"
+                class="min-w-0 flex-1 border rounded-md px-3 py-2 text-sm sm:min-w-[180px] sm:flex-none"
             >
 
                 <option :value="0">Todos los clientes</option>
@@ -43,18 +43,18 @@
 <input
     v-model="startDate"
     type="date"
-    class="border rounded-md px-3 py-2 text-sm"
+    class="min-w-0 flex-1 border rounded-md px-3 py-2 text-sm sm:flex-none"
 />
 
 <input
     v-model="endDate"
     type="date"
-    class="border rounded-md px-3 py-2 text-sm"
+    class="min-w-0 flex-1 border rounded-md px-3 py-2 text-sm sm:flex-none"
 />            
 
             <button
                 @click="onUpdate"
-                class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
+                class="shrink-0 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
             >
 
                 Actualizar

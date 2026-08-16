@@ -49,7 +49,7 @@
 
     <div v-if="!isCollapsed" class="flex flex-1 flex-col">
 
-        <!-- Estado -->
+        <!-- Estado
 
         <div class="border-b border-slate-700 p-5">
 
@@ -69,39 +69,29 @@
 
             </div>
 
-        </div>
+        </div> -->
 
         <!-- Menú -->
 
         <nav class="flex-1 px-4 py-5 overflow-y-auto">
 
-            <div class="title">
+            <button
+                type="button"
+                class="title flex w-full items-center justify-between"
+                :aria-expanded="expandedGroups.general"
+                @click="toggleGroup('general')"
+            >
+                <span>GENERAL</span>
+                <span class="group-chevron" :class="{ 'group-chevron-open': expandedGroups.general }">⌄</span>
+            </button>
 
-                GENERAL
-
-            </div>
+            <div v-show="expandedGroups.general">
 
             <RouterLink to="/" class="menu">
 
                 <span>📊</span>
 
                 <span>Dashboard</span>
-
-            </RouterLink>
-
-            <RouterLink to="/jobs" class="menu">
-
-                <span>💼</span>
-
-                <span>Trabajos</span>
-
-            </RouterLink>
-
-            <RouterLink to="/connections" class="menu">
-
-                <span>🌐</span>
-
-                <span>Conexiones</span>
 
             </RouterLink>
 
@@ -112,6 +102,23 @@
                 <span>Clientes</span>
 
             </RouterLink>
+
+            <RouterLink to="/connections" class="menu">
+
+                <span>🌐</span>
+
+                <span>Conexiones</span>
+
+            </RouterLink>            
+
+            <RouterLink to="/jobs" class="menu">
+
+                <span>💼</span>
+
+                <span>Trabajos</span>
+
+            </RouterLink>
+
             
             <RouterLink to="/queue" class="menu">
 
@@ -137,33 +144,35 @@
 
             </RouterLink>
 
-            <RouterLink to="/logs" class="menu">
-
-                <span>📄</span>
-
-                <span>Logs</span>
-
-            </RouterLink>
-
             <RouterLink to="/reports" class="menu">
 
                 <span>📈</span>
 
                 <span>Reportes</span>
 
-                <span class="badge">
+            </RouterLink>
 
-                    NEW
+            <RouterLink to="/graphics" class="menu">
 
-                </span>
+                <span>📊</span>
+
+                <span>Graficos</span>
 
             </RouterLink>
 
-            <div class="title mt-8">
-
-                SEGURIDAD
-
             </div>
+
+            <button
+                type="button"
+                class="title mt-8 flex w-full items-center justify-between"
+                :aria-expanded="expandedGroups.security"
+                @click="toggleGroup('security')"
+            >
+                <span>SEGURIDAD</span>
+                <span class="group-chevron" :class="{ 'group-chevron-open': expandedGroups.security }">⌄</span>
+            </button>
+
+            <div v-show="expandedGroups.security">
 
             <RouterLink to="/users" class="menu">
 
@@ -181,11 +190,27 @@
 
             </RouterLink>
 
-            <div class="title mt-8">
+            <RouterLink to="/logs" class="menu">
 
-                SISTEMA
+                <span>📄</span>
+
+                <span>Logs</span>
+
+            </RouterLink>            
 
             </div>
+
+            <button
+                type="button"
+                class="title mt-8 flex w-full items-center justify-between"
+                :aria-expanded="expandedGroups.system"
+                @click="toggleGroup('system')"
+            >
+                <span>SISTEMA</span>
+                <span class="group-chevron" :class="{ 'group-chevron-open': expandedGroups.system }">⌄</span>
+            </button>
+
+            <div v-show="expandedGroups.system">
 
             <RouterLink to="/settings" class="menu">
 
@@ -211,6 +236,8 @@
 
             </RouterLink>
 
+            </div>
+
         </nav>
 
         <!-- Pie -->
@@ -231,13 +258,7 @@
 
             <div class="mt-4">
 
-                <div class="flex justify-between text-xs">
 
-                    <span>Versión</span>
-
-                    <strong>1.0.0</strong>
-
-                </div>
 
                 <div class="flex justify-between text-xs">
                     <span>Fecha / Hora:</span>
@@ -246,7 +267,15 @@
                     </span>
                 </div>
 
-                <div class="flex justify-between text-xs mt-2">
+                <div class="flex justify-between text-xs text-green-400">
+
+                    <span>Versión</span>
+
+                    <strong>1.0.0</strong>
+
+                </div>
+
+                <!-- <div class="flex justify-between text-xs mt-2">
 
                     <span>Estado</span>
 
@@ -256,7 +285,7 @@
 
                     </strong>
 
-                </div>
+                </div> -->
 
             </div>
 
@@ -274,11 +303,44 @@ import { RouterLink } from "vue-router"
 import { ref, onMounted } from 'vue'
 
 const isCollapsed = ref(false)
+const expandedGroups = ref({
+    general: true,
+    security: true,
+    system: true
+})
 const serverTime = ref('--:--:--')
 const serverDate = ref('--/--/----')
 
+const groupsStorageKey = 'backup-center-sidebar-groups'
+
 function toggleSidebar() {
   isCollapsed.value = !isCollapsed.value
+}
+
+function toggleGroup(group) {
+    expandedGroups.value[group] = !expandedGroups.value[group]
+    localStorage.setItem(groupsStorageKey, JSON.stringify(expandedGroups.value))
+}
+
+function loadExpandedGroups() {
+    try {
+        const savedGroups = JSON.parse(localStorage.getItem(groupsStorageKey))
+
+        if (savedGroups && typeof savedGroups === 'object') {
+            expandedGroups.value = {
+                ...expandedGroups.value,
+                general: savedGroups.general !== false,
+                security: savedGroups.security !== false,
+                system: savedGroups.system !== false
+            }
+        }
+    } catch {
+        expandedGroups.value = {
+            general: true,
+            security: true,
+            system: true
+        }
+    }
 }
 
 function updateTime() {
@@ -294,6 +356,7 @@ function updateTime() {
 }
 
 onMounted(() => {
+    loadExpandedGroups()
   updateTime()
   setInterval(updateTime, 1000)
 })
@@ -315,6 +378,32 @@ onMounted(() => {
     margin-bottom:12px;
 
     padding-left:12px;
+
+    border:0;
+
+    background:transparent;
+
+    cursor:pointer;
+
+    text-align:left;
+
+}
+
+.group-chevron{
+
+    font-size:16px;
+
+    line-height:1;
+
+    transform:rotate(-90deg);
+
+    transition:transform .2s;
+
+}
+
+.group-chevron-open{
+
+    transform:rotate(0deg);
 
 }
 
