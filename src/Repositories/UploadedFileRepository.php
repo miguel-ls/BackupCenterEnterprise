@@ -92,19 +92,18 @@ public function save(
     public function initializeExecutionHistory(): void
     {
         $this->db->exec("
-            CREATE TABLE execution_history
+            CREATE TABLE IF NOT EXISTS execution_history
             (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            job_id INTEGER NOT NULL,
-            started_at TEXT NOT NULL,
-            finished_at TEXT NOT NULL,
-            files_found INTEGER NOT NULL,
-            files_uploaded INTEGER NOT NULL,
-            files_skipped INTEGER NOT NULL,
-            files_failed INTEGER NOT NULL,
-            duration_seconds INTEGER NOT NULL,
-            status TEXT NOT NULL,
-            created_at TEXT NOT NULL
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                job_id INTEGER NOT NULL,
+                started_at TEXT NOT NULL,
+                client TEXT NOT NULL,
+                files_found INTEGER NOT NULL,
+                files_uploaded INTEGER NOT NULL,
+                files_skipped INTEGER NOT NULL,
+                errors INTEGER NOT NULL,
+                duration REAL NOT NULL,
+                status TEXT NOT NULL
             );
         ");
     }
