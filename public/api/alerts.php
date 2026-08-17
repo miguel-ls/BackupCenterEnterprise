@@ -55,7 +55,7 @@ if($internet){
     fclose($internet);
 }
 
-$last=$history->latest(3);
+$last=$history->latest(6);
 
 foreach ($last as $row) {
 

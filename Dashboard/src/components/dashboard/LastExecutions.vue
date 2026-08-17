@@ -194,7 +194,7 @@ async function load(){
 
         const response = await getHistoryDashboard(
             1,
-            200,
+            50,
             {
                 clientId: selectedClient.value,
                 status: selectedStatus.value

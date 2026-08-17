@@ -25,7 +25,7 @@
     <div class="grid grid-cols-3 gap-6 mt-6">
 
         <div class="col-span-2">
-            <LastExecutions/>
+           <BackupChart/>
         </div> 
 
         <!-- <QueueWidget/> -->
@@ -36,7 +36,7 @@
 
     <div class="grid grid-cols-1 gap-6 mt-6">
         
-        <BackupChart/>
+         <LastExecutions/>
     </div>
 
 </MainLayout>

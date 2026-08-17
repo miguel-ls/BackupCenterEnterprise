@@ -27,43 +27,11 @@
 
     </div>
 
-    <div class="grid grid-cols-3 divide-x">
-
-        <!-- Estado -->
-
-        <div class="p-5">
-
-            <div class="font-semibold mb-4">
-                Estado
-            </div>
-
-            <div
-                v-for="item in status"
-                :key="item.name"
-                class="flex justify-between py-2"
-            >
-
-                <span>
-
-                    {{ item.name }}
-
-                </span>
-
-                <span
-                    :class="item.ok ? 'text-green-600' : 'text-red-600'"
-                >
-
-                    {{ item.ok ? '🟢' : '🔴' }}
-
-                </span>
-
-            </div>
-
-        </div>
+    <div class="grid grid-cols-3 divide-x px-6 py-4  ">
 
         <!-- Eventos -->
 
-        <div class="p-5">
+        <div class="col-span-2">
 
             <div class="font-semibold mb-4">
                 Últimos Eventos
@@ -91,9 +59,38 @@
 
         </div>
 
-        <!-- Alertas -->
+        
+        <!-- Estado -->
 
-        <div class="p-5">
+        <div class="p-5 ">
+
+            <div class="font-semibold mb-4">
+                Estado
+            </div>
+
+            <div
+                v-for="item in status"
+                :key="item.name"
+                class="flex justify-between py-2"
+            >
+
+                <span>
+
+                    {{ item.name }}
+
+                </span>
+
+                <span
+                    :class="item.ok ? 'text-green-600' : 'text-red-600'"
+                >
+
+                    {{ item.ok ? '🟢' : '🔴' }}
+
+                </span>
+
+            </div>
+
+            <div class="border my-4"></div>
 
             <div class="font-semibold mb-4">
                 Alertas
